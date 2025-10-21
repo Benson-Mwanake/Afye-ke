@@ -1,33 +1,45 @@
-import React from "react";
-import ClinicList from "./ClinicList";
-import SearchBar from "./SearchBar";
-import CountyFilter from "./CountyFilter";
-import DistanceFilter from "./DistanceFilter";
-import MapView from "./MapView";
+import { useEffect, useState } from 'react'
+import ClinicList from './ClinicList'
+import SearchBar from './SearchBar'
+import CountyFilter from './CountyFilter'
+import DistanceFilter from './DistanceFilter'
+import MapView from './MapView'
+import { getClinics } from '../../services/api'
 
-const ClinicBrowser = () => {
+export default function ClinicBrowser(){
+  const [clinics, setClinics] = useState([])
+  const [filtered, setFiltered] = useState([])
+  const [search, setSearch] = useState('')
+  const [county, setCounty] = useState('')
+  const [distance, setDistance] = useState(20)
+
+  useEffect(() => {
+    async function load(){
+      const data = await getClinics()
+      setClinics(data)
+      setFiltered(data)
+    }
+    load()
+  }, [])
+
+  useEffect(() => {
+    let f = clinics.filter(c =>
+      (c.name.toLowerCase().includes(search.toLowerCase()) || c.services?.some(s => s.toLowerCase().includes(search.toLowerCase()))) &&
+      (county ? c.county === county : true)
+    )
+    setFiltered(f)
+  }, [search, county, distance, clinics])
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Find a Clinic</h2>
-
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <SearchBar />
-        <div className="flex gap-4">
-          <CountyFilter />
-          <DistanceFilter />
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3 items-center">
+        <SearchBar search={search} setSearch={setSearch} />
+        <CountyFilter county={county} setCounty={setCounty} />
+        <DistanceFilter distance={distance} setDistance={setDistance} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <ClinicList />
-        </div>
-        <div className="lg:col-span-1">
-          <MapView />
-        </div>
-      </div>
+      <ClinicList clinics={filtered} />
+      <MapView clinics={filtered} />
     </div>
-  );
-};
-
-export default ClinicBrowser;
+  )
+}
