@@ -1,55 +1,30 @@
-// src/components/chv/PatientList.jsx
-import React, { useMemo, useState } from "react";
+import React from "react";
+import AppointmentCard from "./AppointmentCard";
 
-export default function PatientList({ patients = [] }) {
-  const [query, setQuery] = useState("");
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return patients;
-    return patients.filter(
-      (p) =>
-        (p.name || "").toLowerCase().includes(q) ||
-        (p.county || "").toLowerCase().includes(q)
-    );
-  }, [patients, query]);
+const mockPatients = [
+  {
+    id: 1,
+    name: "Amina Hussein",
+    appointment: "2025-10-23",
+    condition: "Fever",
+  },
+  {
+    id: 2,
+    name: "James Mwangi",
+    appointment: "2025-10-24",
+    condition: "Cough",
+  },
+];
 
-  return (
-    <div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <input
-          className="input"
-          placeholder="Search patient or county"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-      <div
-        style={{
-          marginTop: 10,
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
-        {filtered.length === 0 && (
-          <div className="small">No patients found.</div>
-        )}
-        {filtered.map((p) => (
-          <div key={p.id} className="app-card">
-            <div>
-              <div style={{ fontWeight: 700 }}>{p.name}</div>
-              <div className="small">
-                {p.county} • Last visit: {p.lastVisit}
-              </div>
-              <div className="small">Condition: {p.condition}</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div className="small">Phone</div>
-              <div style={{ fontWeight: 700 }}>{p.phone}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+const PatientList = () => (
+  <div>
+    <h3 className="text-lg font-semibold mb-3">Assigned Patients</h3>
+    <div className="grid md:grid-cols-2 gap-4">
+      {mockPatients.map((p) => (
+        <AppointmentCard key={p.id} patient={p} />
+      ))}
     </div>
-  );
-}
+  </div>
+);
+
+export default PatientList;
