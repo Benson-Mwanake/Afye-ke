@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import Navbar from './layouts/Navbar'
+import Footer from './layouts/Footer'
+import AppRoutes from './routes/AppRoutes'
 
-function App() {
-  return <h1>Project Client</h1>;
+export default function App() {
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
+      <Navbar />
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <AppRoutes />
+      </main>
+      <Footer />
+    </div>
+  )
 }
-
-export default App;
