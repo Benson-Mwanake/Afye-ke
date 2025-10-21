@@ -1,76 +1,14 @@
-// src/components/chv/AppointmentCard.jsx
-import React, { useState } from "react";
-import { useFetch } from "../../hooks/useAppHooks";
+import React from "react";
 
-export default function AppointmentCard({ appointment }) {
-  const [status, setStatus] = useState(appointment.status);
-  const [loading, setLoading] = useState(false);
-  const api = useFetch();
+const AppointmentCard = ({ patient }) => (
+  <div className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-md transition">
+    <h4 className="font-bold text-blue-700">{patient.name}</h4>
+    <p className="text-sm text-gray-600">Condition: {patient.condition}</p>
+    <p className="text-sm text-gray-500">Appointment: {patient.appointment}</p>
+    <button className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">
+      View Details
+    </button>
+  </div>
+);
 
-  const handleChangeStatus = async (newStatus) => {
-    setLoading(true);
-    try {
-      const res = await api.patch(`/appointments/${appointment.id}`, {
-        status: newStatus,
-      });
-      if (res.ok) {
-        setStatus(res.data.status);
-      } else {
-        alert("Failed to update (mock)");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error updating");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const timePretty = appointment.time ? appointment.time : "—";
-
-  return (
-    <div className="app-card">
-      <div>
-        <div style={{ fontWeight: 700 }}>{appointment.patient_name}</div>
-        <div className="small">
-          {appointment.date} • {timePretty}
-        </div>
-        <div className="small">{appointment.type}</div>
-      </div>
-      <div
-        style={{
-          textAlign: "right",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 700,
-            color:
-              status === "confirmed" ? "var(--primary-green)" : "var(--muted)",
-          }}
-        >
-          {status}
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            className="btn btn-primary"
-            disabled={loading}
-            onClick={() => handleChangeStatus("confirmed")}
-          >
-            Confirm
-          </button>
-          <button
-            className="btn btn-ghost"
-            disabled={loading}
-            onClick={() => handleChangeStatus("cancelled")}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+export default AppointmentCard;
