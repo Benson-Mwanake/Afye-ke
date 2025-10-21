@@ -1,101 +1,41 @@
-// src/components/chv/ReportForm.jsx
 import React, { useState } from "react";
-import { useFetch, useAuth, useSendGrid } from "../../hooks/useAppHooks";
 
-export default function ReportForm({ onSubmitted = () => {}, patients = [] }) {
-  const { user } = useAuth();
-  const api = useFetch();
-  const { sendEmail } = useSendGrid();
-  const [patientId, setPatientId] = useState(patients[0]?.id || "");
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
+const ReportForm = () => {
+  const [report, setReport] = useState({ name: "", notes: "" });
 
-  const submit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!notes.trim()) {
-      setMsg({ type: "error", text: "Please add notes" });
-      return;
-    }
-    setLoading(true);
-    setMsg(null);
-    try {
-      const patient = patients.find((p) => p.id === Number(patientId));
-      const payload = {
-        patient_id: patient?.id || null,
-        patient_name: patient?.name || "Unknown",
-        summary: notes,
-        date: new Date().toISOString().slice(0, 10),
-        chv_id: user?.id || 1,
-      };
-      const res = await api.post("/chv/reports", payload);
-      if (!res.ok) throw new Error(res.error || "failed");
-      setMsg({ type: "success", text: "Report submitted" });
-      onSubmitted(res.data);
-
-      try {
-        await sendEmail({
-          to: "admin@afyalink.ke",
-          subject: `New CHV report for ${payload.patient_name}`,
-          html: `<p>${payload.summary}</p><p>Reported by ${user?.full_name}</p>`,
-        });
-      } catch (err) {
-        console.warn("mock email failed", err);
-      }
-      setNotes("");
-    } catch (err) {
-      console.error(err);
-      setMsg({ type: "error", text: err.message || "Submit failed" });
-    } finally {
-      setLoading(false);
-    }
+    alert(Report submitted for ${report.name});
+    setReport({ name: "", notes: "" });
   };
 
   return (
-    <div className="surface">
-      <h3 style={{ marginTop: 0 }}>Submit Field Report</h3>
-      <form onSubmit={submit}>
-        <label className="form-label">Patient</label>
-        <select
-          className="input"
-          value={patientId}
-          onChange={(e) => setPatientId(e.target.value)}
-        >
-          <option value="">-- select patient --</option>
-          {patients.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.county})
-            </option>
-          ))}
-        </select>
-
-        <label className="form-label" style={{ marginTop: 8 }}>
-          Notes
-        </label>
-        <textarea
-          rows={5}
-          className="input"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-
-        {msg && (
-          <div
-            style={{
-              marginTop: 8,
-              color: msg.type === "error" ? "var(--danger)" : "var(--success)",
-            }}
-          >
-            {msg.text}
-          </div>
-        )}
-
-        <div style={{ marginTop: 12 }}>
-          <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? "Submitting..." : "Submit Report"}
-          </button>
-        </div>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm">
+      <h3 className="text-lg font-semibold mb-4 text-blue-700">Submit Visit Report</h3>
+      <input
+        type="text"
+        placeholder="Patient Name"
+        className="border rounded p-2 w-full mb-3"
+        value={report.name}
+        onChange={(e) => setReport({ ...report, name: e.target.value })}
+        required
+      />
+      <textarea
+        placeholder="Report notes..."
+        className="border rounded p-2 w-full mb-3"
+        rows="4"
+        value={report.notes}
+        onChange={(e) => setReport({ ...report, notes: e.target.value })}
+        required
+      ></textarea>
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Submit
+      </button>
+    </form>
   );
-}
+};
+
+export default ReportForm;
