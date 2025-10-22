@@ -1,6 +1,6 @@
-import Navbar from "./layouts/Navbar";
-import Footer from "./layouts/Footer";
-import AppRoutes from "./routes/AppRoutes";
+import Navbar from './layouts/Navbar'
+import Footer from './layouts/Footer'
+import AppRoutes from './routes/AppRoutes'
 
 export default function App() {
   return (
@@ -11,5 +11,5 @@ export default function App() {
       </main>
       <Footer />
     </div>
-  );
+  )
 }
