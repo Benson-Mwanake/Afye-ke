@@ -12,18 +12,26 @@ export default function ClinicCard({ clinic }){
           <p className="text-sm text-gray-500">{clinic.county}</p>
         </div>
         <div className="text-right">
-          <div className="text-yellow-500 font-medium">⭐ {clinic.rating ?? 4.2}</div>
+          <div className="text-yellow-500 font-medium">
+            ⭐ {clinic.rating ?? 4.2}
+          </div>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mt-3">
-        {clinic.services?.slice(0,4).map((s,i) => <ServiceTag key={i} name={s} />)}
+        {clinic.services?.slice(0, 4).map((s, i) => (
+          <ServiceTag key={i} name={s} />
+        ))}
       </div>
 
       <div className="mt-4 flex justify-between items-center">
-        <span className="text-sm text-gray-500">{clinic.distance ?? '—'} km</span>
-        <Link to={/clinics/${clinic.id}} className="text-afyaBlue font-medium hover:underline">View →</Link>
+        <span className="text-sm text-gray-500">
+          {clinic.distance ?? "—"} km
+        </span>
+        <Link
+          to={`/clinics/${clinic.id}`}
+          className="text-afyaBlue font-medium hover:underline">View →</Link>
       </div>
     </div>
-  )
+  );
 }

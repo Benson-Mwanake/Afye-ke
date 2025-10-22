@@ -5,7 +5,7 @@ const ReportForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(Report submitted for ${report.name});
+    alert(`Report submitted for ${report.name}`);
     setReport({ name: "", notes: "" });
   };
 

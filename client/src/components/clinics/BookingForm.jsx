@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { bookAppointment } from '../../services/api'
+import { bookAppointment } from "../../services/clinicService";
 
 export default function BookingForm({ clinicId }){
   const [form, setForm] = useState({ name:'', date:'', time:'', reason:''})
