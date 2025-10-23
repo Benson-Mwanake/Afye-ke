@@ -1,45 +1,55 @@
-import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
-import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
+// src/layouts/Navbar.jsx
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+import React from "react";
+import { Link } from "react-router-dom";
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Clinics", path: "/clinics" },
-    { name: "Health Education", path: "/education" },
-    { name: "Contact", path: "/contact" },
-    { name: "Profile", path: "/profile" },
-  ];
-
+const Navbar = () => {
   return (
-    <nav className="bg-white text-blue-600 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center px-4 py-4">
-        <h1 className="text-2xl font-bold tracking-tight">
-          AfyaLink <span className="text-blue-500">KE</span>
-        </h1>
+    <nav className="bg-white sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="text-xl font-bold text-green-600">
+              <span className="text-gray-900">Afya</span>Link
+            </Link>
+          </div>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex space-x-6 font-medium">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                `hover:text-blue-500 transition ${
-                  isActive ? "text-blue-500 font-semibold" : ""
-                }`
-              }
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-6">
+            <Link
+              to="/about"
+              className="text-gray-600 hover:text-green-600 transition duration-150"
             >
-              {link.name}
-            </NavLink>
-          ))}
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="text-gray-600 hover:text-green-600 transition duration-150"
+            >
+              Contact
+            </Link>
+
+            {/* Login Link */}
+            <Link
+              to="/login"
+              className="text-gray-600 hover:text-green-600 transition duration-150"
+            >
+              Login
+            </Link>
+
+            {/* Register Button */}
+            <Link
+              to="/signup"
+              className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 transition duration-150 shadow-md"
+            >
+              Register
+            </Link>
+          </div>
         </div>
-        </div>
+      </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
