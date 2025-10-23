@@ -1,71 +1,68 @@
-import React, { useState } from "react";
+import React from "react";
+import DashboardLayout from "../layouts/DashboardLayout";
 import ArticleCard from "./ArticleCard";
-import CategoryFilter from "./CategoryFilter";
 import ArticleDetail from "./ArticleDetail";
+import { useParams, useNavigate } from "react-router-dom";
 
-const articles = [
+const MOCK_ARTICLES = [
   {
-    id: 1,
-    title: "Preventing Malaria in Your Community",
-    category: "Prevention",
-    summary:
-      "Learn effective ways to protect yourself and your family from malaria.",
-    image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528",
+    id: "1",
+    title: "How to prevent common infections",
+    summary: "Simple everyday steps to reduce infection risk.",
+    image: "/logo192.png",
     content:
-      "Use treated mosquito nets, eliminate stagnant water, and seek early treatment when symptoms appear...",
+      "Wash hands regularly, cover your mouth when coughing, and seek care early when symptoms persist.",
+    category: "Prevention",
+    author: "Afya Team",
+    readTime: "3 min",
+    date: "2025-10-01",
   },
   {
-    id: 2,
-    title: "Healthy Nutrition Tips",
-    category: "Nutrition",
-    summary:
-      "A balanced diet keeps your immune system strong and reduces disease risk.",
-    image: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0",
+    id: "2",
+    title: "Nutrition tips for children",
+    summary: "Key nutrients and meal ideas for growing kids.",
+    image: "/logo192.png",
     content:
-      "Eat more fruits, vegetables, and whole grains. Reduce sugar, salt, and processed foods...",
+      "Include protein, fruits, vegetables, and iron-rich foods. Consult community health services for tailored advice.",
+    category: "Nutrition",
+    author: "Afya Team",
+    readTime: "4 min",
+    date: "2025-09-15",
   },
 ];
 
-const HealthEducation = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedArticle, setSelectedArticle] = useState(null);
+export default function HealthEducation() {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const filtered =
-    selectedCategory === "All"
-      ? articles
-      : articles.filter((a) => a.category === selectedCategory);
-
-  if (selectedArticle) {
+  if (id) {
+    const article = MOCK_ARTICLES.find((a) => a.id === id);
+    if (!article) return <div className="p-6">Article not found</div>;
     return (
-      <ArticleDetail
-        article={selectedArticle}
-        onBack={() => setSelectedArticle(null)}
-      />
+      <DashboardLayout>
+        <div className="max-w-3xl mx-auto p-6">
+          <ArticleDetail article={article} onBack={() => navigate(-1)} />
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-blue-700 mb-4">
-        Health Education
-      </h2>
-
-      <CategoryFilter
-        selected={selectedCategory}
-        onSelect={setSelectedCategory}
-      />
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {filtered.map((article) => (
-          <ArticleCard
-            key={article.id}
-            article={article}
-            onClick={() => setSelectedArticle(article)}
-          />
-        ))}
+    <DashboardLayout>
+      <div className="max-w-6xl mx-auto p-6">
+        <h2 className="text-2xl font-semibold mb-4">Health Education</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {MOCK_ARTICLES.map((a) => (
+            <div
+              key={a.id}
+              onClick={() => navigate(`/articles/${a.id}`)}
+              className="cursor-pointer"
+            >
+              <ArticleCard article={a} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
-};
-
-export default HealthEducation;
+}
