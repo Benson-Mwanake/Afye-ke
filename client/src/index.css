@@ -1,8 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-background text-text-primary;
+/* Custom properties for the Figma colors /
+:root {
+--color-primary: #10B981; / Tailwind green-500 equivalent /
+--color-dark: #0F172A;   / Tailwind slate-900 equivalent /
+--color-light-bg: #F8FAFC; / Tailwind slate-50 equivalent */
+/* } */
+
+/* Apply Inter font globally if not already set by Tailwind config */
+.font-inter {
+font-family: 'Inter', sans-serif;
+}
+
+/* Utility to ensure full screen height for components /
+.h-screen-minus-nav {
+min-height: calc(100vh - 80px); / Adjust based on your Navbar height */
+/* } */
+
+/* Custom shadow for cards */
+.custom-shadow {
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
