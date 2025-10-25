@@ -1,13 +1,15 @@
-export default function Button({ children, variant = "primary", ...props }) {
-  const base = "px-4 py-2 rounded-lg font-medium transition";
-  const styles = {
-    primary: "bg-primary text-white hover:bg-primary-dark",
-    secondary:
-      "bg-white border border-primary text-primary hover:bg-primary-light",
-  };
+import React from "react";
+
+const Button = ({ children, onClick, className = "", ...props }) => {
   return (
-    <button className={`${base} ${styles[variant]}`} {...props}>
+    <button
+      onClick={onClick}
+      className={`text-sm font-medium px-3 py-1.5 rounded-lg transition ${className}`}
+      {...props}
+    >
       {children}
     </button>
   );
-}
+};
+
+export default Button;
