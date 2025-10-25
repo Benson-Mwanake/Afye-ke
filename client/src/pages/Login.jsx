@@ -1,24 +1,41 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Heart, CheckCircle } from "lucide-react";
-import Navbar from "../layouts/Navbar";
+import Navbar from "../hooks/layouts/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Patient"); // Default role
+  const [role, setRole] = useState("patient"); // <-- lower-case for API
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  // Placeholder for the login action
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      console.log("Attempting login for:", { role, email, password });
+
+    try {
+      const success = await login(email, password, role);
+      if (success) {
+        const target =
+          role === "patient"
+            ? "/patient-dashboard"
+            : role === "clinic"
+            ? "/clinic-dashboard"
+            : "/admin-dashboard";
+
+        navigate(target);
+      } else {
+        alert("Invalid email or password!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Login failed. Please try again.");
+    } finally {
       setLoading(false);
-      // In a real application, navigation to the respective dashboard would happen here
-    }, 1500);
+    }
   };
 
   const featureItems = [
@@ -27,157 +44,149 @@ const Login = () => {
     "Access health education resources",
   ];
 
-  const roles = ["Patient", "Clinic", "Admin"];
+  const roles = [
+    { label: "Patient", value: "patient" },
+    { label: "Clinic", value: "clinic" },
+    { label: "Admin", value: "admin" },
+  ];
 
   return (
     <>
       <Navbar />
-    <div className="flex items-center justify-center min-h-[calc(100vh-14rem)] py-12 px-4">
-      {/* Main Login Card - matches the rounded, elevated design */}
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        {/* Left Panel: Gradient Welcome */}
-        <div
-          className="md:w-1/2 p-8 md:p-12 text-white flex flex-col justify-center 
-                        bg-gradient-to-br from-green-500 to-teal-500"
-        >
-          <div className="flex items-center space-x-2 mb-8">
-            <Heart className="w-6 h-6 fill-white text-white" />
-            <span className="text-xl font-bold">AfyaLink</span>
-          </div>
-
-          <h1 className="text-4xl font-extrabold mb-4">Welcome Back!</h1>
-          <p className="text-lg opacity-90 mb-8">
-            Sign in to access your healthcare dashboard and manage your
-            appointments.
-          </p>
-
-          {/* Feature List */}
-          <ul className="space-y-4">
-            {featureItems.map((item, index) => (
-              <li key={index} className="flex items-center text-md">
-                <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Right Panel: Login Form */}
-        <div className="md:w-1/2 p-8 md:p-12 space-y-8">
-          <div className="text-left">
-            <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
-            <p className="mt-1 text-gray-500 text-sm">
-              Enter your credentials to continue
-            </p>
-          </div>
-
-          {/* Role Selector */}
-          <div className="space-y-4">
-            <p className="text-sm font-medium text-gray-700">I am a:</p>
-            <div className="flex space-x-4 border border-gray-200 rounded-xl p-1">
-              {roles.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition duration-200 ${
-                    role === r
-                      ? "bg-green-500 text-white shadow-md"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                  disabled={loading}
-                >
-                  {r}
-                </button>
-              ))}
+      <div className="flex items-center justify-center min-h-[calc(100vh-14rem)] py-12 px-4">
+        <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+          {/* Left – Branding */}
+          <div className="md:w-1/2 p-8 md:p-12 text-white flex flex-col justify-center bg-gradient-to-br from-green-500 to-teal-500">
+            <div className="flex items-center space-x-2 mb-8">
+              <Heart className="w-6 h-6 fill-white" />
+              <span className="text-xl font-bold">AfyaLink</span>
             </div>
+            <h1 className="text-4xl font-extrabold mb-4">Welcome Back!</h1>
+            <p className="text-lg opacity-90 mb-8">
+              Sign in to access your healthcare dashboard and manage your
+              appointments.
+            </p>
+            <ul className="space-y-4">
+              {featureItems.map((item, i) => (
+                <li key={i} className="flex items-center text-md">
+                  <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Form */}
-          <form className="space-y-6" onSubmit={handleLogin}>
-            {/* Email Input */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email Address
-              </label>
-              <div className="relative mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full pl-3 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm transition duration-150 bg-gray-50"
-                  placeholder="you@example.com"
-                  disabled={loading}
-                />
-                <Mail className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+          {/* Right – Form */}
+          <div className="md:w-1/2 p-8 md:p-12 space-y-8">
+            <div className="text-left">
+              <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
+              <p className="mt-1 text-gray-500 text-sm">
+                Enter your credentials to continue
+              </p>
+            </div>
+
+            {/* Role selector */}
+            <div className="space-y-4">
+              <p className="text-sm font-medium text-gray-700">I am a:</p>
+              <div className="flex space-x-2 border border-gray-200 rounded-xl p-1">
+                {roles.map(({ label, value }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setRole(value)}
+                    disabled={loading}
+                    className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition duration-200 ${
+                      role === value
+                        ? "bg-green-500 text-white shadow-md"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Password Input */}
-            <div>
-              <div className="flex justify-between items-center">
+            <form className="space-y-6" onSubmit={handleLogin}>
+              {/* Email */}
+              <div>
                 <label
-                  htmlFor="password"
+                  htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Password
+                  Email Address
                 </label>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-green-600 hover:text-green-500 transition duration-150"
-                >
-                  Forgot password?
-                </a>
+                <div className="relative mt-1">
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    className="block w-full pl-3 pr-10 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 bg-gray-50"
+                    placeholder="you@example.com"
+                  />
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                </div>
               </div>
-              <div className="relative mt-1">
+
+              {/* Password */}
+              <div>
+                <div className="flex justify-between items-center">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Password
+                  </label>
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-green-600 hover:text-green-500"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+                <div className="relative mt-1">
+                  <input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    className="block w-full pl-3 pr-10 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 bg-gray-50"
+                    placeholder="********"
+                  />
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Remember me */}
+              <div className="flex items-center">
                 <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full pl-3 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm transition duration-150 bg-gray-50"
-                  placeholder="********"
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                   disabled={loading}
                 />
-                <Lock className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Remember me
+                </label>
               </div>
-            </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                disabled={loading}
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-
-            {/* Sign In Button */}
-            <div>
+              {/* Submit */}
               <button
                 type="submit"
-                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-xl text-white ${
+                disabled={loading}
+                className={`w-full flex justify-center py-3 px-4 rounded-xl text-lg font-medium text-white transition ${
                   loading
                     ? "bg-green-400 cursor-not-allowed"
                     : "bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                } transition duration-150 shadow-lg`}
-                disabled={loading}
+                } shadow-lg`}
               >
                 {loading ? (
                   <svg
@@ -193,42 +202,40 @@ const Login = () => {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    ></path>
+                    />
                   </svg>
                 ) : (
-                  <>Sign In</>
+                  "Sign In"
                 )}
               </button>
-            </div>
+            </form>
 
-            {/* Footer Links */}
+            {/* Footer links */}
             <div className="text-center text-sm space-y-3">
               <p className="text-gray-600">
-                Don't have an account?
+                Don't have an account?{" "}
                 <Link
                   to="/signup"
-                  className="font-semibold text-green-600 hover:text-green-500 transition duration-150 ml-1"
+                  className="font-semibold text-green-600 hover:text-green-500 ml-1"
                 >
                   Sign up
                 </Link>
               </p>
               <Link
                 to="/"
-                className="text-gray-500 hover:text-gray-700 transition duration-150 flex items-center justify-center space-x-1"
+                className="text-gray-500 hover:text-gray-700 flex items-center justify-center space-x-1"
               >
-                <span className="text-lg leading-none">&larr;</span>
-                <span>Back to home</span>
+                <span className="text-lg leading-none">Back to home</span>
               </Link>
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
