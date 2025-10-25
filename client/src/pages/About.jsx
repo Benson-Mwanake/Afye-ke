@@ -1,128 +1,361 @@
 import { motion } from "framer-motion";
-import Navbar from "../layouts/Navbar";
+import Navbar from "../hooks/layouts/Navbar";
 
 export default function About() {
+  const currentDate = new Date().toLocaleString("en-US", {
+    timeZone: "Africa/Nairobi",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }); // Outputs: "Thursday, 23 October 2025, 09:01 PM EAT"
+
+  const developers = [
+    {
+      name: "John Mwangi",
+      role: "Lead Developer",
+      github: "https://github.com/johnmwangi",
+    },
+    {
+      name: "Amina Hassan",
+      role: "UI/UX Designer",
+      github: "https://github.com/aminahassan",
+    },
+    {
+      name: "James Ochieng",
+      role: "Backend Developer",
+      github: "https://github.com/jamesochieng",
+    },
+  ];
+
+  const leadership = [
+    {
+      name: "Dr. Grace Wanjiru",
+      title: "Chief Medical Officer",
+      bio: "Over 15 years in public health, specializing in rural healthcare.",
+      photo: "/images/dr-grace.jpg",
+    },
+    {
+      name: "Mr. Peter Kimani",
+      title: "Operations Director",
+      bio: "Expert in healthcare logistics with a decade of experience.",
+      photo: "/images/peter-kimani.jpg",
+    },
+  ];
+
+  const services = [
+    {
+      name: "AI Symptom Checker",
+      link: "/services/symptom-checker",
+      description: "Get preliminary health insights instantly.",
+    },
+    {
+      name: "Clinic Booking",
+      link: "/services/clinic-booking",
+      description: "Schedule appointments with verified providers.",
+    },
+    {
+      name: "Health Education",
+      link: "/services/health-education",
+      description: "Access resources to improve health literacy.",
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Fatima Ali",
+      quote:
+        "AfyaLink KE saved me time and connected me to a nearby clinic—amazing service!",
+      location: "Nairobi",
+    },
+    {
+      name: "David Otieno",
+      quote:
+        "The AI Symptom Checker gave me peace of mind before my doctor’s visit.",
+      location: "Kisumu",
+    },
+  ];
+
+  const awards = [
+    "2025 Kenya Health Innovation Award",
+    "Certified by the Kenya Medical Practitioners and Dentists Council",
+  ];
+
   return (
     <>
       <Navbar />
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20 px-6 md:px-12 overflow-hidden">
-        <div className="max-w-5xl mx-auto space-y-10 text-center md:text-left">
+      <section className="bg-gradient-to-b from-green-50 to-white py-20 px-6 md:px-12 overflow-hidden">
+        <div className="max-w-5xl mx-auto space-y-12 text-center md:text-left">
           {/* Heading Section */}
           <motion.h2
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight"
+            className="text-4xl md:text-5xl font-extrabold text-green-700 tracking-tight"
           >
-            About <span className="text-blue-500">AfyaLink KE</span>
+            About <span className="text-green-500">AfyaLink KE</span>
           </motion.h2>
 
-          {/* Paragraph 1 */}
-          <motion.p
+          {/* Mission and Values */}
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
             className="text-gray-700 leading-relaxed text-lg"
           >
-            <strong>AfyaLink KE</strong> is a digital health platform designed
-            to make healthcare more accessible, transparent, and
-            community-driven across Kenya. By bridging the gap between users,
-            Community Health Volunteers (CHVs), and trusted local clinics,
-            AfyaLink KE empowers individuals to take control of their health
-            through technology and information.
-          </motion.p>
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Mission and Values
+            </h3>
+            <p>
+              <strong>AfyaLink KE</strong> is committed to improving healthcare
+              accessibility across Kenya, launched on {currentDate}. Our mission
+              is to empower communities through patient-centered care,
+              innovative technology, and collaboration with Community Health
+              Volunteers (CHVs) and verified clinics. We value transparency,
+              trust, and equitable health solutions for all Kenyans.
+            </p>
+          </motion.div>
 
-          {/* Paragraph 2 */}
-          <motion.p
+          {/* History */}
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             viewport={{ once: true }}
             className="text-gray-700 leading-relaxed text-lg"
           >
-            Our mission is to connect Kenyans with reliable medical guidance,
-            starting right from their smartphones. Through our intelligent{" "}
-            <strong className="text-blue-600">AI Symptom Checker</strong>, users
-            can describe their symptoms and receive insights that help them
-            understand possible causes, urgency levels, and the next steps to
-            take. This tool acts as a digital first line of support—especially
-            useful for those in remote areas or seeking quick, confidential
-            advice before visiting a facility.
-          </motion.p>
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Our History
+            </h3>
+            <p>
+              Founded in 2025 as a capstone project by a team of dedicated
+              developers, AfyaLink KE emerged from a vision to address
+              healthcare disparities in Kenya. Starting as a prototype, it has
+              evolved into a full-stack platform, integrating AI-driven tools
+              and a verified clinic network to serve thousands across the
+              nation.
+            </p>
+          </motion.div>
 
-          {/* Paragraph 3 */}
-          <motion.p
+          {/* Leadership and Staff */}
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
             className="text-gray-700 leading-relaxed text-lg"
           >
-            Beyond virtual assistance, AfyaLink KE collaborates with verified
-            clinics and CHVs to ensure users get connected to real people who
-            can help—whether it’s scheduling an appointment, following up on
-            treatment, or finding the nearest healthcare provider. Every clinic
-            and CHV on our platform undergoes a careful verification process to
-            guarantee trust, reliability, and quality service.
-          </motion.p>
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Leadership and Staff
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {leadership.map((leader, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-6 rounded-xl shadow custom-shadow"
+                >
+                  <img
+                    src={leader.photo}
+                    alt={leader.name}
+                    className="w-24 h-24 rounded-full mx-auto mb-4"
+                  />
+                  <h4 className="text-xl font-medium">{leader.name}</h4>
+                  <p className="text-green-600">{leader.title}</p>
+                  <p className="mt-2">{leader.bio}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
 
-          {/* Paragraph 4 */}
-          <motion.p
+          {/* Services */}
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             viewport={{ once: true }}
             className="text-gray-700 leading-relaxed text-lg"
           >
-            Our vision is to create a healthier Kenya by combining technology,
-            community, and compassion. With{" "}
-            <span className="font-semibold text-blue-700">AfyaLink KE</span>,
-            healthcare isn’t just about hospitals and medicine—it’s about
-            access, awareness, and empowerment for every individual. Whether
-            you’re looking for a nearby clinic, need quick health insights, or
-            want to engage with a CHV in your area, AfyaLink KE is your trusted
-            digital health companion.
-          </motion.p>
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Our Services
+            </h3>
+            <ul className="space-y-4">
+              {services.map((service, index) => (
+                <li
+                  key={index}
+                  className="bg-white p-4 rounded-xl shadow custom-shadow"
+                >
+                  <a
+                    href={service.link}
+                    className="text-green-600 hover:underline"
+                  >
+                    {service.name}
+                  </a>
+                  <p>{service.description}</p>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Patient-Centered Approach */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            viewport={{ once: true }}
+            className="text-gray-700 leading-relaxed text-lg"
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Patient-Centered Approach
+            </h3>
+            <p>
+              At AfyaLink KE, we prioritize patient needs by offering
+              personalized health insights, flexible appointment scheduling, and
+              support from CHVs. Our platform is designed to enhance the patient
+              experience, ensuring care is accessible, respectful, and tailored
+              to individual preferences.
+            </p>
+          </motion.div>
+
+          {/* Testimonials */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            viewport={{ once: true }}
+            className="text-gray-700 leading-relaxed text-lg"
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              What Our Patients Say
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-6 rounded-xl shadow custom-shadow"
+                >
+                  <p className="italic">"{testimonial.quote}"</p>
+                  <p className="mt-2 font-semibold text-green-600">
+                    - {testimonial.name}, {testimonial.location}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Awards and Recognition */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            viewport={{ once: true }}
+            className="text-gray-700 leading-relaxed text-lg"
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Awards and Recognition
+            </h3>
+            <ul className="list-disc list-inside space-y-2">
+              {awards.map((award, index) => (
+                <li key={index} className="text-green-600">
+                  {award}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Contact Information */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            viewport={{ once: true }}
+            className="text-gray-700 leading-relaxed text-lg bg-white p-6 rounded-xl shadow custom-shadow"
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Contact Us
+            </h3>
+            <p>Phone: +254 712 345 678</p>
+            <p>Email: support@afyalink.ke</p>
+            <p>Address: P.O. Box 12345, Nairobi, Kenya</p>
+            <a
+              href="/contact"
+              className="text-green-600 hover:underline mt-2 inline-block"
+            >
+              Contact Form
+            </a>
+          </motion.div>
 
           {/* Motto / Quote */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
             viewport={{ once: true }}
-            className="mt-10 bg-blue-100 border-l-4 border-blue-500 py-6 px-6 rounded-xl shadow-sm"
+            className="mt-10 bg-green-100 border-l-4 border-green-500 py-6 px-6 rounded-xl shadow custom-shadow"
           >
             <p className="text-gray-700 italic text-lg md:text-xl text-center md:text-left">
-              “Together, we’re redefining how healthcare is accessed and
-              delivered —
-              <span className="font-semibold text-blue-700">
+              “Enhancing healthcare accessibility through innovation and
+              community trust—
+              <span className="font-semibold text-green-700">
                 {" "}
-                one link at a time.
+                one connection at a time.
               </span>
               ”
             </p>
           </motion.div>
 
-          {/* Motto line */}
+          {/* Developers Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.1 }}
+            viewport={{ once: true }}
+            className="mt-12 bg-white p-6 rounded-xl shadow custom-shadow"
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-4">
+              Our Development Team
+            </h3>
+            <ul className="space-y-4">
+              {developers.map((dev, index) => (
+                <li key={index} className="flex items-center justify-between">
+                  <span className="text-gray-700">
+                    <strong>{dev.name}</strong> - {dev.role}
+                  </span>
+                  <a
+                    href={dev.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-500 hover:text-green-700 underline"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Motto Line */}
           <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: "100%" }}
             transition={{ duration: 1 }}
             viewport={{ once: true }}
-            className="h-1 bg-gradient-to-r from-blue-600 to-blue-300 rounded-full mt-8"
+            className="h-1 bg-gradient-to-r from-green-600 to-green-300 rounded-full mt-8"
           ></motion.div>
 
-          {/* Motto subtitle */}
+          {/* Motto Subtitle */}
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
             viewport={{ once: true }}
-            className="text-center md:text-right text-blue-600 font-semibold italic mt-4 tracking-wide"
+            className="text-center md:text-right text-green-600 font-semibold italic mt-4 tracking-wide"
           >
-            — Empowering Health, Empowering You 💙
+            — Empowering Health, Empowering Kenya 💚
           </motion.p>
         </div>
       </section>
