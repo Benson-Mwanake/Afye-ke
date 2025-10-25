@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import ArticleCard from "./ArticleCard";
 import ArticleDetail from "./ArticleDetail";
 import { useParams, useNavigate } from "react-router-dom";
