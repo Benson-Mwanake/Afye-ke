@@ -1,561 +1,428 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   BriefcaseMedical,
   Calendar,
-  Clock,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  X,
-  Check,
   ClipboardList,
-  BarChart2,
-  AlertTriangle,
-  Server,
-  Database,
-  Zap,
-  Activity,
-  UserPlus,
-  ArrowUpRight,
-  ArrowDownRight,
-  ChevronDown,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import AdminLayout from "../hooks/layouts/AdminLayout";
 
-// --- START: Dependency Definitions (Required for consolidation) ---
-
-// Mock navigation items for the Admin
-const adminNavItems = [
-  {
-    name: "Dashboard",
-    path: "/admin-dashboard",
-    icon: LayoutDashboard,
-    current: true,
-  },
-  {
-    name: "Clinic Approvals",
-    path: "/clinic-approvals",
-    icon: Check,
-    current: false,
-  },
-  {
-    name: "Articles",
-    path: "/manage-articles",
-    icon: ClipboardList,
-    current: false,
-  },
-  { name: "Reports", path: "/admin-reports", icon: BarChart2, current: false },
-];
-
-// 1. AdminDashboardLayout Component (Reusable)
-const AdminDashboardLayout = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentPath = "/admin/dashboard"; // Hardcode current path
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      {/* Top Header/Navbar */}
-      <header className="bg-white shadow-md sticky top-0 z-40">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo and Role */}
-            <div className="flex-shrink-0 flex items-center">
-              <img
-                src="https://placehold.co/32x32/10b981/ffffff?text=AL"
-                alt="AfyaLink Logo"
-                className="w-8 h-8 mr-2"
-              />
-              <span className="text-xl font-bold text-gray-900">AfyaLink</span>
-              <span className="ml-2 text-sm font-semibold text-gray-500 border-l pl-2 border-gray-200">
-                Admin
-              </span>
-            </div>
-
-            {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex space-x-4 lg:space-x-8 items-center">
-              {adminNavItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 
-                    ${
-                      item.path === currentPath
-                        ? "bg-green-50 text-green-700 font-semibold"
-                        : "text-gray-600 hover:text-green-600 hover:bg-gray-100"
-                    }`}
-                >
-                  <item.icon
-                    className={`w-4 h-4 ${
-                      item.path === currentPath
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  />
-                  <span>{item.name}</span>
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition duration-150"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </a>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="block h-6 w-6" />
-                ) : (
-                  <Menu className="block h-6 w-6" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu Content */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {adminNavItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    item.path === currentPath
-                      ? "bg-green-100 text-green-700"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <item.icon className="inline w-4 h-4 mr-2" />
-                  {item.name}
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
-              >
-                <LogOut className="inline w-4 h-4 mr-2" />
-                Logout
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </div>
-  );
-};
-
-// 2. Admin Stat Card Component
-const AdminStatCard = ({ title, value, icon: Icon, colorClass, growth }) => {
-  const isGood = growth === "good";
-
-  return (
-    <div
-      className={`${colorClass} p-6 rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-xl text-white flex flex-col justify-between h-full`}
-    >
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-medium opacity-80">{title}</h3>
-        <div className="p-2 rounded-full bg-white bg-opacity-20">
-          {/* The trend icon (graph) is fixed for design coherence */}
-          <BarChart2 className="w-5 h-5 text-white" />
-        </div>
-      </div>
-      <p className="text-5xl font-extrabold">{value}</p>
-    </div>
-  );
-};
-
-// 3. Status Badge Helper
-const StatusBadge = ({ status }) => {
-  let color = "";
-  let text = "";
-  if (status === "pending") {
-    color = "bg-yellow-100 text-yellow-700";
-    text = "Pending";
-  } else if (status === "approved") {
-    color = "bg-green-100 text-green-700";
-    text = "Approved";
-  } else if (status === "published") {
-    color = "bg-blue-100 text-blue-700";
-    text = "Published";
-  } else if (status === "active") {
-    color = "bg-indigo-100 text-indigo-700";
-    text = "Active";
-  } else if (status === "new") {
-    color = "bg-red-100 text-red-700";
-    text = "New";
-  }
-
-  return (
-    <span
-      className={`text-xs font-semibold px-3 py-1 rounded-full ${color} uppercase tracking-wider`}
-    >
-      {text}
-    </span>
-  );
-};
-
-// Mock Data
-const adminData = {
-  stats: [
-    {
-      title: "Total Users",
-      value: "3,842",
-      icon: Users,
-      colorClass: "bg-green-600",
-      growth: "good",
+// Admin Stat Card
+const AdminStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
+  const colorMap = {
+    green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
+    blue: { bg: "bg-indigo-600", text: "text-white", trend: "text-indigo-200" },
+    "dark-green": {
+      bg: "bg-teal-600",
+      text: "text-white",
+      trend: "text-teal-200",
     },
-    {
-      title: "Registered Clinics",
-      value: "144",
-      icon: BriefcaseMedical,
-      colorClass: "bg-blue-500",
-      growth: "good",
+    "light-blue": {
+      bg: "bg-blue-600",
+      text: "text-white",
+      trend: "text-blue-200",
     },
-    {
-      title: "Total Appointments",
-      value: "1,248",
-      icon: Calendar,
-      colorClass: "bg-green-600",
-      growth: "good",
-    },
-    {
-      title: "Pending Approvals",
-      value: "5",
-      icon: Clock,
-      colorClass: "bg-red-500",
-      growth: "bad",
-    },
-  ],
-  pendingApprovals: [
-    {
-      id: 1,
-      name: "Kisumu Medical Centre",
-      details: "Kisumu County • Submitted 2 hours ago",
-    },
-    {
-      id: 2,
-      name: "Eldoret Health Services",
-      details: "Eldoret County • Submitted 1 day ago",
-    },
-    {
-      id: 3,
-      name: "Machakos Family Clinic",
-      details: "Machakos County • Submitted 2 days ago",
-    },
-  ],
-  recentActivity: [
-    {
-      type: "New clinic registration",
-      description: "Kisumu Medical Centre",
-      time: "2 hours ago",
-      icon: BriefcaseMedical,
-      status: "pending", // pending for new registration
-    },
-    {
-      type: "Article published",
-      description: "Understanding Malaria Prevention",
-      time: "5 hours ago",
-      icon: ClipboardList,
-      status: "published",
-    },
-    {
-      type: "Clinic approved",
-      description: "Nakuru Health Center",
-      time: "1 day ago",
-      icon: BriefcaseMedical,
-      status: "approved",
-    },
-    {
-      type: "45 new users",
-      description: "User signups",
-      time: "1 day ago",
-      icon: UserPlus,
-      status: "active",
-    },
-  ],
-  quickActions: [
-    { label: "Review Approvals (5)", icon: Check, path: "/admin/approvals" },
-    { label: "Manage Articles", icon: ClipboardList, path: "/admin/articles" },
-    { label: "View Reports", icon: BarChart2, path: "/admin/reports" },
-  ],
-  systemHealth: {
-    serverStatus: "Healthy",
-    database: "Optimal",
-    apiResponse: "Good",
-  },
-  platformOverview: {
-    activeToday: "2,341 users",
-    newThisWeek: "156 users",
-    avgResponseTime: "1.2s",
-    uptime: "99.8%",
-  },
-  countyStatistics: [
-    { county: "Nairobi", users: 1240, clinics: 45, growth: "12%" },
-    { county: "Mombasa", users: 856, clinics: 32, growth: "12%" },
-    { county: "Kisumu", users: 624, clinics: 28, growth: "12%" },
-    { county: "Nakuru", users: 512, clinics: 21, growth: "12%" },
-    { county: "Eldoret", users: 445, clinics: 18, growth: "12%" },
-  ],
-};
-
-const AdminDashboard = () => {
-  // Helper to determine system health bar color and value text
-  const getSystemStatus = (status) => {
-    let percentage = 100;
-    let color = "bg-green-500";
-    if (status === "Optimal" || status === "Healthy") {
-      percentage = 100;
-      color = "bg-green-500";
-    } else if (status === "Good") {
-      percentage = 80;
-      color = "bg-blue-500";
-    } else if (status === "Warning") {
-      percentage = 60;
-      color = "bg-yellow-500";
-    } else if (status === "Critical") {
-      percentage = 20;
-      color = "bg-red-500";
-    }
-    return { percentage, color };
+  };
+  const { bg, text, trend } = colorMap[color] || {
+    bg: "bg-gray-600",
+    text: "text-white",
+    trend: "text-gray-200",
   };
 
   return (
-    <AdminDashboardLayout>
+    <div
+      className={`${bg} p-6 sm:p-7 md:p-8 rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-2xl flex flex-col justify-between h-full`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>
+          {title}
+        </h3>
+        <div className={`p-2 sm:p-3 rounded-full bg-white bg-opacity-20`}>
+          <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${text}`} />
+        </div>
+      </div>
+      <p className={`mt-1 text-3xl sm:text-4xl font-extrabold ${text}`}>
+        {value}
+      </p>
+      <p className={`mt-2 text-sm ${trend} font-medium`}>{trendValue}</p>
+    </div>
+  );
+};
+
+// Admin Pending Approval Row
+const AdminPendingApprovalRow = ({
+  clinicName,
+  location,
+  email,
+  onApprove,
+  onReject,
+}) => {
+  return (
+    <div className="py-4 flex justify-between items-center space-x-4 border-b border-gray-100 last:border-b-0">
+      <div className="flex items-center space-x-4 flex-grow">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold bg-blue-500">
+          {clinicName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()}
+        </div>
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-800">{clinicName}</h4>
+          <p className="text-sm text-gray-600 line-clamp-1">{location}</p>
+          <div className="flex items-center text-sm text-gray-500 mt-1">
+            <Clock className="w-3 h-3 mr-1" />
+            {email}
+          </div>
+        </div>
+        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-yellow-100 text-yellow-700">
+          Pending
+        </span>
+      </div>
+      <div className="flex space-x-2">
+        <button
+          onClick={onApprove}
+          className="text-xs font-medium text-green-600 hover:text-green-700"
+        >
+          Approve
+        </button>
+        <span className="text-gray-300">|</span>
+        <button
+          onClick={onReject}
+          className="text-xs font-medium text-red-600 hover:text-red-700"
+        >
+          Reject
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Main Admin Dashboard
+const AdminDashboard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [clinics, setClinics] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load Data
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [clinicsRes, usersRes, appointmentsRes, articlesRes] =
+          await Promise.all([
+            fetch("http://localhost:4000/clinics"),
+            fetch("http://localhost:4000/users"),
+            fetch("http://localhost:4000/appointments"),
+            fetch("http://localhost:4000/articles"),
+          ]);
+
+        if (
+          !clinicsRes.ok ||
+          !usersRes.ok ||
+          !appointmentsRes.ok ||
+          !articlesRes.ok
+        ) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const [clinicsData, usersData, appointmentsData, articlesData] =
+          await Promise.all([
+            clinicsRes.json(),
+            usersRes.json(),
+            appointmentsRes.json(),
+            articlesRes.json(),
+          ]);
+
+        setClinics(clinicsData);
+        setUsers(usersData);
+        setAppointments(appointmentsData);
+        setArticles(articlesData);
+      } catch (err) {
+        console.error("Dashboard load error:", err);
+        alert(`Failed to load data: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+    const interval = setInterval(loadData, 30_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Data Filters
+  const pendingApprovals = clinics.filter((c) => c.status === "pending");
+  const approvedClinics = clinics.filter((c) => c.status === "approved").length;
+  const totalPatients = users.filter((u) => u.role === "patient").length;
+  const publishedArticles = articles.filter((a) => a.published).length;
+
+  // Actions
+  const handleApprove = async (id) => {
+    try {
+      await fetch(`http://localhost:4000/clinics/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "approved", verified: true }),
+      });
+      setClinics((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, status: "approved", verified: true } : c
+        )
+      );
+    } catch (err) {
+      alert("Failed to approve clinic");
+    }
+  };
+
+  const handleReject = async (id) => {
+    if (!window.confirm("Reject this clinic?")) return;
+    try {
+      await fetch(`http://localhost:4000/clinics/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected", verified: false }),
+      });
+      setClinics((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, status: "rejected", verified: false } : c
+        )
+      );
+    } catch (err) {
+      alert("Failed to reject clinic");
+    }
+  };
+
+  // Render
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          Loading admin dashboard...
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
           Admin Dashboard
         </h1>
-        <p className="text-lg text-gray-600">County Health Officer Overview</p>
+        <p className="text-lg text-gray-600">
+          Welcome back, {user?.fullName || "Admin"}
+        </p>
       </div>
 
-      {/* 1. Statistics Cards */}
-      <section className="mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {adminData.stats.map((stat) => (
-            <AdminStatCard key={stat.title} {...stat} />
-          ))}
+      {/* Stats */}
+      <section className="mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+          <AdminStatCard
+            title="Total Users"
+            value={users.length}
+            icon={Users}
+            color="green"
+            trendValue={`${totalPatients} patients`}
+          />
+          <AdminStatCard
+            title="Registered Clinics"
+            value={approvedClinics}
+            icon={BriefcaseMedical}
+            color="blue"
+            trendValue={`${pendingApprovals.length} pending`}
+          />
+          <AdminStatCard
+            title="Total Appointments"
+            value={appointments.length}
+            icon={Calendar}
+            color="dark-green"
+            trendValue="All time"
+          />
+          <AdminStatCard
+            title="Published Articles"
+            value={publishedArticles}
+            icon={ClipboardList}
+            color="light-blue"
+            trendValue={`${articles.length - publishedArticles} drafts`}
+          />
         </div>
       </section>
 
-      {/* 2. Main Content Grid (Left: Approvals & Activity, Right: Sidebar) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2/3 width) */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Pending Clinic Approvals */}
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Pending Approvals */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">
                 Pending Clinic Approvals
               </h2>
-              <button className="text-sm font-medium text-green-600 hover:text-green-700 transition duration-150 flex items-center">
+              <button
+                onClick={() => navigate("/admin-approvals")}
+                className="text-sm font-medium text-green-600 hover:text-green-700"
+              >
                 View All
-                <span className="ml-1 text-xs">
-                  <ArrowUpRight className="w-4 h-4" />
-                </span>
               </button>
             </div>
-
             <div className="divide-y divide-gray-100">
-              {adminData.pendingApprovals.map((item) => (
-                <div
-                  key={item.id}
-                  className="py-4 flex justify-between items-center"
-                >
-                  <div>
-                    <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                    <p className="text-sm text-gray-500">{item.details}</p>
-                  </div>
-                  <button className="px-4 py-1.5 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition duration-150">
-                    Review
-                  </button>
-                </div>
-              ))}
+              {pendingApprovals.length > 0 ? (
+                pendingApprovals
+                  .slice(0, 5)
+                  .map((clinic) => (
+                    <AdminPendingApprovalRow
+                      key={clinic.id}
+                      clinicName={clinic.name}
+                      location={clinic.location}
+                      email={clinic.email}
+                      onApprove={() => handleApprove(clinic.id)}
+                      onReject={() => handleReject(clinic.id)}
+                    />
+                  ))
+              ) : (
+                <p className="text-gray-500 py-4">No pending approvals.</p>
+              )}
             </div>
           </div>
 
-          {/* Recent Activity */}
+          {/* Recent Articles */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Recent Activity
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">
+                Recent Articles
+              </h2>
+              <button
+                onClick={() => navigate("/admin-articles")}
+                className="text-sm font-medium text-green-600 hover:text-green-700"
+              >
+                View All
+              </button>
+            </div>
             <div className="divide-y divide-gray-100">
-              {adminData.recentActivity.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <div key={index} className="py-4 flex items-center space-x-3">
-                    <div className="p-2 rounded-full bg-gray-100 text-gray-500 flex-shrink-0">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-grow">
-                      <p className="text-sm font-semibold text-gray-800">
-                        {item.type}:{" "}
-                        <span className="font-normal text-gray-600">
-                          {item.description}
-                        </span>
-                      </p>
-                      <p className="text-xs text-gray-500">{item.time}</p>
-                    </div>
-                    <StatusBadge status={item.status} />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column (1/3 width) */}
-        <div className="lg:col-span-1 space-y-6">
-          {/* Quick Actions */}
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Quick Actions
-            </h2>
-            <div className="space-y-2">
-              {adminData.quickActions.map((action) => {
-                const Icon = action.icon;
-                return (
-                  <a
-                    key={action.label}
-                    href={action.path}
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition duration-150 text-gray-700"
-                  >
-                    <Icon className="w-5 h-5 text-green-500" />
-                    <span className="text-sm font-medium">{action.label}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* System Health */}
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              System Health
-            </h2>
-            <div className="space-y-4">
-              {Object.entries(adminData.systemHealth).map(([key, value]) => {
-                const { percentage, color } = getSystemStatus(value);
-                const Icon =
-                  key === "serverStatus"
-                    ? Server
-                    : key === "database"
-                    ? Database
-                    : Zap;
-                const label = key
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase());
-
-                return (
-                  <div key={key}>
-                    <div className="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
-                      <span className="flex items-center">
-                        <Icon className="w-4 h-4 mr-2 text-gray-500" />
-                        {label}
-                      </span>
-                      <span className={`${color.replace("bg", "text")}`}>
-                        {value}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`${color} h-2 rounded-full`}
-                        style={{ width: `${percentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Platform Overview */}
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Platform Overview
-            </h2>
-            <div className="space-y-3">
-              {Object.entries(adminData.platformOverview).map(
-                ([key, value]) => (
+              {articles.length > 0 ? (
+                articles.slice(0, 5).map((article) => (
                   <div
-                    key={key}
-                    className="flex justify-between items-center border-b border-dashed border-gray-200 pb-1"
+                    key={article.id}
+                    className="py-4 flex justify-between items-center"
                   >
-                    <span className="text-sm text-gray-600">
-                      {key
-                        .replace(/([A-Z])/g, " $1")
-                        .replace(/^./, (str) => str.toUpperCase())}
-                    </span>
-                    <span className="text-sm font-semibold text-gray-800">
-                      {value}
+                    <div>
+                      <h4 className="font-semibold text-gray-800">
+                        {article.title}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {article.category}
+                      </p>
+                      <p className="text-sm text-gray-500">{article.date}</p>
+                    </div>
+                    <span
+                      className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                        article.published
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {article.published ? "Published" : "Draft"}
                     </span>
                   </div>
-                )
+                ))
+              ) : (
+                <p className="text-gray-500 py-4">No articles available.</p>
               )}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 3. County Statistics Table */}
-      <section className="mt-8 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          County Statistics
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  County
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Users
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Clinics
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center">
-                  Growth
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {adminData.countyStatistics.map((item) => (
-                <tr key={item.county} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {item.county}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {item.users.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {item.clinics}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600 flex items-center">
-                    <ArrowUpRight className="w-4 h-4 mr-1 text-green-500" />
-                    {item.growth}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Sidebar */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Admin Card */}
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center">
+            <div className="w-16 h-16 bg-green-500 text-white font-bold text-2xl rounded-full flex items-center justify-center mb-3">
+              {user?.fullName
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase() || "A"}
+            </div>
+            <h3 className="text-xl font-bold text-gray-800">
+              {user?.fullName || "Admin"}
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">County Health Officer</p>
+            <button
+              onClick={() => navigate("/admin-profile")}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg"
+            >
+              Edit Profile
+            </button>
+          </div>
+
+          {/* System Overview */}
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <h4 className="text-lg font-bold text-gray-800 mb-3">
+              System Overview
+            </h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <p className="text-gray-600">Server Status</p>
+                <p className="font-semibold text-green-800">Healthy</p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-gray-600">Database</p>
+                <p className="font-semibold text-green-800">Optimal</p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-gray-600">API Response</p>
+                <p className="font-semibold text-green-800">Good</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <h4 className="text-lg font-bold text-gray-800 mb-3">
+              Quick Actions
+            </h4>
+            <div className="space-y-3">
+              <button
+                onClick={() => navigate("/admin-approvals")}
+                className="flex items-center w-full px-3 py-3 rounded-lg text-left text-gray-700 hover:bg-gray-50 transition"
+              >
+                <CheckCircle className="w-5 h-5 mr-3 text-green-500" />
+                <span className="font-medium">Review Approvals</span>
+              </button>
+              <button
+                onClick={() => navigate("/admin-articles")}
+                className="flex items-center w-full px-3 py-3 rounded-lg text-left text-gray-700 hover:bg-gray-50 transition"
+              >
+                <ClipboardList className="w-5 h-5 mr-3 text-blue-500" />
+                <span className="font-medium">Manage Articles</span>
+              </button>
+              <button
+                onClick={() => navigate("/admin-reports")}
+                className="flex items-center w-full px-3 py-3 rounded-lg text-left text-gray-700 hover:bg-gray-50 transition"
+              >
+                <ClipboardList className="w-5 h-5 mr-3 text-indigo-500" />
+                <span className="font-medium">View Reports</span>
+              </button>
+              <button
+                onClick={() => navigate("/admin-users")}
+                className="flex items-center w-full px-3 py-3 rounded-lg text-left text-gray-700 hover:bg-gray-50 transition"
+              >
+                <Users className="w-5 h-5 mr-3 text-teal-500" />
+                <span className="font-medium">Manage Users</span>
+              </button>
+            </div>
+          </div>
         </div>
-      </section>
-    </AdminDashboardLayout>
+      </div>
+    </AdminLayout>
   );
 };
 
