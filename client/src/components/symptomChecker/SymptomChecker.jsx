@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // Corrected path for a common CRA structure (src/components/symptomChecker -> src/layouts)
-import DashboardLayout from "../../layouts/DashboardLayout";
+import DashboardLayout from "../../hooks/layouts/DashboardLayout";
 import { Heart, Search, CheckSquare, Loader2, Info } from "lucide-react";
 
 // Mock list of common symptoms
