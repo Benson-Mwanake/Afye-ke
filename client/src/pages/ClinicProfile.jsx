@@ -1,183 +1,31 @@
-import React, { useState } from "react";
+// src/pages/clinic/ClinicProfile.jsx
+import React, { useState, useEffect } from "react";
 import {
-  Calendar,
-  User,
-  Clock,
+  Heart,
   LayoutDashboard,
   LogOut,
   Menu,
   X,
-  UserCheck, // Profile icon
+  UserCheck,
   MapPin,
-  Heart,
-  Upload, // For image upload
-  Mail, // For contact support
+  Upload,
+  Mail,
 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 
-// --- START: Dependency Definitions (Required for consolidation) ---
+const API_URL = "http://localhost:4000";
 
-// Mock navigation items for the Clinic Provider
-const navItems = [
-  {
-    name: "Dashboard",
-    path: "/clinic-dashboard",
-    icon: LayoutDashboard,
-    current: false,
-  },
-  {
-    name: "Clinic Profile",
-    path: "/clinic-profile",
-    icon: UserCheck,
-    current: true, // Mark this page as current
-  },
-];
-
-// 1. DashboardLayout Component
-const ClinicDashboardLayout = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentPath = "/clinic/profile"; // Hardcode current path
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Header/Navbar */}
-      <header className="bg-white shadow-md sticky top-0 z-40">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <Heart className="w-6 h-6 mr-2 text-green-600 fill-green-600" />
-              <span className="text-xl font-bold text-gray-900">AfyaLink</span>
-              <span className="ml-2 text-sm font-semibold text-gray-500 border-l pl-2 border-gray-200">
-                Provider
-              </span>
-            </div>
-
-            {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex space-x-4 lg:space-x-8 items-center">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 
-                    ${
-                      item.path === currentPath
-                        ? "bg-green-50 text-green-700 font-semibold"
-                        : "text-gray-600 hover:text-green-600 hover:bg-gray-100"
-                    }`}
-                >
-                  <item.icon
-                    className={`w-4 h-4 ${
-                      item.path === currentPath
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  />
-                  <span>{item.name}</span>
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition duration-150"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </a>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="block h-6 w-6" />
-                ) : (
-                  <Menu className="block h-6 w-6" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu Content */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    item.path === currentPath
-                      ? "bg-green-100 text-green-700"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <item.icon className="inline w-4 h-4 mr-2" />
-                  {item.name}
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
-              >
-                <LogOut className="inline w-4 h-4 mr-2" />
-                Logout
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </div>
-  );
-};
-
-// --- END: Dependency Definitions ---
-
-// Mock Data Structure for form state
-const initialClinicData = {
-  clinicName: "Nairobi Health Center",
-  description: "Describe your clinic and services...",
-  phone: "+254 700 111 111",
-  email: "info@nairobihealthcenter.co.ke",
-  website: "www.nairobihealthcenter.co.ke",
-  county: "Nairobi County",
-  areaTown: "Westlands, Nairobi",
-  fullAddress: "Parklands Road, Westlands",
-  operatingHours: {
-    mondayFriday: { open: "8:00 AM", close: "8:00 PM", isClosed: false },
-    saturday: { open: "9:00 AM", close: "5:00 PM", isClosed: false },
-    sunday: { open: "Closed", close: "Closed", isClosed: true },
-  },
-  services: {
-    generalPractice: true,
-    laboratoryServices: false,
-    dentalCare: true,
-    xRay: false,
-    surgery: false,
-    physiotherapy: false,
-    pediatrics: true,
-    pharmacy: true,
-    maternity: false,
-    immunization: true,
-    emergencyServices: false,
-    mentalHealth: false,
-  },
-};
-
-// Helper components for the form inputs
+/* --------------------------------------------------------------
+   2. Re‑usable form components
+   -------------------------------------------------------------- */
 const TextInput = ({ label, placeholder, value, onChange }) => (
   <div className="space-y-1">
     <label className="text-sm font-medium text-gray-600">{label}</label>
     <input
       type="text"
-      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 transition duration-150"
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 transition"
       placeholder={placeholder}
       value={value}
       onChange={onChange}
@@ -189,8 +37,8 @@ const TextArea = ({ label, placeholder, value, onChange }) => (
   <div className="space-y-1">
     <label className="text-sm font-medium text-gray-600">{label}</label>
     <textarea
-      rows="4"
-      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 transition duration-150"
+      rows={4}
+      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 transition"
       placeholder={placeholder}
       value={value}
       onChange={onChange}
@@ -216,7 +64,6 @@ const CheckboxInput = ({ label, checked, onChange }) => (
   </div>
 );
 
-// Component for a single Operating Hour row
 const OperatingHourRow = ({ label, hours, onToggle, onTimeChange }) => (
   <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-gray-100">
     <div className="text-base font-medium text-gray-700 w-full sm:w-1/3 mb-2 sm:mb-0">
@@ -258,66 +105,187 @@ const OperatingHourRow = ({ label, hours, onToggle, onTimeChange }) => (
   </div>
 );
 
+/* --------------------------------------------------------------
+   3. Main ClinicProfile – fetches real data, saves to server
+   -------------------------------------------------------------- */
 const ClinicProfile = () => {
-  // State to manage all form data
-  const [formData, setFormData] = useState(initialClinicData);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleBasicChange = (key, value) => {
-    setFormData({ ...formData, [key]: value });
-  };
+  const [clinic, setClinic] = useState(null);
+  const [form, setForm] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const handleServicesChange = (key) => {
-    setFormData({
-      ...formData,
-      services: {
-        ...formData.services,
-        [key]: !formData.services[key],
-      },
-    });
+  /* ---------- Load clinic from json‑server ---------- */
+  useEffect(() => {
+    const load = async () => {
+      if (!user?.clinicId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/clinics/${user.clinicId}`);
+        if (!res.ok) throw new Error("Clinic not found");
+        const data = await res.json();
+
+        // Normalise operatingHours to the shape the UI expects
+        const normalized = {
+          ...data,
+          operatingHours: {
+            mondayFriday: {
+              open: data.operatingHours?.includes("Mon-Fri")
+                ? "8:00 AM"
+                : "Closed",
+              close: data.operatingHours?.includes("Mon-Fri")
+                ? "8:00 PM"
+                : "Closed",
+              isClosed: !data.operatingHours?.includes("Mon-Fri"),
+            },
+            saturday: {
+              open: data.operatingHours?.includes("Sat") ? "9:00 AM" : "Closed",
+              close: data.operatingHours?.includes("Sat")
+                ? "5:00 PM"
+                : "Closed",
+              isClosed: !data.operatingHours?.includes("Sat"),
+            },
+            sunday: {
+              open: "Closed",
+              close: "Closed",
+              isClosed: true,
+            },
+          },
+          // services → map to booleans
+          services: {
+            generalPractice:
+              data.services?.includes("General Checkup") ?? false,
+            laboratoryServices: data.services?.includes("Lab Tests") ?? false,
+            dentalCare: data.services?.includes("Dental") ?? false,
+            xRay: data.services?.includes("X-Ray") ?? false,
+            surgery: data.services?.includes("Surgery") ?? false,
+            physiotherapy: data.services?.includes("Physiotherapy") ?? false,
+            pediatrics: data.services?.includes("Pediatrics") ?? false,
+            pharmacy: data.services?.includes("Pharmacy") ?? false,
+            maternity: data.services?.includes("Maternity") ?? false,
+            immunization: data.services?.includes("Vaccinations") ?? false,
+            emergencyServices: data.services?.includes("Emergency") ?? false,
+            mentalHealth: false,
+          },
+        };
+
+        setClinic(normalized);
+        setForm(normalized);
+      } catch (e) {
+        console.error(e);
+        alert("Failed to load clinic profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [user]);
+
+  /* ---------- Handlers ---------- */
+  const handleBasic = (key, val) => setForm((p) => ({ ...p, [key]: val }));
+
+  const handleService = (key) => {
+    setForm((p) => ({
+      ...p,
+      services: { ...p.services, [key]: !p.services[key] },
+    }));
   };
 
   const handleHoursToggle = (day) => {
-    setFormData((prev) => ({
-      ...prev,
+    setForm((p) => ({
+      ...p,
       operatingHours: {
-        ...prev.operatingHours,
+        ...p.operatingHours,
         [day]: {
-          ...prev.operatingHours[day],
-          isClosed: !prev.operatingHours[day].isClosed,
+          ...p.operatingHours[day],
+          isClosed: !p.operatingHours[day].isClosed,
         },
       },
     }));
   };
 
-  const handleTimeChange = (day, type, value) => {
-    // Simple 24h to 12h conversion for display coherence with mock data.
-    const [h, m] = value.split(":");
-    let hours = parseInt(h);
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const time12h = `${hours}:${m} ${ampm}`;
+  const handleTime = (day, type, val) => {
+    const [h, m] = val.split(":");
+    let hour = parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const display = `${hour}:${m} ${ampm}`;
 
-    setFormData((prev) => ({
-      ...prev,
+    setForm((p) => ({
+      ...p,
       operatingHours: {
-        ...prev.operatingHours,
-        [day]: {
-          ...prev.operatingHours[day],
-          [type]: time12h,
-        },
+        ...p.operatingHours,
+        [day]: { ...p.operatingHours[day], [type]: display },
       },
     }));
   };
 
-  // Calculate profile completion percentage
-  const profileCompletion = 85; // Static for mock, would be calculated dynamically
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Build payload that matches db.json schema
+      const payload = {
+        name: form.name,
+        location: form.location,
+        phone: form.phone,
+        email: form.email,
+        operatingHours: [
+          form.operatingHours.mondayFriday.isClosed ? "" : "Mon-Fri",
+          form.operatingHours.saturday.isClosed ? "" : "Sat",
+        ]
+          .filter(Boolean)
+          .join(", "),
+        services: Object.entries(form.services)
+          .filter(([, v]) => v)
+          .map(([k]) => {
+            const map = {
+              generalPractice: "General Checkup",
+              laboratoryServices: "Lab Tests",
+              dentalCare: "Dental",
+              xRay: "X-Ray",
+              surgery: "Surgery",
+              physiotherapy: "Physiotherapy",
+              pediatrics: "Pediatrics",
+              pharmacy: "Pharmacy",
+              maternity: "Maternity",
+              immunization: "Vaccinations",
+              emergencyServices: "Emergency",
+            };
+            return map[k] || "";
+          })
+          .filter(Boolean),
+      };
+
+      const res = await fetch(`${API_URL}/clinics/${user.clinicId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Save failed");
+      const saved = await res.json();
+      setClinic({ ...clinic, ...saved });
+      alert("Profile saved successfully!");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /* ---------- Profile completion (static for demo) ---------- */
+  const profileCompletion = 85;
 
   const servicesList = [
     { key: "generalPractice", label: "General Practice" },
     { key: "laboratoryServices", label: "Laboratory Services" },
     { key: "dentalCare", label: "Dental Care" },
-    { key: "xRay", label: "X-Ray" },
+    { key: "xRay", label: "X‑Ray" },
     { key: "surgery", label: "Surgery" },
     { key: "physiotherapy", label: "Physiotherapy" },
     { key: "pediatrics", label: "Pediatrics" },
@@ -328,8 +296,28 @@ const ClinicProfile = () => {
     { key: "mentalHealth", label: "Mental Health" },
   ];
 
+  /* ---------- Render ---------- */
+  if (loading) {
+    return (
+      <ClinicDashboardLayout>
+        <div className="text-center py-12">Loading clinic profile…</div>
+      </ClinicDashboardLayout>
+    );
+  }
+
+  if (!clinic) {
+    return (
+      <ClinicDashboardLayout>
+        <div className="text-center py-12 text-red-600">
+          Clinic not found – please log in as a clinic.
+        </div>
+      </ClinicDashboardLayout>
+    );
+  }
+
   return (
     <ClinicDashboardLayout>
+      {/* Header */}
       <div className="flex justify-between items-center mb-6 border-b pb-4 border-gray-200">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
@@ -340,19 +328,26 @@ const ClinicProfile = () => {
           </p>
         </div>
         <div className="flex space-x-3">
-          <button className="px-5 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition duration-150">
+          <button
+            onClick={() => navigate("/clinic-dashboard")}
+            className="px-5 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition"
+          >
             Cancel
           </button>
-          <button className="px-5 py-2 bg-green-500 text-white font-medium rounded-lg shadow-md hover:bg-green-600 transition duration-150">
-            Save Changes
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-5 py-2 bg-green-500 text-white font-medium rounded-lg shadow-md hover:bg-green-600 transition disabled:opacity-70"
+          >
+            {saving ? "Saving…" : "Save Changes"}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Form Sections (2/3 width) */}
+        {/* ==== LEFT – FORM ==== */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Basic Information */}
+          {/* Basic Info */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Basic Information
@@ -360,24 +355,20 @@ const ClinicProfile = () => {
             <div className="space-y-4">
               <TextInput
                 label="Clinic Name"
-                placeholder="Nairobi Health Center"
-                value={formData.clinicName}
-                onChange={(e) =>
-                  handleBasicChange("clinicName", e.target.value)
-                }
+                placeholder="Enter clinic name"
+                value={form.name || ""}
+                onChange={(e) => handleBasic("name", e.target.value)}
               />
               <TextArea
                 label="Description"
-                placeholder="Describe your clinic and services..."
-                value={formData.description}
-                onChange={(e) =>
-                  handleBasicChange("description", e.target.value)
-                }
+                placeholder="Briefly describe your clinic…"
+                value={form.description || ""}
+                onChange={(e) => handleBasic("description", e.target.value)}
               />
             </div>
           </div>
 
-          {/* Contact Information */}
+          {/* Contact */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Contact Information
@@ -386,21 +377,21 @@ const ClinicProfile = () => {
               <TextInput
                 label="Phone Number"
                 placeholder="+254 700 111 111"
-                value={formData.phone}
-                onChange={(e) => handleBasicChange("phone", e.target.value)}
+                value={form.phone || ""}
+                onChange={(e) => handleBasic("phone", e.target.value)}
               />
               <TextInput
                 label="Email Address"
                 placeholder="info@clinic.com"
-                value={formData.email}
-                onChange={(e) => handleBasicChange("email", e.target.value)}
+                value={form.email || ""}
+                onChange={(e) => handleBasic("email", e.target.value)}
               />
               <div className="md:col-span-2">
                 <TextInput
                   label="Website (Optional)"
                   placeholder="www.yourclinic.com"
-                  value={formData.website}
-                  onChange={(e) => handleBasicChange("website", e.target.value)}
+                  value={form.website || ""}
+                  onChange={(e) => handleBasic("website", e.target.value)}
                 />
               </div>
             </div>
@@ -413,23 +404,21 @@ const ClinicProfile = () => {
               <TextInput
                 label="County"
                 placeholder="Nairobi County"
-                value={formData.county}
-                onChange={(e) => handleBasicChange("county", e.target.value)}
+                value={form.county || ""}
+                onChange={(e) => handleBasic("county", e.target.value)}
               />
               <TextInput
-                label="Area/Town"
+                label="Area / Town"
                 placeholder="Westlands, Nairobi"
-                value={formData.areaTown}
-                onChange={(e) => handleBasicChange("areaTown", e.target.value)}
+                value={form.areaTown || ""}
+                onChange={(e) => handleBasic("areaTown", e.target.value)}
               />
               <div className="md:col-span-2">
                 <TextInput
                   label="Full Address"
                   placeholder="Parklands Road, Westlands"
-                  value={formData.fullAddress}
-                  onChange={(e) =>
-                    handleBasicChange("fullAddress", e.target.value)
-                  }
+                  value={form.fullAddress || ""}
+                  onChange={(e) => handleBasic("fullAddress", e.target.value)}
                 />
               </div>
             </div>
@@ -441,70 +430,65 @@ const ClinicProfile = () => {
               Operating Hours
             </h2>
             <OperatingHourRow
-              label="Monday - Friday"
-              hours={formData.operatingHours.mondayFriday}
+              label="Monday – Friday"
+              hours={form.operatingHours?.mondayFriday || {}}
               onToggle={() => handleHoursToggle("mondayFriday")}
-              onTimeChange={(type, value) =>
-                handleTimeChange("mondayFriday", type, value)
+              onTimeChange={(type, val) =>
+                handleTime("mondayFriday", type, val)
               }
             />
             <OperatingHourRow
               label="Saturday"
-              hours={formData.operatingHours.saturday}
+              hours={form.operatingHours?.saturday || {}}
               onToggle={() => handleHoursToggle("saturday")}
-              onTimeChange={(type, value) =>
-                handleTimeChange("saturday", type, value)
-              }
+              onTimeChange={(type, val) => handleTime("saturday", type, val)}
             />
             <OperatingHourRow
               label="Sunday"
-              hours={formData.operatingHours.sunday}
+              hours={form.operatingHours?.sunday || {}}
               onToggle={() => handleHoursToggle("sunday")}
-              onTimeChange={(type, value) =>
-                handleTimeChange("sunday", type, value)
-              }
+              onTimeChange={(type, val) => handleTime("sunday", type, val)}
             />
           </div>
 
-          {/* Services Offered */}
+          {/* Services */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Services Offered
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {servicesList.map((service) => (
+              {servicesList.map((s) => (
                 <CheckboxInput
-                  key={service.key}
-                  label={service.label}
-                  checked={formData.services[service.key]}
-                  onChange={() => handleServicesChange(service.key)}
+                  key={s.key}
+                  label={s.label}
+                  checked={form.services?.[s.key] ?? false}
+                  onChange={() => handleService(s.key)}
                 />
               ))}
             </div>
           </div>
         </div>
 
-        {/* Right Column: Images and Status (1/3 width) */}
+        {/* ==== RIGHT – IMAGES & STATUS ==== */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Clinic Images */}
+          {/* Images */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Clinic Images
             </h2>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition duration-150 cursor-pointer">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition cursor-pointer">
               <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
               <p className="text-sm font-medium text-gray-600">
                 Upload clinic photos
               </p>
-              <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
+              <p className="text-xs text-gray-500">JPG, PNG up to 5 MB</p>
             </div>
 
-            {/* Mock Image Grid */}
+            {/* Mock grid */}
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="h-20 bg-gray-100 rounded-lg"></div>
-              <div className="h-20 bg-gray-100 rounded-lg"></div>
-              <div className="h-20 bg-gray-100 rounded-lg"></div>
-              <div className="h-20 bg-gray-100 rounded-lg"></div>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-20 bg-gray-100 rounded-lg" />
+              ))}
             </div>
           </div>
 
@@ -519,9 +503,9 @@ const ClinicProfile = () => {
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-green-600 h-2.5 rounded-full"
+                  className="bg-green-600 h-2.5 rounded-full transition-all"
                   style={{ width: `${profileCompletion}%` }}
-                ></div>
+                />
               </div>
               <p className="text-right text-sm font-semibold text-gray-800 mt-1">
                 {profileCompletion}%
@@ -537,13 +521,13 @@ const ClinicProfile = () => {
             </div>
           </div>
 
-          {/* Need Help? */}
+          {/* Support */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-3">Need Help?</h2>
             <p className="text-sm text-gray-600 mb-4">
               Contact our support team for assistance with your clinic profile.
             </p>
-            <button className="flex items-center justify-center w-full px-4 py-2 bg-blue-500 text-white font-medium rounded-lg shadow-md hover:bg-blue-600 transition duration-150">
+            <button className="flex items-center justify-center w-full px-4 py-2 bg-blue-500 text-white font-medium rounded-lg shadow-md hover:bg-blue-600 transition">
               <Mail className="w-4 h-4 mr-2" />
               Contact Support
             </button>
