@@ -1,223 +1,36 @@
-import React, { useState } from "react";
-import {
-  Calendar,
-  MapPin,
-  BookOpen,
-  Heart,
-  User,
-  Clock,
-  BriefcaseMedical,
-  LayoutDashboard,
-  Stethoscope,
-  LogOut,
-  Menu,
-  X,
-  CheckCircle,
-  Phone,
-  Mail,
-  UserCheck, // Icon for Profile page active state
-  ClipboardList, // Icon for Appointment History
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Calendar, ClipboardList, Pencil, Save, XCircle } from "lucide-react";
+import DashboardLayout from "../hooks/layouts/DashboardLayout";
+import { useAuth } from "../context/AuthContext";
 
-// --- START: Dependency Definitions (Required for consolidation) ---
-
-// Mock navigation items
-const navItems = [
-  {
-    name: "Dashboard",
-    path: "/dashboard",
-    icon: LayoutDashboard,
-    color: "text-blue-500",
-    current: false,
-  },
-  {
-    name: "Find Clinics",
-    path: "/find-clinics",
-    icon: MapPin,
-    color: "text-green-500",
-    current: false,
-  },
-  {
-    name: "Symptom Checker",
-    path: "/symptom-checker",
-    icon: Stethoscope,
-    color: "text-indigo-500",
-    current: false,
-  },
-  {
-    name: "Health Tips",
-    path: "/health-tips",
-    icon: BookOpen,
-    color: "text-teal-500",
-    current: false,
-  },
-  {
-    name: "Profile",
-    path: "/profile",
-    icon: UserCheck, // Use a distinct icon for the active profile tab
-    color: "text-yellow-500",
-    current: true, // Mark this page as current for styling
-  },
-];
-
-// 1. DashboardLayout Component (Shared Layout)
-const DashboardLayout = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentPath = "/profile"; // Hardcode current path for simplicity
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Header/Navbar */}
-      <header className="bg-white shadow-md sticky top-0 z-40">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <Heart className="w-6 h-6 mr-2 text-green-600 fill-green-600" />
-              <span className="text-xl font-bold text-gray-900">AfyaLink</span>
-            </div>
-
-            {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex space-x-4 lg:space-x-8 items-center">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 
-                    ${
-                      item.path === currentPath
-                        ? "bg-green-50 text-green-700 font-semibold"
-                        : "text-gray-600 hover:text-green-600 hover:bg-gray-100"
-                    }`}
-                >
-                  <item.icon
-                    className={`w-4 h-4 ${
-                      item.path === currentPath
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  />
-                  <span>{item.name}</span>
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition duration-150"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </a>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="block h-6 w-6" />
-                ) : (
-                  <Menu className="block h-6 w-6" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu Content */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    item.path === currentPath
-                      ? "bg-green-100 text-green-700"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  {item.name}
-                </a>
-              ))}
-              <a
-                href="/logout"
-                className="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
-              >
-                Logout
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </div>
-  );
-};
-// --- END: Dependency Definitions ---
-
-// Mock data for the profile
-const patientData = {
-  fullName: "John Doe",
-  profileInitials: "JD",
-  email: "john.doe@example.com",
-  memberSince: "Jan 2023",
-  totalVisits: 12,
-  bloodType: "O+",
-  allergies: "Penicillin",
-  emergencyContact: "Jane Doe • +254 700 111 111",
-  personal: {
-    phone: "+254 700 000 000",
-    dob: "1990-01-01",
-    gender: "Male",
-    country: "Nairobi",
-  },
-  appointmentHistory: [
-    {
-      clinic: "Nairobi Health Center",
-      doctor: "Dr. Jane Mwangi",
-      service: "General",
-      date: "2023-09-15",
-      status: "Completed",
-    },
-    {
-      clinic: "Westlands Medical Clinic",
-      doctor: "Dr. Peter Kariuki",
-      service: "Follow Up",
-      date: "2023-09-22",
-      status: "Completed",
-    },
-    {
-      clinic: "Mombasa Community Clinic",
-      doctor: "Dr. Sarah Ochieng",
-      service: "Dental",
-      date: "2023-07-10",
-      status: "Completed",
-    },
-  ],
-};
-
-// Generic Text Input Field for display only
-const ProfileField = ({ label, value, readOnly = true }) => (
+// Reusable input field
+const EditableField = ({
+  label,
+  value,
+  onChange,
+  type = "text",
+  readOnly = false,
+  placeholder = "",
+}) => (
   <div className="space-y-1">
     <label className="text-sm font-medium text-gray-500">{label}</label>
-    <div
-      className={`w-full p-3 rounded-lg border text-gray-800 ${
-        readOnly ? "bg-gray-50 border-gray-200" : "bg-white border-blue-400"
-      }`}
-    >
-      {value}
-    </div>
+    <input
+      type={type}
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      className={`w-full p-3 rounded-lg border text-gray-800 transition-all duration-200
+        ${
+          readOnly
+            ? "bg-gray-50 border-gray-200 cursor-not-allowed"
+            : "bg-white border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        }`}
+    />
   </div>
 );
 
-// Component for a single completed appointment history row
+// Appointment row
 const AppointmentHistoryRow = ({ clinic, doctor, service, date, status }) => (
   <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 last:border-b-0">
     <div className="flex items-start space-x-4">
@@ -240,6 +53,151 @@ const AppointmentHistoryRow = ({ clinic, doctor, service, date, status }) => (
 );
 
 const PatientProfile = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({});
+  const [appointments, setAppointments] = useState([]);
+  const [clinics, setClinics] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [apptLoading, setApptLoading] = useState(true);
+
+  // Load user profile + clinics map
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || "",
+        email: user.email || "",
+        phone: user.phoneNumber || "",
+        dob: user.profile?.dob || "",
+        gender: user.profile?.gender || "",
+        country: user.profile?.country || "",
+        bloodType: user.profile?.bloodType || "Unknown",
+        allergies: user.profile?.allergies || "",
+        emergencyContact: user.profile?.emergencyContact || "",
+      });
+
+      // Load all clinics to map clinicId → name
+      const fetchClinics = async () => {
+        try {
+          const res = await fetch("/clinics");
+          const data = await res.json();
+          const map = {};
+          data.forEach((c) => (map[c.id] = c.name));
+          setClinics(map);
+        } catch (err) {
+          console.error("Failed to load clinics:", err);
+        }
+      };
+
+      fetchClinics();
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Load patient appointments
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (!user?.id) return;
+
+      try {
+        const res = await fetch(`/appointments?patientId=${user.id}`);
+        const data = await res.json();
+
+        const completed = data
+          .filter((a) => a.status === "Completed")
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        setAppointments(completed);
+      } catch (err) {
+        console.error("Failed to load appointments:", err);
+      } finally {
+        setApptLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [user]);
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!user?.id) return;
+
+    const updated = {
+      fullName: formData.fullName,
+      phoneNumber: formData.phone,
+      profile: {
+        dob: formData.dob,
+        gender: formData.gender,
+        country: formData.country,
+        bloodType: formData.bloodType,
+        allergies: formData.allergies,
+        emergencyContact: formData.emergencyContact,
+      },
+    };
+
+    try {
+      const res = await fetch(`/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (!res.ok) throw new Error("Save failed");
+
+      alert("Profile saved to server!");
+      setIsEditing(false);
+      window.location.reload();
+    } catch (err) {
+      alert("Failed to save. Is json-server running?");
+      console.error(err);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      fullName: user?.fullName || "",
+      email: user?.email || "",
+      phone: user?.phoneNumber || "",
+      dob: user?.profile?.dob || "",
+      gender: user?.profile?.gender || "",
+      country: user?.profile?.country || "",
+      bloodType: user?.profile?.bloodType || "Unknown",
+      allergies: user?.profile?.allergies || "",
+      emergencyContact: user?.profile?.emergencyContact || "",
+    });
+    setIsEditing(false);
+  };
+
+  if (!user) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-10 text-gray-600">
+          Please log in to view your profile.
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-10 text-gray-600">
+          Loading profile...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const initials = formData.fullName
+    ? formData.fullName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "??";
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
@@ -247,92 +205,164 @@ const PatientProfile = () => {
           <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
           <p className="text-gray-500">Manage your personal information</p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-green-500 text-white font-medium rounded-lg shadow-md hover:bg-green-600 transition duration-150">
-          <Pencil className="w-4 h-4 mr-2" />
-          Edit Profile
-        </button>
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleSave}
+                className="flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="flex items-center px-4 py-2 bg-gray-300 text-gray-700 font-medium rounded-lg shadow-md hover:bg-gray-400 transition"
+              >
+                <XCircle className="w-4 h-4 mr-2" />
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 transition"
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Edit Profile
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Summary Card */}
-        <div className="lg:col-span-1 space-y-6">
+        {/* Left: Summary */}
+        <div className="lg:col-span-1">
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center">
-            <div className="w-24 h-24 bg-green-500 text-white font-bold text-4xl rounded-full flex items-center justify-center mb-4 shadow-lg">
-              {patientData.profileInitials}
+            <div className="w-24 h-24 bg-green-600 text-white font-bold text-4xl rounded-full flex items-center justify-center mb-4 shadow-lg">
+              {initials}
             </div>
             <h3 className="text-2xl font-bold text-gray-800">
-              {patientData.fullName}
+              {formData.fullName || "Unknown User"}
             </h3>
-            <p className="text-base text-gray-500 mb-6">{patientData.email}</p>
+            <p className="text-base text-gray-500 mb-6">{formData.email}</p>
 
             <div className="w-full space-y-4 pt-4 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium text-gray-600">
+              <div className="flex justify-between">
+                <span className="text-sm font-medium text-gray-600">
                   Member Since
-                </p>
-                <p className="text-sm font-semibold text-gray-800">
-                  {patientData.memberSince}
-                </p>
+                </span>
+                <span className="text-sm font-semibold text-gray-800">
+                  Jan 2023
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium text-gray-600">
+              <div className="flex justify-between">
+                <span className="text-sm font-medium text-gray-600">
                   Total Visits
-                </p>
-                <p className="text-sm font-semibold text-green-600">
-                  {patientData.totalVisits} visits
-                </p>
+                </span>
+                <span className="text-sm font-semibold text-green-600">
+                  {appointments.length} visits
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium text-gray-600">Blood Type</p>
+              <div className="flex justify-between">
+                <span className="text-sm font-medium text-gray-600">
+                  Blood Type
+                </span>
                 <span className="text-sm font-semibold px-3 py-0.5 rounded-full text-red-700 bg-red-100">
-                  {patientData.bloodType}
+                  {formData.bloodType}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Details and History */}
+        {/* Right: Form */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Personal Information */}
+          {/* Personal Info */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-3 border-gray-100">
               Personal Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ProfileField label="Full Name" value={patientData.fullName} />
-              <ProfileField label="Email Address" value={patientData.email} />
-              <ProfileField
+              <EditableField
+                label="Full Name"
+                value={formData.fullName}
+                onChange={(v) => handleChange("fullName", v)}
+                readOnly={!isEditing}
+              />
+              <EditableField
+                label="Email Address"
+                value={formData.email}
+                type="email"
+                readOnly={true}
+              />
+              <EditableField
                 label="Phone Number"
-                value={patientData.personal.phone}
+                value={formData.phone}
+                onChange={(v) => handleChange("phone", v)}
+                readOnly={!isEditing}
               />
-              <ProfileField
+              <EditableField
                 label="Date of Birth"
-                value={patientData.personal.dob}
+                value={formData.dob}
+                type="date"
+                onChange={(v) => handleChange("dob", v)}
+                readOnly={!isEditing}
               />
-              <ProfileField
-                label="Gender"
-                value={patientData.personal.gender}
-              />
-              <ProfileField
-                label="Country"
-                value={patientData.personal.country}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-500">
+                  Gender
+                </label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => handleChange("gender", e.target.value)}
+                  disabled={!isEditing}
+                  className={`w-full p-3 rounded-lg border text-gray-800 ${
+                    !isEditing
+                      ? "bg-gray-50 border-gray-200 cursor-not-allowed"
+                      : "bg-white border-blue-400"
+                  }`}
+                >
+                  <option value="">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <EditableField
+                label="Country/Region"
+                value={formData.country}
+                onChange={(v) => handleChange("country", v)}
+                readOnly={!isEditing}
               />
             </div>
           </div>
 
-          {/* Medical Information */}
+          {/* Medical Info */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-3 border-gray-100">
               Medical Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ProfileField label="Blood Type" value={patientData.bloodType} />
-              <ProfileField label="Allergies" value={patientData.allergies} />
+              <EditableField
+                label="Blood Type"
+                value={formData.bloodType}
+                readOnly={true}
+              />
+              <EditableField
+                label="Allergies"
+                value={formData.allergies}
+                onChange={(v) => handleChange("allergies", v)}
+                readOnly={!isEditing}
+                placeholder="e.g. Penicillin, Nuts"
+              />
               <div className="md:col-span-2">
-                <ProfileField
+                <EditableField
                   label="Emergency Contact"
-                  value={patientData.emergencyContact}
+                  value={formData.emergencyContact}
+                  onChange={(v) => handleChange("emergencyContact", v)}
+                  readOnly={!isEditing}
+                  placeholder="Name • Phone"
                 />
               </div>
             </div>
@@ -344,13 +374,27 @@ const PatientProfile = () => {
               Appointment History
             </h2>
             <div className="divide-y divide-gray-100">
-              {patientData.appointmentHistory.map((appointment, index) => (
-                <AppointmentHistoryRow key={index} {...appointment} />
-              ))}
-              {patientData.appointmentHistory.length === 0 && (
-                <p className="text-gray-500 py-4">
-                  No past appointments found.
-                </p>
+              {apptLoading ? (
+                <p className="text-gray-500 py-4">Loading appointments...</p>
+              ) : appointments.length > 0 ? (
+                appointments
+                  .slice(0, 5)
+                  .map((appt) => (
+                    <AppointmentHistoryRow
+                      key={appt.id}
+                      clinic={
+                        clinics[appt.clinicId] ||
+                        appt.clinicName ||
+                        "Unknown Clinic"
+                      }
+                      doctor={appt.doctor || "Dr. Not Assigned"}
+                      service={appt.service || "General"}
+                      date={appt.date}
+                      status={appt.status}
+                    />
+                  ))
+              ) : (
+                <p className="text-gray-500 py-4">No past appointments.</p>
               )}
             </div>
           </div>
@@ -359,23 +403,5 @@ const PatientProfile = () => {
     </DashboardLayout>
   );
 };
-
-// Import necessary icons that were missing
-const Pencil = (props) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-  </svg>
-);
 
 export default PatientProfile;
