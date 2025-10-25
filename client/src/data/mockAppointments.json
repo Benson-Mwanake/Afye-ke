@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "clinic": "Nairobi West Clinic",
+    "doctor": "Dr. Jane Doe",
+    "service": "Consultation",
+    "date": "2025-10-24",
+    "status": "Confirmed"
+  }
+]
