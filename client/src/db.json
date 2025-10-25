@@ -1,0 +1,546 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "fullName": "John Doe",
+      "email": "john.doe@example.com",
+      "phoneNumber": "+254712345678",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1990-01-01",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "O+",
+        "allergies": "Penicillin",
+        "emergencyContact": "Jane Doe • +254700111111"
+      }
+    },
+    {
+      "id": "2",
+      "fullName": "Amina Hassan",
+      "email": "amina@example.com",
+      "phoneNumber": "+254798765432",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1995-08-20",
+        "gender": "Female",
+        "country": "Mombasa",
+        "bloodType": "B-",
+        "allergies": "Dust, Pollen",
+        "emergencyContact": "Fatma Hassan • +254711222333"
+      }
+    },
+    {
+      "id": "3",
+      "fullName": "Peter Kariuki",
+      "email": "peter@test.com",
+      "phoneNumber": "+254723456789",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1987-03-12",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "A+",
+        "allergies": "None",
+        "emergencyContact": "Mary Kariuki • +254722333444"
+      }
+    },
+    {
+      "id": "4",
+      "fullName": "Fatma Ali",
+      "email": "fatma@patient.com",
+      "phoneNumber": "+254711987654",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1993-11-05",
+        "gender": "Female",
+        "country": "Mombasa",
+        "bloodType": "O-",
+        "allergies": "Seafood",
+        "emergencyContact": "Ahmed Ali • +254733444555"
+      }
+    },
+    {
+      "id": "5",
+      "fullName": "Grace Wanjiku",
+      "email": "grace@test.com",
+      "phoneNumber": "+254720123456",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1980-07-22",
+        "gender": "Female",
+        "country": "Nakuru",
+        "bloodType": "AB+",
+        "allergies": "None",
+        "emergencyContact": "James Njoroge • +254721555666"
+      }
+    },
+    {
+      "id": "6",
+      "fullName": "Samuel Omondi",
+      "email": "samuel@patient.com",
+      "phoneNumber": "+254733555999",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1998-04-18",
+        "gender": "Male",
+        "country": "Kisumu",
+        "bloodType": "B+",
+        "allergies": "Peanuts",
+        "emergencyContact": "Rose Auma • +254722666777"
+      }
+    },
+    {
+      "id": "7",
+      "fullName": "Linet Chepkoech",
+      "email": "linet@test.com",
+      "phoneNumber": "+254710888999",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "2001-09-30",
+        "gender": "Female",
+        "country": "Eldoret",
+        "bloodType": "A-",
+        "allergies": "Latex",
+        "emergencyContact": "Paul Kiprop • +254723777888"
+      }
+    },
+    {
+      "id": "8",
+      "fullName": "David Mwangi",
+      "email": "david@patient.com",
+      "phoneNumber": "+254721999000",
+      "password": "123",
+      "role": "patient",
+      "profile": {
+        "dob": "1975-12-14",
+        "gender": "Male",
+        "country": "Thika",
+        "bloodType": "O+",
+        "allergies": "None",
+        "emergencyContact": "Esther Wambui • +254724888999"
+      }
+    },
+    {
+      "id": "c1",
+      "fullName": "Westlands Family Clinic",
+      "email": "westlands@clinic.com",
+      "phoneNumber": "+254720123456",
+      "password": "west123",
+      "role": "clinic",
+      "clinicId": "1",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c2",
+      "fullName": "Mombasa Community Health Center",
+      "email": "mombasa@health.go.ke",
+      "phoneNumber": "+254711987654",
+      "password": "mombasa456",
+      "role": "clinic",
+      "clinicId": "2",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c3",
+      "fullName": "Karen Health Hub",
+      "email": "info@karenhealth.co.ke",
+      "phoneNumber": "+254733555999",
+      "password": "karen789",
+      "role": "clinic",
+      "clinicId": "3",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c4",
+      "fullName": "Nakuru General Hospital",
+      "email": "info@nakurugeneral.co.ke",
+      "phoneNumber": "+254721444555",
+      "password": "nakuru2025",
+      "role": "clinic",
+      "clinicId": "4",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c5",
+      "fullName": "New Horizon Clinic",
+      "email": "new@clinic.com",
+      "phoneNumber": "+254733222333",
+      "password": "horizon123",
+      "role": "clinic",
+      "clinicId": "1761381889773",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "admin1",
+      "fullName": "County Health Officer",
+      "email": "admin@afyalink.com",
+      "phoneNumber": "+254700000001",
+      "password": "admin123",
+      "role": "admin",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    }
+  ],
+  "clinics": [
+    {
+      "id": "1",
+      "name": "Westlands Family Clinic",
+      "location": "Westlands, Nairobi",
+      "coordinates": [-1.2674, 36.8119],
+      "services": [
+        "General Checkup",
+        "Lab Tests",
+        "Dental",
+        "Surgery",
+        "Pediatrics",
+        "Maternity",
+        "Vaccinations",
+        "Emergency"
+      ],
+      "rating": 4.8,
+      "reviews": 124,
+      "phone": "+254720123456",
+      "email": "westlands@clinic.com",
+      "operatingHours": "Mon-Fri, Sat",
+      "verified": true,
+      "status": "approved"
+    },
+    {
+      "id": "2",
+      "name": "Mombasa Community Health Center",
+      "location": "Nyali, Mombasa",
+      "coordinates": [-4.0435, 39.6682],
+      "services": [
+        "Maternity",
+        "HIV Testing",
+        "Nutrition",
+        "General",
+        "Lab Tests"
+      ],
+      "rating": 4.5,
+      "reviews": 89,
+      "phone": "+254711987654",
+      "email": "mombasa@health.go.ke",
+      "operatingHours": "Mon-Sun: 7AM-7PM",
+      "verified": true,
+      "status": "approved"
+    },
+    {
+      "id": "3",
+      "name": "Karen Health Hub",
+      "location": "Karen, Nairobi",
+      "coordinates": [-1.3201, 36.7085],
+      "services": [
+        "Cardiology",
+        "Physiotherapy",
+        "Lab Tests",
+        "X-Ray",
+        "Ultrasound"
+      ],
+      "rating": 4.9,
+      "reviews": 201,
+      "phone": "+254733555999",
+      "email": "info@karenhealth.co.ke",
+      "operatingHours": "24/7",
+      "verified": true,
+      "status": "approved"
+    },
+    {
+      "id": "4",
+      "name": "Nakuru General Hospital",
+      "location": "Nakuru CBD",
+      "coordinates": [-0.3031, 36.08],
+      "services": ["Emergency", "Surgery", "Pediatrics", "General", "Pharmacy"],
+      "rating": 4.6,
+      "reviews": 156,
+      "phone": "+254721444555",
+      "email": "info@nakurugeneral.co.ke",
+      "operatingHours": "24/7",
+      "verified": true,
+      "status": "approved"
+    },
+    {
+      "id": "1761381889773",
+      "name": "New Horizon Clinic",
+      "location": "Kilimani, Nairobi",
+      "coordinates": [-1.2921, 36.8219],
+      "services": ["General Checkup", "Vaccinations", "Nutrition Counseling"],
+      "rating": 0,
+      "reviews": 0,
+      "phone": "+254733222333",
+      "email": "new@clinic.com",
+      "operatingHours": "Mon-Fri: 9AM-5PM, Sat: 9AM-1PM",
+      "verified": false,
+      "status": "approved"
+    },
+    {
+      "id": "p1",
+      "name": "Kisumu Medical Centre",
+      "location": "Kisumu",
+      "phone": "+254711222333",
+      "email": "kisumu@clinic.com",
+      "operatingHours": "Mon-Fri",
+      "services": ["General Checkup", "Lab Tests"],
+      "status": "pending",
+      "verified": false
+    },
+    {
+      "id": "p2",
+      "name": "Eldoret Health Services",
+      "location": "Eldoret",
+      "phone": "+254722333444",
+      "email": "eldoret@health.co.ke",
+      "operatingHours": "Mon-Sat",
+      "services": ["Pediatrics", "Vaccinations"],
+      "status": "pending",
+      "verified": false
+    }
+  ],
+
+  "appointments": [
+    {
+      "id": "1",
+      "patientId": 1,
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Sarah Chebet",
+      "service": "General Checkup",
+      "date": "2025-10-25",
+      "time": "10:30",
+      "status": "Cancelled",
+      "notes": "Annual health screening"
+    },
+    {
+      "id": "2",
+      "patientId": 2,
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Amina Mohamed",
+      "service": "Prenatal Checkup",
+      "date": "2025-10-25",
+      "time": "09:00",
+      "status": "Confirmed",
+      "notes": "Week 32 ultrasound"
+    },
+    {
+      "id": "3",
+      "patientId": 3,
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Sarah Chebet",
+      "service": "Dental Cleaning",
+      "date": "2025-10-26",
+      "time": "14:00",
+      "status": "Pending",
+      "notes": ""
+    },
+    {
+      "id": "4",
+      "patientId": 4,
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Fatma Juma",
+      "service": "HIV Testing",
+      "date": "2025-10-27",
+      "time": "11:00",
+      "status": "Pending",
+      "notes": "Routine screening"
+    },
+    {
+      "id": "5",
+      "patientId": 5,
+      "clinicId": "4",
+      "clinicName": "Nakuru General Hospital",
+      "doctor": "Dr. James Otieno",
+      "service": "Emergency",
+      "date": "2025-10-24",
+      "time": "19:30",
+      "status": "Completed",
+      "notes": "Fever and cough"
+    },
+    {
+      "id": "6",
+      "patientId": 1,
+      "clinicId": "3",
+      "clinicName": "Karen Health Hub",
+      "doctor": "Dr. Peter Kariuki",
+      "service": "Cardiology",
+      "date": "2025-11-01",
+      "time": "10:00",
+      "status": "Pending",
+      "notes": "Follow-up ECG"
+    },
+    {
+      "id": "7",
+      "patientId": 6,
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Sarah Chebet",
+      "service": "Vaccinations",
+      "date": "2025-10-25",
+      "time": "15:30",
+      "status": "Completed",
+      "notes": "Flu shot"
+    },
+    {
+      "id": "8",
+      "patientId": 7,
+      "clinicId": "1761381889773",
+      "clinicName": "New Horizon Clinic",
+      "doctor": "Dr. John Kimani",
+      "service": "General Checkup",
+      "date": "2025-10-30",
+      "time": "11:00",
+      "status": "Confirmed",
+      "notes": "First visit"
+    },
+    {
+      "id": "9",
+      "patientId": 8,
+      "clinicId": "3",
+      "clinicName": "Karen Health Hub",
+      "doctor": "Dr. Lucy Wanjiru",
+      "service": "Physiotherapy",
+      "date": "2025-10-29",
+      "time": "16:00",
+      "status": "Pending",
+      "notes": "Knee pain"
+    },
+    {
+      "id": "10",
+      "patientId": 2,
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Amina Mohamed",
+      "service": "Nutrition",
+      "date": "2025-11-05",
+      "time": "10:30",
+      "status": "Pending",
+      "notes": "Postnatal diet plan"
+    }
+  ],
+
+  "articles": [
+    {
+      "id": "1",
+      "title": "5 Tips to Manage Hypertension at Home",
+      "category": "Lifestyle",
+      "author": "Dr. James Otieno",
+      "date": "2025-03-20",
+      "readTime": "5 min",
+      "image": "/images/hypertension.jpg",
+      "summary": "Learn simple lifestyle changes to control blood pressure without medication.",
+      "content": "Hypertension affects millions...",
+      "published": true
+    },
+    {
+      "id": "2",
+      "title": "Understanding Childhood Vaccinations in Kenya",
+      "category": "Children",
+      "author": "Ministry of Health",
+      "date": "2025-03-15",
+      "readTime": "7 min",
+      "image": "/images/vaccines.jpg",
+      "summary": "A complete guide to KEPI schedule and why every dose matters.",
+      "content": "The Kenya Expanded Programme...",
+      "published": true
+    },
+    {
+      "id": "3",
+      "title": "Diabetes: Early Signs You Shouldn't Ignore",
+      "category": "Chronic Illness",
+      "author": "Dr. Lucy Wanjiru",
+      "date": "2025-03-10",
+      "readTime": "6 min",
+      "image": "/images/diabetes.jpg",
+      "summary": "Frequent urination, fatigue, and blurred vision could be warning signs.",
+      "content": "Type 2 diabetes is on the rise...",
+      "published": true
+    },
+    {
+      "id": "4",
+      "title": "Why Annual Health Checkups Save Lives",
+      "category": "Prevention",
+      "author": "Dr. Sarah Chebet",
+      "date": "2025-02-28",
+      "readTime": "4 min",
+      "image": "/images/checkup.jpg",
+      "summary": "Early detection of cancer, diabetes, and heart disease starts with routine screening.",
+      "content": "Many Kenyans skip...",
+      "published": false
+    },
+    {
+      "id": "5",
+      "title": "Mental Health in the Workplace: A Growing Concern",
+      "category": "Mental Health",
+      "author": "Dr. Paul Mburu",
+      "date": "2025-02-20",
+      "readTime": "8 min",
+      "image": "/images/mental-health.jpg",
+      "summary": "Burnout, anxiety, and depression are rising among Kenyan professionals.",
+      "content": "With long working hours...",
+      "published": true
+    },
+    {
+      "id": "6",
+      "title": "How to Choose the Right Clinic in Nairobi",
+      "category": "Healthcare Tips",
+      "author": "AfyaLink Team",
+      "date": "2025-01-15",
+      "readTime": "5 min",
+      "image": "/images/clinic-choice.jpg",
+      "summary": "Location, services, ratings, and verification matter when picking a provider.",
+      "content": "Nairobi has over 500 clinics...",
+      "published": false
+    }
+  ]
+}
