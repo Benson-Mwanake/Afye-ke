@@ -1,24 +1,27 @@
-from datetime import datetime
 from extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
-user_saved_clinics = db.Table(
-    "user_saved_clinics",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("clinic_id", db.Integer, db.ForeignKey("clinics.id"), primary_key=True),
-)
+class Profile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    dob = db.Column(db.String(20))
+    gender = db.Column(db.String(20))
+    country = db.Column(db.String(50))
+    blood_type = db.Column(db.String(5))
+    allergies = db.Column(db.String(255))
+    emergency_contact = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
 
 class User(db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.String(30), default="user")  # admin, clinic, user
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    bookings = db.relationship("Booking", back_populates="user", cascade="all, delete-orphan")
-    saved_clinics = db.relationship("Clinic", secondary=user_saved_clinics, back_populates="saved_by_users")
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    full_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    phone_number = db.Column(db.String(20))
+    password_hash = db.Column(db.String(512))
+    role = db.Column(db.String(20), nullable=False)  # patient, clinic, admin
+    clinic_id = db.Column(db.String, nullable=True)
+    profile = db.relationship("Profile", backref="user", uselist=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -27,51 +30,47 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
 class Clinic(db.Model):
-    __tablename__ = "clinics"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    county = db.Column(db.String(100))
-    address = db.Column(db.String(300))
-    phone = db.Column(db.String(50))
-    lat = db.Column(db.Float)
-    lng = db.Column(db.Float)
-    services = db.Column(db.Text)  # comma-separated or JSON text
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    bookings = db.relationship("Booking", back_populates="clinic", cascade="all, delete-orphan")
-    saved_by_users = db.relationship("User", secondary=user_saved_clinics, back_populates="saved_clinics")
-    chvs = db.relationship("CHV", back_populates="clinic")
+    id = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String(100))
+    location = db.Column(db.String(255))
+    coordinates = db.Column(db.PickleType)  # list: [lat, long]
+    services = db.Column(db.PickleType)
+    rating = db.Column(db.Float, default=0)
+    reviews = db.Column(db.Integer, default=0)
+    phone = db.Column(db.String(20))
+    email = db.Column(db.String(100))
+    operating_hours = db.Column(db.String(50))
+    verified = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default="pending")
 
 class Booking(db.Model):
-    __tablename__ = "bookings"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    clinic_id = db.Column(db.Integer, db.ForeignKey("clinics.id"), nullable=False)
-    appointment_time = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(50), default="pending")  # pending, confirmed, cancelled, done
-    notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id = db.Column(db.String, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    clinic_id = db.Column(db.String, db.ForeignKey("clinic.id"))
+    clinic_name = db.Column(db.String(100))
+    doctor = db.Column(db.String(100))
+    service = db.Column(db.String(100))
+    date = db.Column(db.String(20))
+    time = db.Column(db.String(10))
+    status = db.Column(db.String(20), default="Pending")
+    notes = db.Column(db.String(255))
 
-    user = db.relationship("User", back_populates="bookings")
-    clinic = db.relationship("Clinic", back_populates="bookings")
 
 class CHV(db.Model):
-    __tablename__ = "chvs"
-    id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(50))
-    county = db.Column(db.String(100))
-    clinic_id = db.Column(db.Integer, db.ForeignKey("clinics.id"), nullable=True)
-    bio = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    clinic = db.relationship("Clinic", back_populates="chvs")
+    id = db.Column(db.String, primary_key=True)
+    full_name = db.Column(db.String(100))
+    phone_number = db.Column(db.String(20))
+    assigned_patients = db.Column(db.PickleType)  # list of patient IDs
 
 class Article(db.Model):
-    __tablename__ = "articles"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(300), nullable=False)
-    slug = db.Column(db.String(300), unique=True, nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(120))
+    id = db.Column(db.String, primary_key=True)
+    title = db.Column(db.String(255))
+    category = db.Column(db.String(50))
+    author = db.Column(db.String(100))
+    date = db.Column(db.String(20))
+    read_time = db.Column(db.String(20))
+    image = db.Column(db.String(255))
+    summary = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    published = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
