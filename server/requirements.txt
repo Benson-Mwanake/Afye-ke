@@ -6,4 +6,4 @@ marshmallow==3.19.0
 marshmallow-sqlalchemy==0.29.0
 python-dotenv==1.0.0
 Flask-Cors==4.0.0
-psycopg2-binary==2.9.7        # For Postgres (optional); if using SQLite you can omit
+psycopg2-binary==2.9.7       
