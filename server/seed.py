@@ -1,122 +1,155 @@
 from app import create_app
 from extensions import db
-from models import User, Clinic, Booking, CHV, Article
+from models import User, Clinic, CHV, Booking, Article
 from datetime import datetime, timedelta
 import random
-import slugify  # optional: pip install python-slugify
-# if slugify not available, simple replace
+import uuid
 
 app = create_app()
 app.app_context().push()
 
+# ----------------------------------------
+# Helper function
+# ----------------------------------------
 def simple_slug(title):
     return title.lower().replace(" ", "-")
 
+# Drop and recreate all tables
 db.drop_all()
 db.create_all()
 
-# Create users
-user_names = [
-    ("Jesse Mwangi", "jesse@example.com"),
-    ("Aisha Wanjiru", "aisha@example.com"),
-    ("Samuel Otieno", "samuel@example.com"),
-    ("Grace Njeri", "grace@example.com"),
-    ("Peter Kamau", "peter@example.com"),
+# ----------------------------------------
+# USERS
+# ----------------------------------------
+users_data = [
+    {"full_name": "John Doe", "email": "john@example.com", "phone_number": "+254712345678", "password": "123", "role": "patient"},
+    {"full_name": "Soraya Ali", "email": "soraya@example.com", "phone_number": "+254798765432", "password": "123", "role": "patient"},
+    {"full_name": "Kyrell Kim", "email": "kyrell@example.com", "phone_number": "+254711234567", "password": "123", "role": "patient"},
+    {"full_name": "Jeremy Njoroge", "email": "jeremy@example.com", "phone_number": "+254722112233", "password": "123", "role": "patient"},
+    {"full_name": "Erskine Muli", "email": "erskine@example.com", "phone_number": "+254733445566", "password": "123", "role": "patient"},
+    {"full_name": "Jane Mwende", "email": "jane@example.com", "phone_number": "+254799111222", "password": "123", "role": "patient"},
+    {"full_name": "Peter Ouma", "email": "peter@example.com", "phone_number": "+254701556677", "password": "123", "role": "patient"},
+    {"full_name": "Faith Wanjiku", "email": "faith@example.com", "phone_number": "+254710998877", "password": "123", "role": "patient"},
+    {"full_name": "Brian Kiptoo", "email": "brian@example.com", "phone_number": "+254743221100", "password": "123", "role": "patient"},
+    {"full_name": "Admin Officer", "email": "admin@afyalink.com", "phone_number": "+254700000001", "password": "admin123", "role": "admin"},
 ]
 
 users = []
-for name, email in user_names:
-    u = User(full_name=name, email=email)
-    u.set_password("password123")
-    db.session.add(u)
-    users.append(u)
+for u in users_data:
+    user = User(
+        full_name=u["full_name"],
+        email=u["email"],
+        phone_number=u["phone_number"],
+        role=u["role"]
+    )
+    user.set_password(u["password"])
+    db.session.add(user)
+    users.append(user)
 db.session.commit()
 
-# Clinics (Kenyan counties + sample GPS)
-clinic_list = [
-    ("Nyali Health Centre", "Mombasa", "Nyali, Mombasa", "0712345678", -4.0500, 39.6500, "General,Maternal,Child Health"),
-    ("Machakos County Hospital", "Machakos", "Machakos Town", "0723456789", -1.5110, 37.2610, "Surgery,OPD,Pharmacy"),
-    ("Kibera Community Clinic", "Nairobi", "Kibera, Nairobi", "0734567890", -1.3138, 36.8219, "OPD,Immunization"),
-    ("Kisumu Family Health", "Kisumu", "Kisumu CBD", "0709876543", -0.0917, 34.7679, "Maternity,Lab"),
-    ("Nyeri County Clinic", "Nyeri", "Nyeri Town", "0798765432", -0.4167, 36.9500, "OPD,Pharmacy"),
+# ----------------------------------------
+# CLINICS
+# ----------------------------------------
+clinic_names = [
+    "Westlands Family Clinic", "Mombasa Community Health Center",
+    "Nakuru Wellness Hospital", "Kisumu Medical Plaza",
+    "Machakos Health Hub", "Eldoret Family Care",
+    "Karen Trust Clinic", "Thika Road Medical Center",
+    "Ruiru Community Clinic", "Langata Health & Dental"
 ]
 
 clinics = []
-for name, county, address, phone, lat, lng, services in clinic_list:
-    c = Clinic(name=name, county=county, address=address, phone=phone, lat=lat, lng=lng, services=services)
-    db.session.add(c)
-    clinics.append(c)
+for name in clinic_names:
+    clinic = Clinic(
+        id=str(uuid.uuid4()),
+        name=name,
+        location=random.choice(["Nairobi", "Mombasa", "Nakuru", "Eldoret", "Kisumu"]),
+        coordinates=[round(random.uniform(-4.6, 1.5), 4), round(random.uniform(36.5, 39.7), 4)],
+        services=random.sample(["General Checkup", "Dental", "Lab Tests", "Maternity", "Pediatrics", "Nutrition"], 3),
+        rating=round(random.uniform(3.8, 5.0), 1),
+        reviews=random.randint(50, 200),
+        phone=f"+2547{random.randint(10000000,99999999)}",
+        email=f"{name.lower().replace(' ', '')}@clinic.com",
+        operating_hours=random.choice(["Mon–Sat: 8AM–6PM", "Mon–Sun: 7AM–7PM"]),
+        verified=True,
+        status="approved"
+    )
+    db.session.add(clinic)
+    clinics.append(clinic)
 db.session.commit()
 
-# CHVs (Community Health Volunteers)
-chv_list = [
-    ("Mama Amina Otieno","0721111111","Nairobi"),
-    ("John Mwenda","0722222222","Mombasa"),
-    ("Esther Wairimu","0723333333","Kisumu"),
-    ("Peter Njoroge","0724444444","Nyeri"),
-    ("Mercy Atieno","0725555555","Machakos"),
+# ----------------------------------------
+# CHVs
+# ----------------------------------------
+chv_names = [
+    "Amina Otieno", "John Mwenda", "Esther Wairimu", "Peter Njoroge",
+    "Mercy Atieno", "James Muli", "Lucy Njeri", "Paul Kiptoo",
+    "Agnes Wambui", "Collins Odhiambo"
 ]
+
 chvs = []
-for name, phone, county in chv_list:
-    assigned = random.choice(clinics)
-    chv = CHV(full_name=name, phone=phone, county=county, clinic=assigned,
-              bio=f"{name} is a trusted CHV serving the {county} community with maternal and child health outreach.")
+for name in chv_names:
+    chv = CHV(
+        id=str(uuid.uuid4()),
+        full_name=name,
+        phone_number=f"+2547{random.randint(10000000, 99999999)}",
+        assigned_patients=[random.choice(users).id for _ in range(3)]
+    )
     db.session.add(chv)
     chvs.append(chv)
 db.session.commit()
 
-# Bookings (some seeded)
-for i in range(8):
-    u = random.choice(users)
+# ----------------------------------------
+# BOOKINGS
+# ----------------------------------------
+for _ in range(10):
+    u = random.choice(users[:-1])  # exclude admin
     c = random.choice(clinics)
-    appt = datetime.utcnow() + timedelta(days=random.randint(1,30))
-    b = Booking(user_id=u.id, clinic_id=c.id, appointment_time=appt, status=random.choice(["pending","confirmed"]))
-    db.session.add(b)
+    booking = Booking(
+        id=str(uuid.uuid4()),
+        patient_id=u.id,
+        clinic_id=c.id,
+        clinic_name=c.name,
+        doctor=random.choice(["Dr. Kyrell Kim", "Dr. Soraya Ali", "Dr. Jeremy Njoroge"]),
+        service=random.choice(c.services),
+        date=(datetime.utcnow() + timedelta(days=random.randint(1, 14))).strftime("%Y-%m-%d"),
+        time=f"{random.randint(8, 17)}:00",
+        status=random.choice(["Pending", "Confirmed", "Completed"]),
+        notes="Routine check-up appointment."
+    )
+    db.session.add(booking)
 db.session.commit()
 
-# Long health education articles (Kenyan oriented)
-articles = [
-    {
-        "title":"Preventing Malaria in Your Community",
-        "author":"Ministry of Health",
-        "content":(
-            "Malaria remains a major public health concern in many parts of Kenya. "
-            "Prevention includes sleeping under long-lasting insecticide-treated nets (LLINs), "
-            "indoor residual spraying (IRS) where recommended, prompt diagnosis and treatment, "
-            "draining standing water around homes to reduce mosquito breeding sites, and seeking "
-            "prenatal care for pregnant women. Communities should also be empowered through "
-            "education campaigns about symptom recognition and the importance of early treatment. "
-            "If you or a family member have fever, chills, headache or joint pain seek testing immediately. "
-            "Children, pregnant women and the elderly are especially vulnerable so prioritize preventive strategies for them."
-        )
-    },
-    {
-        "title":"Maternal Health: What Every Mother Should Know",
-        "author":"Kenya Maternal Health Initiative",
-        "content":(
-            "A healthy pregnancy starts with early antenatal care (ANC). Expectant mothers should attend at least four ANC visits "
-            "throughout the pregnancy to monitor the health of mother and baby, receive tetanus toxoid vaccinations where indicated, "
-            "and get counselling on nutrition, danger signs, and birth preparedness. Skilled birth attendance significantly reduces "
-            "maternal and neonatal deaths. Recognize danger signs such as severe bleeding, severe headache, blurred vision, and reduced fetal movements "
-            "and seek immediate care. Postnatal care within 48 hours, plus follow-ups at 1-2 weeks and 6 weeks, ensures both mother and infant receive essential care."
-        )
-    },
-    {
-        "title":"Nutrition for Children under 5",
-        "author":"Community Health Services",
-        "content":(
-            "Good nutrition in the first 1000 days (from conception to 2 years) is crucial. Exclusive breastfeeding for the first 6 months, "
-            "followed by appropriate complementary feeding and continued breastfeeding, helps child growth and immunity. Offer diverse foods "
-            "including legumes, vegetables, fruits and animal-source foods if available. Monitor growth at health clinics, and seek advice if "
-            "a child is not gaining weight. Vitamin A supplementation and deworming are part of routine child health services in many counties."
-        )
-    }
+# ----------------------------------------
+# ARTICLES
+# ----------------------------------------
+article_titles = [
+    "How to Protect Your Family from Malaria",
+    "The Importance of Annual Health Checkups",
+    "Understanding Child Immunization",
+    "Healthy Eating for Busy Adults",
+    "The Role of CHVs in Community Health",
+    "Early Detection of Diabetes",
+    "Coping with Stress in Urban Life",
+    "The Power of Physical Exercise",
+    "Safe Motherhood Practices",
+    "Common Myths About Vaccines"
 ]
 
-for a in articles:
-    slug = simple_slug(a["title"])
-    article = Article(title=a["title"], slug=slug, content=a["content"], author=a["author"])
+for title in article_titles:
+    article = Article(
+        id=str(uuid.uuid4()),
+        title=title,
+        category=random.choice(["Prevention", "Wellness", "Community", "Nutrition"]),
+        author=random.choice(["Dr. Kyrell Kim", "Dr. Soraya Ali", "Dr. Jeremy Njoroge"]),
+        date=(datetime.utcnow() - timedelta(days=random.randint(0, 60))).strftime("%Y-%m-%d"),
+        read_time=f"{random.randint(3,7)} min",
+        image=f"https://example.com/{simple_slug(title)}.jpg",
+        summary=f"A quick overview of {title.lower()}.",
+        content=f"Full article content about {title.lower()} and how it affects your community.",
+        published=True
+    )
     db.session.add(article)
 db.session.commit()
 
-print("Seeding complete.")
+print(" PostgreSQL seeding complete — 10 users, 10 clinics, 10 CHVs, 10 bookings, 10 articles added successfully!")
