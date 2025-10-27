@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
-from models import User
+from models import User, Profile
 from schemas import UserSchema
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -17,18 +18,36 @@ def register():
     try:
         data = user_schema.load(json_data)
     except Exception as e:
-        return jsonify({"msg": "Validation error", "errors": e.messages}), 400
+        return jsonify({"msg": "Validation error", "errors": getattr(e, 'messages', str(e))}), 400
 
-    if User.query.filter_by(email=data.email).first():
+    if User.query.filter_by(email=data["email"]).first():
         return jsonify({"msg": "Email already registered"}), 400
 
     # create user
-    user = User(full_name=data.full_name, email=data.email)
-    user.set_password(json_data["password"])
+    user = User(
+        id=data.get("id"),
+        full_name=data.get("fullName"),
+        email=data.get("email"),
+        phone_number=data.get("phoneNumber"),
+        role=data.get("role")
+    )
+    user.password_hash = generate_password_hash(json_data["password"])
+
+    # create profile
+    profile_data = data.get("profile", {})
+    profile = Profile(
+        dob=profile_data.get("dob"),
+        gender=profile_data.get("gender"),
+        country=profile_data.get("country"),
+        blood_type=profile_data.get("bloodType"),
+        allergies=profile_data.get("allergies"),
+        emergency_contact=profile_data.get("emergencyContact"),
+        user=user
+    )
     db.session.add(user)
+    db.session.add(profile)
     db.session.commit()
 
-    # create JWT token
     access_token = create_access_token(identity=user.id)
 
     return jsonify({
@@ -37,6 +56,7 @@ def register():
         "user": user_schema.dump(user)
     }), 201
 
+
 @bp.route("/login", methods=["POST"])
 def login():
     json_data = request.get_json()
@@ -44,19 +64,14 @@ def login():
         return jsonify({"msg": "Missing email or password"}), 400
 
     user = User.query.filter_by(email=json_data["email"]).first()
-    if not user or not user.check_password(json_data["password"]):
+    if not user or not check_password_hash(user.password_hash, json_data["password"]):
         return jsonify({"msg": "Invalid credentials"}), 401
 
     access_token = create_access_token(identity=user.id)
-
     return jsonify({
         "msg": "Login successful",
         "access_token": access_token,
-        "user": {
-            "id": user.id,
-            "full_name": user.full_name,
-            "email": user.email
-        }
+        "user": user_schema.dump(user)
     }), 200
 
 
