@@ -60,8 +60,9 @@ clinic_names = [
 
 clinics = []
 for name in clinic_names:
+    clinic_id = str(uuid.uuid4())
     clinic = Clinic(
-        id=str(uuid.uuid4()),
+        id=clinic_id,
         name=name,
         location=random.choice(["Nairobi", "Mombasa", "Nakuru", "Eldoret", "Kisumu"]),
         coordinates=[round(random.uniform(-4.6, 1.5), 4), round(random.uniform(36.5, 39.7), 4)],
@@ -76,7 +77,18 @@ for name in clinic_names:
     )
     db.session.add(clinic)
     clinics.append(clinic)
-db.session.commit()
+
+    # Create a corresponding user for login
+    clinic_user = User(
+        full_name=name,
+        email=clinic.email,   # same email as clinic
+        phone_number=clinic.phone,
+        role="clinic",
+        clinic_id=clinic_id
+    )
+    clinic_user.set_password("clinic123")  # default password for all clinics
+    db.session.add(clinic_user)
+
 
 # ----------------------------------------
 # CHVs
