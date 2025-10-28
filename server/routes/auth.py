@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
-user_schema = UserSchema(session=db.session)
+user_schema = UserSchema()
 
 @bp.route("/register", methods=["POST"])
 def register():
@@ -14,24 +14,24 @@ def register():
     if not json_data:
         return jsonify({"msg": "No input provided"}), 400
 
-    # validate
+    # validate input
     try:
         data = user_schema.load(json_data)
     except Exception as e:
         return jsonify({"msg": "Validation error", "errors": getattr(e, 'messages', str(e))}), 400
 
+    # check if email exists
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"msg": "Email already registered"}), 400
 
     # create user
     user = User(
-        id=data.get("id"),
         full_name=data.get("fullName"),
         email=data.get("email"),
         phone_number=data.get("phoneNumber"),
         role=data.get("role")
     )
-    user.password_hash = generate_password_hash(json_data["password"])
+    user.password_hash = generate_password_hash(data["password"])
 
     # create profile
     profile_data = data.get("profile", {})
@@ -44,11 +44,13 @@ def register():
         emergency_contact=profile_data.get("emergencyContact"),
         user=user
     )
+
     db.session.add(user)
     db.session.add(profile)
     db.session.commit()
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+
 
     return jsonify({
         "msg": "User created",
@@ -67,7 +69,9 @@ def login():
     if not user or not check_password_hash(user.password_hash, json_data["password"]):
         return jsonify({"msg": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+
+
     return jsonify({
         "msg": "Login successful",
         "access_token": access_token,
@@ -81,5 +85,5 @@ def me():
     uid = get_jwt_identity()
     user = User.query.get(uid)
     if not user:
-        return jsonify({"msg":"User not found"}), 404
+        return jsonify({"msg": "User not found"}), 404
     return jsonify(user_schema.dump(user))
