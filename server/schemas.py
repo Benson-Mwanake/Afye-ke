@@ -1,32 +1,29 @@
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from marshmallow import fields
 from models import User, Profile, Clinic, Booking, CHV, Article
+from marshmallow import Schema, fields
+from extensions import db
 
-class ProfileSchema(SQLAlchemySchema):
-    class Meta:
-        model = Profile
-        load_instance = True
+from marshmallow import Schema, fields
 
-    dob = auto_field()
-    gender = auto_field()
-    country = auto_field()
-    blood_type = auto_field()
-    allergies = auto_field()
-    emergency_contact = auto_field()
+class ProfileSchema(Schema):
+    dob = fields.String()
+    gender = fields.String()
+    country = fields.String()
+    blood_type = fields.String(data_key="bloodType")
+    allergies = fields.String()
+    emergency_contact = fields.String(data_key="emergencyContact")
 
-class UserSchema(SQLAlchemySchema):
-    class Meta:
-        model = User
-        load_instance = True
-
-    id = auto_field()
-    full_name = auto_field()
-    email = auto_field()
-    phone_number = auto_field()
-    role = auto_field()
-    clinic_id = auto_field()
-    password = fields.String(load_only=True)
+class UserSchema(Schema):
+    id = fields.String(dump_only=True)
+    fullName = fields.String(required=True)
+    email = fields.Email(required=True)
+    phoneNumber = fields.String(required=True)
+    role = fields.String(required=True)
+    password = fields.String(load_only=True, required=True)
     profile = fields.Nested(ProfileSchema)
+
+
 
 class ClinicSchema(SQLAlchemySchema):
     class Meta:
@@ -51,33 +48,36 @@ class BookingSchema(SQLAlchemySchema):
         model = Booking
         load_instance = True
 
-    id = auto_field()
-    patient_id = auto_field()
-    clinic_id = auto_field()
-    clinic_name = auto_field()
-    doctor = auto_field()
-    service = auto_field()
-    date = auto_field()
-    time = auto_field()
-    status = auto_field()
-    notes = auto_field()
+    id = fields.Int(dump_only=True)             # Auto-generated ID
+    patient_id = fields.Int(dump_only=True)     # Comes from logged-in user
+    clinic_id = fields.Int(required=True)       # Clinic to book
+    clinic_name = fields.Str(required=True)    # Optional display info
+    doctor = fields.Str(required=False)
+    service = fields.Str(required=False)
+    date = fields.Str(required=False)
+    time = fields.Str(required=False)
+    status = fields.Str(dump_only=True)
+    notes = fields.Str(required=False)
+
 
 class CHVSchema(SQLAlchemySchema):
     class Meta:
         model = CHV
         load_instance = True
+        sqla_session = db.session
 
     id = auto_field()
     full_name = auto_field()
     phone_number = auto_field()
-    assigned_patients = auto_field()
+    assigned_patients = fields.List(fields.String())
+
 
 class ArticleSchema(SQLAlchemySchema):
     class Meta:
         model = Article
         load_instance = True
 
-    id = auto_field()
+    id =  fields.String(dump_only=True)
     title = auto_field()
     category = auto_field()
     author = auto_field()
