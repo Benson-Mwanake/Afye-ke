@@ -84,3 +84,16 @@ export default function ClinicBrowser() {
 
    return list;
  }, [clinics, searchTerm, activeFilter]);
+ if (loading) { /* loading UI */ }
+ if (error) { /* error UI */ }
+
+ return (
+   <DashboardLayout>
+     {/* Header */}
+     {/* Search Bar */}
+     {/* Filters */}
+     {/* Results count */}
+     {/* Clinic Grid */}
+   </DashboardLayout>
+ );
+}
