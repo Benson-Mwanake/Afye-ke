@@ -50,3 +50,19 @@ if (error && !loading) {
     </div>
   );
 }
+<Formik
+  initialValues={{
+    name: user?.fullName || "",
+    service: "",
+    doctor: "",
+    date: "",
+    time: "",
+    reason: "",
+  }}
+  validationSchema={bookingSchema}
+  onSubmit=
+>
+  {({ isSubmitting, status }) => (
+    <Form></Form>
+  )}
+</Formik>
