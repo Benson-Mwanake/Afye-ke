@@ -9,3 +9,4 @@ useEffect(() => {
   const stored = localStorage.getItem("currentUser");
   ...
 }, []);
+const login = async (arg1, password, role) => { ... }
