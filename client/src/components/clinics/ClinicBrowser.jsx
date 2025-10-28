@@ -1,4 +1,4 @@
- src/components/clinics/ClinicBrowser.jsx
+ 
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, MapPin } from "lucide-react";
 import DashboardLayout from "../../hooks/layouts/DashboardLayout";
