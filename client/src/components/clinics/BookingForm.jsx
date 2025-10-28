@@ -19,3 +19,16 @@ const bookingSchema = Yup.object().shape({
     .min(10, "Reason must be at least 10 characters")
     .required("Reason is required"),
 });
+const { user } = useAuth();
+const navigate = useNavigate();
+const [doctors, setDoctors] = useState([]);
+const [services, setServices] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  const controller = new AbortController();
+  const fetchClinicData = async () => { /* ...fetch logic... */ };
+  fetchClinicData();
+  return () => controller.abort();
+}, [clinicId]);
