@@ -2,52 +2,45 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models import Clinic, User
 from schemas import ClinicSchema
-from flask_jwt_extended import jwt_required, get_jwt_identity
-import math
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from functools import wraps
+import uuid
 
 bp = Blueprint("clinics", __name__, url_prefix="/api/clinics")
 clinic_schema = ClinicSchema()
 clinic_list_schema = ClinicSchema(many=True)
 
-# helper: haversine distance in km
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371.0
-    phi1, phi2 = math.radians(lat1), math.radians(lat2)
-    dphi = math.radians(lat2 - lat1)
-    dlambda = math.radians(lon2 - lon1)
-    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
-    return 2 * R * math.asin(math.sqrt(a))
+# ---------------------------
+# Decorators
+# ---------------------------
+def admin_required(fn):
+    @wraps(fn)
+    @jwt_required()
+    def wrapper(*args, **kwargs):
+        claims = get_jwt()
+        if claims.get("role") != "admin":
+            return jsonify({"msg": "Admins only"}), 403
+        return fn(*args, **kwargs)
+    return wrapper
 
+# ---------------------------
+# Routes
+# ---------------------------
+
+# GET all clinics (any logged-in user)
 @bp.route("/", methods=["GET"])
 def list_clinics():
     clinics = Clinic.query.all()
     return jsonify(clinic_list_schema.dump(clinics))
 
-@bp.route("/<int:clinic_id>", methods=["GET"])
+# GET single clinic by UUID (any logged-in user)
+@bp.route("/<uuid:clinic_id>", methods=["GET"])
 def get_clinic(clinic_id):
     clinic = Clinic.query.get_or_404(clinic_id)
-    return clinic_schema.jsonify(clinic)
+    return jsonify(clinic_schema.dump(clinic))
 
-@bp.route("/search", methods=["GET"])
-def search_clinics():
-    lat = request.args.get("lat", type=float)
-    lng = request.args.get("lng", type=float)
-    radius_km = request.args.get("radius_km", default=10, type=float)
-    clinics = Clinic.query.all()
-    if lat is not None and lng is not None:
-        filtered = []
-        for c in clinics:
-            if c.lat is None or c.lng is None:
-                continue
-            dist = haversine(lat, lng, c.lat, c.lng)
-            if dist <= radius_km:
-                obj = clinic_schema.dump(c)
-                obj["distance_km"] = round(dist, 2)
-                filtered.append(obj)
-        return jsonify(filtered)
-    return clinic_list_schema.jsonify(clinics)
-
-@bp.route("/<int:clinic_id>/save", methods=["POST"])
+# Toggle save clinic for a user (any logged-in user)
+@bp.route("/<uuid:clinic_id>/save", methods=["POST"])
 @jwt_required()
 def toggle_save_clinic(clinic_id):
     uid = get_jwt_identity()
@@ -56,20 +49,49 @@ def toggle_save_clinic(clinic_id):
     if clinic in user.saved_clinics:
         user.saved_clinics.remove(clinic)
         db.session.commit()
-        return jsonify({"msg":"Clinic removed from saved list"})
+        return jsonify({"msg": "Clinic removed from saved list"})
     else:
         user.saved_clinics.append(clinic)
         db.session.commit()
-        return jsonify({"msg":"Clinic saved"})
+        return jsonify({"msg": "Clinic saved"})
 
+# Create a new clinic (admin only)
 @bp.route("/", methods=["POST"])
+@admin_required
 def create_clinic():
     json_data = request.get_json()
+    if not json_data:
+        return jsonify({"msg": "No input provided"}), 400
     try:
-        data = clinic_schema.load(json_data)
+        clinic = clinic_schema.load(json_data, session=db.session)
     except Exception as e:
-        return jsonify({"msg":"Validation error", "errors": e.messages}), 400
-    clinic = Clinic(**data)
+        return jsonify({"msg": "Validation error", "errors": str(e)}), 400
+
     db.session.add(clinic)
     db.session.commit()
-    return clinic_schema.jsonify(clinic), 201
+    return jsonify(clinic_schema.dump(clinic)), 201
+
+# Update clinic (admin only)
+@bp.route("/<uuid:clinic_id>", methods=["PUT"])
+@admin_required
+def update_clinic(clinic_id):
+    clinic = Clinic.query.get_or_404(clinic_id)
+    json_data = request.get_json()
+    if not json_data:
+        return jsonify({"msg": "No input provided"}), 400
+    try:
+        updated_clinic = clinic_schema.load(json_data, instance=clinic, session=db.session)
+    except Exception as e:
+        return jsonify({"msg": "Validation error", "errors": str(e)}), 400
+
+    db.session.commit()
+    return jsonify(clinic_schema.dump(updated_clinic)), 200
+
+# Delete clinic (admin only)
+@bp.route("/<uuid:clinic_id>", methods=["DELETE"])
+@admin_required
+def delete_clinic(clinic_id):
+    clinic = Clinic.query.get_or_404(clinic_id)
+    db.session.delete(clinic)
+    db.session.commit()
+    return jsonify({"msg": "Clinic deleted"}), 200
