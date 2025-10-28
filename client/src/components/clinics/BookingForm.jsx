@@ -32,3 +32,21 @@ useEffect(() => {
   fetchClinicData();
   return () => controller.abort();
 }, [clinicId]);
+if (error && !loading) {
+  return (
+    <div className="max-w-2xl mx-auto py-12 text-center">
+      <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-6">
+        <p className="text-red-800 font-medium">{error}</p>
+        <p className="text-red-600 mt-2">
+          We couldn't load the clinic details. It may have been removed or the ID is invalid.
+        </p>
+      </div>
+      <button
+        onClick={() => navigate("/find-clinics")}
+        className="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition font-medium"
+      >
+        Back to Find Clinics
+      </button>
+    </div>
+  );
+}
