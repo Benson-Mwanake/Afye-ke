@@ -1,4 +1,3 @@
-/ src/pages/AllHealthEducation.jsx
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { Search, BookOpen } from "lucide-react";
@@ -34,7 +33,7 @@ export default function AllHealthEducation() {
 
  const articles = await res.json();
 
- 
+ // Build topics: { title, slug, count }
  const topicMap = {};
 
  articles.forEach((art) => {
