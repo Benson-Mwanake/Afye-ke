@@ -54,3 +54,33 @@ export default function ClinicBrowser() {
      clearInterval(interval);
    };
  }, []);
+ const filteredClinics = useMemo(() => {
+   let list = clinics.filter(
+     (c) =>
+       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       c.location.toLowerCase().includes(searchTerm.toLowerCase())
+   );
+
+   switch (activeFilter) {
+     case "Highest Rated":
+       list.sort((a, b) => b.rating - a.rating);
+       break;
+     case "Nearest First":
+       list.sort((a, b) => {
+         const da = a.distance === "N/A" ? Infinity : parseFloat(a.distance);
+         const db = b.distance === "N/A" ? Infinity : parseFloat(b.distance);
+         return da - db;
+       });
+       break;
+     case "Open Now":
+       list.sort((a, b) => (b.status === "Open" ? 1 : -1));
+       break;
+     case "24/7 Services":
+       list.sort((a, b) => (/24[/]?7/i.test(b.operatingHours) ? 1 : -1));
+       break;
+     default:
+       break;
+   }
+
+   return list;
+ }, [clinics, searchTerm, activeFilter]);
