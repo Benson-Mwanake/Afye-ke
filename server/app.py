@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
 from config import Config
 from extensions import db, migrate, jwt
 from routes.auth import bp as auth_bp
@@ -39,6 +39,11 @@ def create_app():
     @app.errorhandler(500)
     def server_error(e):
         return jsonify({"msg":"Server error", "detail": str(e)}), 500
+    
+    @app.before_request
+    def log_request():
+        print(" Incoming:", request.method, request.path)
+
 
     return app
 
