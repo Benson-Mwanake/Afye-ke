@@ -10,3 +10,4 @@ useEffect(() => {
   ...
 }, []);
 const login = async (arg1, password, role) => { ... }
+const toggleSavedClinic = async (clinicId) => { ... }
