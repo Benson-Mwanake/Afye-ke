@@ -11,3 +11,6 @@ useEffect(() => {
 }, []);
 const login = async (arg1, password, role) => { ... }
 const toggleSavedClinic = async (clinicId) => { ... }
+const logout = () => { ... }
+...
+return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
