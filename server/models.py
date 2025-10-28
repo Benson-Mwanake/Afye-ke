@@ -1,6 +1,9 @@
+import uuid
 from extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import UUID
+
 
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,17 +13,17 @@ class Profile(db.Model):
     blood_type = db.Column(db.String(5))
     allergies = db.Column(db.String(255))
     emergency_contact = db.Column(db.String(255))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"), nullable=False)
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     full_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone_number = db.Column(db.String(20))
     password_hash = db.Column(db.String(512))
-    role = db.Column(db.String(20), nullable=False)  # patient, clinic, admin
-    clinic_id = db.Column(db.String, nullable=True)
+    role = db.Column(db.String(20), nullable=False)
+    clinic_id = db.Column(UUID(as_uuid=True), db.ForeignKey("clinic.id"), nullable=True)
     profile = db.relationship("Profile", backref="user", uselist=False)
 
     def set_password(self, password):
@@ -29,11 +32,12 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Clinic(db.Model):
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String(100))
     location = db.Column(db.String(255))
-    coordinates = db.Column(db.PickleType)  # list: [lat, long]
+    coordinates = db.Column(db.PickleType)
     services = db.Column(db.PickleType)
     rating = db.Column(db.Float, default=0)
     reviews = db.Column(db.Integer, default=0)
@@ -43,10 +47,11 @@ class Clinic(db.Model):
     verified = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default="pending")
 
+
 class Booking(db.Model):
-    id = db.Column(db.String, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    clinic_id = db.Column(db.String, db.ForeignKey("clinic.id"))
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    patient_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
+    clinic_id = db.Column(UUID(as_uuid=True), db.ForeignKey("clinic.id"))
     clinic_name = db.Column(db.String(100))
     doctor = db.Column(db.String(100))
     service = db.Column(db.String(100))
@@ -57,13 +62,14 @@ class Booking(db.Model):
 
 
 class CHV(db.Model):
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     full_name = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
-    assigned_patients = db.Column(db.PickleType)  # list of patient IDs
+    assigned_patients = db.Column(db.PickleType)
+
 
 class Article(db.Model):
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = db.Column(db.String(255))
     category = db.Column(db.String(50))
     author = db.Column(db.String(100))
@@ -74,3 +80,17 @@ class Article(db.Model):
     content = db.Column(db.Text)
     published = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Many-to-many table for saved clinics
+saved_clinics = db.Table(
+    "saved_clinics",
+    db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("user.id"), primary_key=True),
+    db.Column("clinic_id", UUID(as_uuid=True), db.ForeignKey("clinic.id"), primary_key=True)
+)
+
+# Add this inside the User class (after profile relationship)
+User.saved_clinics = db.relationship(
+    "Clinic",
+    secondary=saved_clinics,
+    backref=db.backref("saved_by_users", lazy="dynamic")
+)
