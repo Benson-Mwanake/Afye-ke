@@ -1,107 +1,197 @@
-import React, { useState } from "react";
-import { Search, MapPin, Star, Clock } from "lucide-react";
+// src/components/clinics/ClinicBrowser.jsx
+import React, { useState, useEffect, useMemo } from "react";
+import { Search, MapPin } from "lucide-react";
 import DashboardLayout from "../../hooks/layouts/DashboardLayout";
 import ClinicCard from "./ClinicCard";
 
-// Mock Data for Clinics with IDs
-const mockClinics = [
-  {
-    id: 1,
-    name: "Nairobi Health Center",
-    location: "Westlands, Nairobi",
-    distance: "2.5 km",
-    rating: "4.8",
-    reviews: 124,
-    status: "Open",
-    hours: "8:00 PM",
-    services: ["General Practice", "Pediatrics", "Laboratory"],
-  },
-  {
-    id: 2,
-    name: "Mombasa Community Clinic",
-    location: "Nyali, Mombasa",
-    distance: "5.8 km",
-    rating: "4.6",
-    reviews: 98,
-    status: "Open",
-    hours: "6:00 PM",
-    services: ["Maternity", "Laboratory", "Dental"],
-  },
-  {
-    id: 3,
-    name: "Kisumu Medical Centre",
-    location: "Town Centre, Kisumu",
-    distance: "3.2 km",
-    rating: "4.9",
-    reviews: 156,
-    status: "Open",
-    hours: "9:00 PM",
-    services: ["Dental", "Pharmacy", "X-Ray"],
-  },
-  {
-    id: 4,
-    name: "Westlands Family Health",
-    location: "Westlands, Nairobi",
-    distance: "1.8 km",
-    rating: "4.7",
-    reviews: 89,
-    status: "Closed",
-    hours: "8:00 AM",
-    services: ["Family Medicine", "Pediatrics", "Vaccination"],
-  },
-  {
-    id: 5,
-    name: "Nakuru Central Hospital",
-    location: "CBD, Nakuru",
-    distance: "4.1 km",
-    rating: "4.5",
-    reviews: 72,
-    status: "Open",
-    hours: "7:00 PM",
-    services: ["Emergency", "Surgery", "ICU"],
-  },
-  {
-    id: 6,
-    name: "Eldoret Community Care",
-    location: "Eldoret Town",
-    distance: "6.5 km",
-    rating: "4.8",
-    reviews: 110,
-    status: "Open",
-    hours: "8:30 PM",
-    services: ["Outpatient", "Maternity", "Laboratory"],
-  },
-];
+const FILTERS = ["Nearest First", "Highest Rated", "Open Now", "24/7 Services"];
 
-const ClinicBrowser = () => {
+/* -------------------------------------------------------------
+ SHOW‑MORE COMPONENT
+ ------------------------------------------------------------- */
+const ShowMoreClinics = ({ clinics }) => {
+  const [showAll, setShowAll] = useState(false);
+  const displayed = showAll ? clinics : clinics.slice(0, 6);
+
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {displayed.map((c) => (
+          <ClinicCard key={c.id} clinic={c} />
+        ))}
+      </div>
+
+      {clinics.length > 6 && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center px-5 py-2 bg-teal-600 text-white text-sm font-medium rounded-full hover:bg-teal-700 transition"
+          >
+            {showAll ? "Show Less" : `Show More (${clinics.length - 6} more)`}
+          </button>
+        </div>
+      )}
+    </>
+  );
+};
+
+/* -------------------------------------------------------------
+ MAIN COMPONENT
+ ------------------------------------------------------------- */
+export default function ClinicBrowser() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("Nearest First");
+  const [activeFilter, setActiveFilter] = useState(FILTERS[0]);
+  const [clinics, setClinics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filters = [
-    "Nearest First",
-    "Highest Rated",
-    "Open Now",
-    "24/7 Services",
-  ];
+  /* ---------------------------------------------------------
+   FETCH + ENRICH
+   --------------------------------------------------------- */
+  useEffect(() => {
+    const controller = new AbortController();
 
-  const filteredClinics = mockClinics
-    .filter(
-      (clinic) =>
-        clinic.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        clinic.location.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (activeFilter === "Highest Rated")
-        return parseFloat(b.rating) - parseFloat(a.rating);
-      if (activeFilter === "Nearest First")
-        return parseFloat(a.distance) - parseFloat(b.distance);
-      if (activeFilter === "Open Now") return b.status === "Open" ? 1 : -1;
-      if (activeFilter === "24/7 Services") return b.hours === "24/7" ? 1 : -1;
-      return 0;
-    });
+    const fetchClinics = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/clinics", {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Failed to load clinics – ${res.status}: ${txt}`);
+        }
+
+        const raw = await res.json();
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentDay = now.toLocaleString("en-US", { weekday: "long" });
+
+        const enriched = raw.map((c) => {
+          // 1. Distance (demo)
+          const distance =
+            c.distance ?? `${(Math.random() * 8 + 0.5).toFixed(1)} km`;
+
+          // 2. 24/7 detection
+          const is24h =
+            Array.isArray(c.operatingHours) &&
+            c.operatingHours.every(
+              (h) => h.open === "00:00" && h.close === "23:59" && !h.closed
+            );
+
+          // 3. Status
+          let status = "Closed";
+          if (is24h) {
+            status = "Open";
+          } else if (Array.isArray(c.operatingHours)) {
+            const today = c.operatingHours.find((h) => h.day === currentDay);
+            if (today && !today.closed && today.open && today.close) {
+              const [openH] = today.open.split(":").map(Number);
+              const [closeH] = today.close.split(":").map(Number);
+              if (currentHour >= openH && currentHour < closeH) {
+                status = "Open";
+              }
+            }
+          }
+
+          // 4. Hours – first closing time in 12h format
+          let hours = "N/A";
+          if (Array.isArray(c.operatingHours)) {
+            const firstOpen = c.operatingHours.find(
+              (h) => !h.closed && h.close
+            );
+            if (firstOpen) {
+              const [hour] = firstOpen.close.split(":").map(Number);
+              const period = hour >= 12 ? "PM" : "AM";
+              const h12 = hour % 12 || 12;
+              hours = `${h12}:00 ${period}`;
+            }
+          }
+
+          return { ...c, distance, status, hours, is24h };
+        });
+
+        setClinics(enriched);
+        setError(null);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("ClinicBrowser fetch error:", err);
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClinics();
+    const interval = setInterval(fetchClinics, 30_000);
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
+  }, []);
+
+  /* ---------------------------------------------------------
+   FILTER + SEARCH + SORT
+   --------------------------------------------------------- */
+  const filteredClinics = useMemo(() => {
+    let list = clinics.filter(
+      (c) =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.location.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    switch (activeFilter) {
+      case "Highest Rated":
+        list.sort((a, b) => b.rating - a.rating);
+        break;
+      case "Nearest First":
+        list.sort((a, b) => {
+          const da = a.distance === "N/A" ? Infinity : parseFloat(a.distance);
+          const db = b.distance === "N/A" ? Infinity : parseFloat(b.distance);
+          return da - db;
+        });
+        break;
+      case "Open Now":
+        list.sort((a, b) => (b.status === "Open" ? 1 : -1));
+        break;
+      case "24/7 Services":
+        list.sort((a, b) => (b.is24h ? 1 : -1));
+        break;
+      default:
+        break;
+    }
+
+    return list;
+  }, [clinics, searchTerm, activeFilter]);
+
+  /* ---------------------------------------------------------
+   RENDER
+   --------------------------------------------------------- */
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <p className="text-lg text-gray-600">Loading clinics…</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh] text-red-600">
+          <p>{error}</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
+      {/* Header */}
       <header className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Explore Healthcare Providers
@@ -111,7 +201,7 @@ const ClinicBrowser = () => {
         </p>
       </header>
 
-      {/* Search Bar */}
+      {/* Search */}
       <div className="bg-white p-2 rounded-2xl shadow-md border border-gray-100 flex items-center max-w-3xl mx-auto mb-6">
         <Search className="w-5 h-5 ml-3 text-gray-400" />
         <input
@@ -125,45 +215,43 @@ const ClinicBrowser = () => {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-6 max-w-3xl mx-auto">
-        {filters.map((filter) => (
+        {FILTERS.map((f) => (
           <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
+            key={f}
+            onClick={() => setActiveFilter(f)}
             className={`px-3 py-1 text-sm font-medium rounded-lg transition duration-200 ${
-              activeFilter === filter
+              activeFilter === f
                 ? "bg-teal-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {filter}
+            {f}
           </button>
         ))}
       </div>
 
+      {/* Count */}
       <p className="text-md font-medium text-gray-700 mb-4 max-w-3xl mx-auto">
-        {filteredClinics.length} providers found
+        {filteredClinics.length} provider
+        {filteredClinics.length !== 1 ? "s" : ""} found
       </p>
 
-      {/* Clinic Results Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+      {/* Grid */}
+      <div className="max-w-3xl mx-auto">
         {filteredClinics.length > 0 ? (
-          filteredClinics.map((clinic, index) => (
-            <ClinicCard key={index} clinic={clinic} />
-          ))
+          <ShowMoreClinics clinics={filteredClinics} />
         ) : (
-          <div className="col-span-full text-center py-8 bg-white rounded-2xl shadow-md border border-gray-100">
+          <div className="text-center py-8 bg-white rounded-2xl shadow-md border border-gray-100">
             <MapPin className="w-8 h-8 mx-auto text-gray-400 mb-2" />
             <p className="text-lg text-gray-600">
               No clinics match your search.
             </p>
             <p className="text-sm text-gray-400 mt-1">
-              Please try different keywords or filters.
+              Try different keywords or filters.
             </p>
           </div>
         )}
       </div>
     </DashboardLayout>
   );
-};
-
-export default ClinicBrowser;
+}
