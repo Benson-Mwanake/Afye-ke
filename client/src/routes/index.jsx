@@ -36,7 +36,7 @@ import BookAppointment from "../pages/BookAppointment";
 import ClinicDashboard from "../pages/ClinicDashboard";
 import ClinicProfile from "../pages/ClinicProfile";
 import ClinicSchedule from "../pages/ClinicSchedule";
-import ClinicAvailability from "../pages/ClinicAvailability";
+import ClinicAppointments from "../pages/ClinicAvailability";
 import ClinicPatients from "../pages/ClinicPatients";
 import ClinicAnalytics from "../pages/ClinicAnalytics";
 import ClinicReschedule from "../pages/ClinicReschedule";
@@ -48,9 +48,6 @@ import AdminArticles from "../pages/AdminArticles";
 import AdminReports from "../pages/AdminReports";
 import AdminUsers from "../pages/AdminUsers";
 import AdminProfile from "../pages/AdminProfile";
-
-// Legacy
-import HealthEducation from "../features/HealthEducation";
 
 const AppRoutes = () => (
   <Routes>
@@ -208,7 +205,7 @@ const AppRoutes = () => (
       path="/clinic-availability"
       element={
         <ProtectedRoute allowedRoles={["clinic"]}>
-          <ClinicAvailability />
+          <ClinicAppointments />
         </ProtectedRoute>
       }
     />
@@ -287,15 +284,6 @@ const AppRoutes = () => (
       }
     />
 
-    {/* === LEGACY === */}
-    <Route
-      path="/health-education"
-      element={
-        <ProtectedRoute allowedRoles={["patient"]}>
-          <HealthEducation />
-        </ProtectedRoute>
-      }
-    />
 
     {/* === CATCH-ALL === */}
     <Route path="*" element={<Navigate to="/" replace />} />
