@@ -4,20 +4,27 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   LogOut,
-    Menu,
+  Menu,
+  X,
   UserCheck,
-    X,
   Heart,
+  Clock,
+  Users,
+  BarChart2,
 } from "lucide-react";
-
 
 const ClinicDashboardLayout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ALL NAV ITEMS (main + quick actions)
   const navItems = [
+    // Main
     { name: "Dashboard", path: "/clinic-dashboard", icon: LayoutDashboard },
+    { name: "Appointments", path: "/clinic-availability", icon: Clock, color: "text-green-600"},
+    { name: "Patients", path: "/clinic-patients", icon: Users, color: "text-blue-600"},
+    { name: "Analytics", path: "/clinic-analytics", icon: BarChart2, color: "text-indigo-600"},
     { name: "Clinic Profile", path: "/clinic-profile", icon: UserCheck },
   ];
 
@@ -36,31 +43,42 @@ const ClinicDashboardLayout = ({ children }) => {
             </div>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex space-x-4 lg:space-x-8 items-center">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => navigate(item.path)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 
-                    ${
-                      location.pathname === item.path
-                        ? "bg-green-50 text-green-700 font-semibold"
-                        : "text-gray-600 hover:text-green-600 hover:bg-gray-100"
-                    }`}
-                >
-                  <item.icon
-                    className={`w-4 h-4 ${
-                      location.pathname === item.path
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  />
-                  <span>{item.name}</span>
-                </button>
-              ))}
+            <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+              {navItems.map((item, idx) => {
+                if (item.divider) {
+                  return (
+                    <div key={idx} className="h-6 w-px bg-gray-300 mx-2"></div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => navigate(item.path)}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 
+                      ${
+                        location.pathname === item.path
+                          ? "bg-green-50 text-green-700 font-semibold"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
+                    title={item.name}
+                  >
+                    <item.icon
+                      className={`w-4 h-4 ${
+                        location.pathname === item.path
+                          ? "text-green-600"
+                          : item.color || "text-gray-500"
+                      }`}
+                    />
+                    <span className="hidden lg:inline">{item.name}</span>
+                  </button>
+                );
+              })}
+
+              {/* Logout */}
               <button
                 onClick={() => navigate("/logout")}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition duration-150"
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition duration-150 ml-2"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
@@ -83,31 +101,48 @@ const ClinicDashboardLayout = ({ children }) => {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden px-2 pt-2 pb-3 space-y-1">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                  location.pathname === item.path
-                    ? "bg-green-100 text-green-700"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {item.name}
-              </button>
-            ))}
-            <button
-              onClick={() => navigate("/logout")}
-              className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
-            >
-              Logout
-            </button>
+          <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="px-4 pt-3 pb-4 space-y-2">
+              {/* Main Nav */}
+              {navItems
+                .filter((item) => !item.divider)
+                .map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      navigate(item.path);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-3 w-full px-3 py-2.5 rounded-lg text-base font-medium transition ${
+                      location.pathname === item.path
+                        ? "bg-green-50 text-green-700"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <item.icon
+                      className={`w-5 h-5 ${
+                        location.pathname === item.path
+                          ? "text-green-600"
+                          : item.color || "text-gray-600"
+                      }`}
+                    />
+                    <span>{item.name}</span>
+                  </button>
+                ))}
+
+              {/* Logout */}
+              <div className="pt-3 border-t border-gray-200 mt-3">
+                <button
+                  onClick={() => navigate("/logout")}
+                  className="flex items-center space-x-3 w-full px-3 py-2.5 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </header>
