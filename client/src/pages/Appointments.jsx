@@ -1,3 +1,4 @@
+// src/pages/Appointments.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
@@ -6,28 +7,51 @@ import Button from "../components/ui/Button";
 import ListItem from "../components/ui/ListItem";
 import { BriefcaseMedical } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { fetchAppointments } from "../services/userService";
+
+const API_URL = "http://localhost:4000";
 
 const Appointments = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [clinicsMap, setClinicsMap] = useState({});
 
   useEffect(() => {
+    if (!user?.id) return;
+
+    const controller = new AbortController();
+
     const loadAppointments = async () => {
-      if (user) {
-        try {
-          const data = await fetchAppointments(user.email);
-          setAppointments(data);
-        } catch (error) {
-          console.error("Failed to load appointments:", error);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        // Fetch appointments
+        const apptRes = await fetch(
+          `${API_URL}/appointments?patientId=${user.id}`,
+          {
+            signal: controller.signal,
+          }
+        );
+        const allAppts = apptRes.ok ? await apptRes.json() : [];
+
+        // Fetch clinics map
+        const clinicsRes = await fetch(`${API_URL}/clinics`, {
+          signal: controller.signal,
+        });
+        const clinicsData = clinicsRes.ok ? await clinicsRes.json() : [];
+        const map = {};
+        clinicsData.forEach((c) => (map[c.id] = c.name));
+        setClinicsMap(map);
+
+        setAppointments(allAppts);
+      } catch (error) {
+        console.error("Failed to load appointments:", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     loadAppointments();
+    return () => controller.abort();
   }, [user]);
 
   const handleBookAppointment = () => {
@@ -41,9 +65,7 @@ const Appointments = () => {
           Appointments
         </h1>
         <p className="text-lg text-gray-500 mb-6">
-          {user?.role === "doctor"
-            ? "Manage your appointment schedule."
-            : "View your upcoming appointments."}
+          View your upcoming and past appointments.
         </p>
         <Card>
           {loading ? (
@@ -54,8 +76,12 @@ const Appointments = () => {
                 <ListItem
                   key={appointment.id}
                   icon={BriefcaseMedical}
-                  title={appointment.clinicName || "Unknown Clinic"}
-                  subtitle={`${appointment.doctorName || "Unknown Doctor"} • ${
+                  title={
+                    clinicsMap[appointment.clinicId] ||
+                    appointment.clinicName ||
+                    "Unknown Clinic"
+                  }
+                  subtitle={`${appointment.doctor || "Dr. Not Assigned"} • ${
                     appointment.service || "N/A"
                   } • ${appointment.date} @ ${appointment.time}`}
                   action={
@@ -69,8 +95,7 @@ const Appointments = () => {
                 />
               ))}
               <p className="text-sm text-gray-400 pt-4">
-                Showing {appointments.length} appointment(s). See all for
-                history.
+                Showing {appointments.length} appointment(s).
               </p>
             </div>
           ) : (
