@@ -1,3 +1,4 @@
+// src/components/admin/AdminDashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Users,
@@ -10,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AdminLayout from "../hooks/layouts/AdminLayout";
+import { checkSystemHealth } from "../services/healthService";
 
 // Admin Stat Card
 const AdminStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
@@ -53,7 +55,7 @@ const AdminStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   );
 };
 
-// Admin Pending Approval Row
+// Pending Approval Row
 const AdminPendingApprovalRow = ({
   clinicName,
   location,
@@ -102,7 +104,7 @@ const AdminPendingApprovalRow = ({
   );
 };
 
-// Main Admin Dashboard
+// Main Dashboard
 const AdminDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -111,6 +113,13 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [articles, setArticles] = useState([]);
+  const [health, setHealth] = useState({
+    server: "Checking...",
+    database: "Checking...",
+    apiResponse: "Checking...",
+    latency: "...",
+    version: "N/A",
+  });
   const [loading, setLoading] = useState(true);
 
   // Load Data
@@ -159,7 +168,29 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Data Filters
+  // Health Check
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const data = await checkSystemHealth();
+        setHealth(data);
+      } catch (err) {
+        setHealth({
+          server: "Error",
+          database: "Failed",
+          apiResponse: "Failed",
+          latency: "N/A",
+          version: "N/A",
+        });
+      }
+    };
+
+    check();
+    const interval = setInterval(check, 30_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Filters
   const pendingApprovals = clinics.filter((c) => c.status === "pending");
   const approvedClinics = clinics.filter((c) => c.status === "approved").length;
   const totalPatients = users.filter((u) => u.role === "patient").length;
@@ -201,7 +232,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Render
   if (loading) {
     return (
       <AdminLayout>
@@ -258,7 +288,7 @@ const AdminDashboard = () => {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
+        {/* Main */}
         <div className="lg:col-span-2 space-y-8">
           {/* Pending Approvals */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
@@ -363,25 +393,98 @@ const AdminDashboard = () => {
             </button>
           </div>
 
-          {/* System Overview */}
+          {/* System Overview – DYNAMIC */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h4 className="text-lg font-bold text-gray-800 mb-3">
               System Overview
             </h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
                 <p className="text-gray-600">Server Status</p>
-                <p className="font-semibold text-green-800">Healthy</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      health.server === "Healthy"
+                        ? "bg-green-500"
+                        : health.server === "Warning"
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }`}
+                  />
+                  <p
+                    className={`font-semibold ${
+                      health.server === "Healthy"
+                        ? "text-green-800"
+                        : health.server === "Warning"
+                        ? "text-yellow-800"
+                        : "text-red-800"
+                    }`}
+                  >
+                    {health.server}
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-between">
+
+              <div className="flex justify-between items-center">
                 <p className="text-gray-600">Database</p>
-                <p className="font-semibold text-green-800">Optimal</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      health.database === "Optimal"
+                        ? "bg-green-500"
+                        : health.database === "Error"
+                        ? "bg-red-500"
+                        : "bg-yellow-500"
+                    }`}
+                  />
+                  <p
+                    className={`font-semibold ${
+                      health.database === "Optimal"
+                        ? "text-green-800"
+                        : health.database === "Error"
+                        ? "text-red-800"
+                        : "text-yellow-800"
+                    }`}
+                  >
+                    {health.database}
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-between">
+
+              <div className="flex justify-between items-center">
                 <p className="text-gray-600">API Response</p>
-                <p className="font-semibold text-green-800">Good</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      health.apiResponse === "Good"
+                        ? "bg-green-500"
+                        : health.apiResponse === "Slow"
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }`}
+                  />
+                  <p
+                    className={`font-semibold ${
+                      health.apiResponse === "Good"
+                        ? "text-green-800"
+                        : health.apiResponse === "Slow"
+                        ? "text-yellow-800"
+                        : "text-red-800"
+                    }`}
+                  >
+                    {health.apiResponse} ({health.latency})
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                <p className="text-gray-600">Version</p>
+                <p className="font-mono text-xs text-gray-700">
+                  v{health.version}
+                </p>
               </div>
             </div>
+            <p className="text-xs text-gray-400 mt-3">Updated every 30s</p>
           </div>
 
           {/* Quick Actions */}
