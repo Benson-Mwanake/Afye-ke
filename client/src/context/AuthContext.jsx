@@ -9,18 +9,57 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
 
-  // Load current user from localStorage on mount
+  // Load current user from localStorage + enrich with full data
   useEffect(() => {
     const stored = localStorage.getItem("currentUser");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setUser({
-          email: parsed.email,
-          role: parsed.role,
-          clinicId: parsed.clinicId,
-          fullName: parsed.fullName || "",
-        });
+
+        // If we only have minimal data, fetch full user
+        if (parsed.id && !parsed.phoneNumber) {
+          fetch(`${API_URL}/users/${parsed.id}`)
+            .then((res) => {
+              if (res.ok) return res.json();
+              throw new Error("User not found");
+            })
+            .then((fullUser) => {
+              const enriched = {
+                id: fullUser.id,
+                fullName: fullUser.fullName,
+                email: fullUser.email,
+                phoneNumber: fullUser.phoneNumber,
+                role: fullUser.role,
+                clinicId: fullUser.clinicId,
+                profile: fullUser.profile || {
+                  dob: "",
+                  gender: "",
+                  country: "",
+                  bloodType: "",
+                  allergies: "",
+                  emergencyContact: "",
+                },
+                savedClinics: fullUser.savedClinics || [],
+              };
+              setUser(enriched);
+              localStorage.setItem("currentUser", JSON.stringify(enriched));
+            })
+            .catch(() => {
+              setUser({
+                id: parsed.id,
+                fullName: parsed.fullName || "",
+                email: parsed.email,
+                role: parsed.role,
+                clinicId: parsed.clinicId,
+                savedClinics: parsed.savedClinics || [],
+              });
+            });
+        } else {
+          setUser({
+            ...parsed,
+            savedClinics: parsed.savedClinics || [],
+          });
+        }
       } catch (err) {
         console.error("Failed to parse stored user:", err);
       }
@@ -28,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Load all users once (for signup checks)
+  // Load all users (for signup checks)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -46,9 +85,19 @@ export const AuthProvider = ({ children }) => {
     fetchUsers();
   }, []);
 
-  // LOGIN: Always fetch fresh user data
-  const login = async (email, password, role) => {
-    const normalizedRole = role.toLowerCase();
+  // LOGIN: Overloaded — accepts (email, password, role) OR (fullUserObject)
+  const login = async (arg1, password, role) => {
+    // Case 1: Full user object (from toggleSavedClinic)
+    if (typeof arg1 === "object" && !password && !role) {
+      const userObj = arg1;
+      setUser(userObj);
+      localStorage.setItem("currentUser", JSON.stringify(userObj));
+      return true;
+    }
+
+    // Case 2: Normal login with email/password/role
+    const email = arg1;
+    const normalizedRole = (role || "").toLowerCase();
 
     let users = [];
     try {
@@ -65,7 +114,7 @@ export const AuthProvider = ({ children }) => {
       (u) =>
         u.email === email &&
         u.password === password &&
-        u.role === normalizedRole
+        (!normalizedRole || u.role === normalizedRole)
     );
 
     if (!found) {
@@ -73,22 +122,41 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
 
+    let fullUser = found;
+    try {
+      const userRes = await fetch(`${API_URL}/users/${found.id}`);
+      if (userRes.ok) {
+        fullUser = await userRes.json();
+      }
+    } catch (err) {
+      console.warn("Could not fetch full user, using minimal data", err);
+    }
+
     const userObj = {
-      id: found.id,
-      fullName: found.fullName,
-      email: found.email,
-      role: found.role,
-      clinicId: found.clinicId,
+      id: fullUser.id,
+      fullName: fullUser.fullName,
+      email: fullUser.email,
+      phoneNumber: fullUser.phoneNumber,
+      role: fullUser.role,
+      clinicId: fullUser.clinicId,
+      profile: fullUser.profile || {
+        dob: "",
+        gender: "",
+        country: "",
+        bloodType: "",
+        allergies: "",
+        emergencyContact: "",
+      },
+      savedClinics: fullUser.savedClinics || [],
     };
 
     setUser(userObj);
     setAllUsers(users);
-
     localStorage.setItem("currentUser", JSON.stringify(userObj));
     return true;
   };
 
-  // SIGNUP: Create user + clinic (if clinic)
+  // SIGNUP: unchanged
   const signup = async (fullName, email, phoneNumber, password, role) => {
     const normalizedRole = role.toLowerCase();
 
@@ -112,7 +180,7 @@ export const AuthProvider = ({ children }) => {
         email: email,
         operatingHours: "Mon-Fri: 9AM-5PM",
         verified: false,
-        status: "pending", // for admin approval
+        status: "pending",
       };
 
       try {
@@ -147,6 +215,7 @@ export const AuthProvider = ({ children }) => {
         allergies: "",
         emergencyContact: "",
       },
+      savedClinics: [],
     };
 
     try {
@@ -166,8 +235,11 @@ export const AuthProvider = ({ children }) => {
         id: savedUser.id,
         fullName: savedUser.fullName,
         email: savedUser.email,
+        phoneNumber: savedUser.phoneNumber,
         role: savedUser.role,
         clinicId: savedUser.clinicId,
+        profile: savedUser.profile,
+        savedClinics: savedUser.savedClinics || [],
       };
 
       setUser(userObj);
@@ -177,6 +249,47 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Signup error:", err);
       alert("Signup failed. Try again.");
+      return false;
+    }
+  };
+
+  // TOGGLE SAVED CLINIC
+  const toggleSavedClinic = async (clinicId) => {
+    if (!user || user.role !== "patient") return false;
+
+    const saved = user.savedClinics || [];
+    const isSaved = saved.includes(clinicId);
+    const updatedSaved = isSaved
+      ? saved.filter((id) => id !== clinicId)
+      : [...new Set([...saved, clinicId])];
+
+    try {
+      const res = await fetch(`${API_URL}/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ savedClinics: updatedSaved }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update");
+
+      const updatedUser = await res.json();
+
+      const fullUser = {
+        id: updatedUser.id,
+        fullName: updatedUser.fullName,
+        email: updatedUser.email,
+        phoneNumber: updatedUser.phoneNumber,
+        role: updatedUser.role,
+        clinicId: updatedUser.clinicId,
+        profile: updatedUser.profile || {},
+        savedClinics: updatedUser.savedClinics || [],
+      };
+
+      // This now works safely
+      login(fullUser);
+      return true;
+    } catch (err) {
+      console.error("toggleSavedClinic error:", err);
       return false;
     }
   };
@@ -193,6 +306,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     logout,
     allUsers,
+    toggleSavedClinic,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
