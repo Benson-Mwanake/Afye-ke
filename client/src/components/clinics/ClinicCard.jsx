@@ -1,26 +1,22 @@
+// src/components/clinics/ClinicCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  MapPin,
-  Star,
-  Phone,
-  BriefcaseMedical,
-  Clock,
-  Plus,
-} from "lucide-react";
+import { MapPin, Star, Phone, BriefcaseMedical, Clock } from "lucide-react";
 
 const ClinicCard = ({ clinic }) => {
   const navigate = useNavigate();
-  const is24hr = clinic.hours === "24/7";
+
+  const is24hr = clinic.is24h;
   const isOpen = clinic.status === "Open";
+  const services = Array.isArray(clinic.services) ? clinic.services : [];
 
   const handleDetailsClick = () => {
-    navigate(`/clinic/${clinic.id}`); // Navigate to clinic details page with ID
+    navigate(`/clinic/${clinic.id}`);
   };
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
-      {/* Header with Name and Status */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-900 truncate">
           {clinic.name}
@@ -30,11 +26,11 @@ const ClinicCard = ({ clinic }) => {
             isOpen ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
-          {clinic.status}
+          {isOpen ? "Open" : "Closed"}
         </span>
       </div>
 
-      {/* Location and Distance */}
+      {/* Location + Distance */}
       <div className="flex items-center text-gray-600 text-sm mb-3">
         <MapPin className="w-4 h-4 mr-2 text-teal-500" />
         <span className="flex-1 truncate">
@@ -42,38 +38,38 @@ const ClinicCard = ({ clinic }) => {
         </span>
       </div>
 
-      {/* Rating and Reviews */}
+      {/* Rating */}
       <div className="flex items-center text-sm mb-3">
         <Star className="w-4 h-4 mr-1 text-yellow-400 fill-yellow-400" />
         <span className="font-medium text-gray-800">{clinic.rating}</span>
         <span className="text-gray-500 ml-1">({clinic.reviews} reviews)</span>
       </div>
 
-      {/* Operating Hours */}
+      {/* Operating Hours – SAFE */}
       <div className="flex items-center text-gray-600 text-sm mb-4">
         <Clock className="w-4 h-4 mr-2 text-indigo-500" />
-        {is24hr ? (
-          <span className="font-medium text-indigo-600">Open 24/7</span>
-        ) : (
-          <span>
-            Closes at {clinic.hours} {isOpen ? `(${clinic.closesIn})` : ""}
-          </span>
-        )}
+        <span>
+          {is24hr ? (
+            <span className="font-medium text-indigo-600">Open 24/7</span>
+          ) : (
+            `Closes at ${clinic.hours}`
+          )}
+        </span>
       </div>
 
-      {/* Services Tagline */}
+      {/* Services */}
       <div className="flex flex-wrap gap-2 mb-4 border-t pt-3">
-        {clinic.services.slice(0, 3).map((service, index) => (
+        {services.slice(0, 3).map((s, i) => (
           <span
-            key={index}
+            key={i}
             className="bg-gray-50 text-gray-700 text-xs font-medium px-2 py-1 rounded-full"
           >
-            {service}
+            {s}
           </span>
         ))}
-        {clinic.services.length > 3 && (
+        {services.length > 3 && (
           <span className="bg-gray-50 text-gray-500 text-xs font-medium px-2 py-1 rounded-full">
-            +{clinic.services.length - 3} more
+            +{services.length - 3} more
           </span>
         )}
       </div>
@@ -86,9 +82,12 @@ const ClinicCard = ({ clinic }) => {
         >
           <BriefcaseMedical className="w-4 h-4 mr-1" /> Details
         </button>
-        <button className="flex items-center justify-center bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition duration-200">
+        <a
+          href={`tel:${clinic.phone}`}
+          className="flex items-center justify-center bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition duration-200"
+        >
           <Phone className="w-4 h-4" />
-        </button>
+        </a>
       </div>
     </div>
   );
