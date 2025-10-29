@@ -1,9 +1,8 @@
 // src/pages/AllHealthEducation.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { Search, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { topics,articles } from "../services/articles"; // ← Use shared data
 
 const TopicCard = ({ title, count, slug, onClick }) => (
   <button
@@ -18,10 +17,79 @@ const TopicCard = ({ title, count, slug, onClick }) => (
 
 export default function AllHealthEducation() {
   const navigate = useNavigate();
+  const [topics, setTopics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchTopics = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/articles", {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) throw new Error(`Failed to load articles – ${res.status}`);
+
+        const articles = await res.json();
+
+        // Build topics: { title, slug, count }
+        const topicMap = {};
+
+        articles.forEach((art) => {
+          const cat = art.category || "General";
+          if (!topicMap[cat]) {
+            topicMap[cat] = {
+              title: cat,
+              slug: cat.toLowerCase().replace(/\s+/g, "-"),
+              count: 0,
+            };
+          }
+          topicMap[cat].count += 1;
+        });
+
+        const topicList = Object.values(topicMap);
+        setTopics(topicList);
+        setError(null);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("AllHealthEducation fetch error:", err);
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopics();
+
+    return () => controller.abort();
+  }, []);
 
   const handleTopicClick = (slug) => {
     navigate(`/health-tips?topic=${slug}`);
   };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-6xl mx-auto py-8 px-4 text-center">
+          <p className="text-lg text-gray-600">Loading topics…</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-6xl mx-auto py-8 px-4 text-center text-red-600">
+          <p>{error}</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -46,7 +114,13 @@ export default function AllHealthEducation() {
         {/* Topic Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {topics.map((topic) => (
-            <TopicCard key={topic.slug} {...topic} onClick={handleTopicClick} />
+            <TopicCard
+              key={topic.slug}
+              title={topic.title}
+              count={topic.count}
+              slug={topic.slug}
+              onClick={handleTopicClick}
+            />
           ))}
         </div>
 
