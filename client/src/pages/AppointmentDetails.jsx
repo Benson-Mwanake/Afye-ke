@@ -1,3 +1,4 @@
+// src/pages/AppointmentDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
@@ -5,37 +6,52 @@ import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import { BriefcaseMedical, Calendar, Clock, MapPin } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { fetchAppointments } from "../services/userService";
+
+const API_URL = "http://localhost:4000";
 
 const AppointmentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [appointment, setAppointment] = useState(null);
+  const [clinic, setClinic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!user?.id || !id) return;
+
+    const controller = new AbortController();
+
     const loadAppointment = async () => {
-      if (user && id) {
-        try {
-          const appointments = await fetchAppointments(user.email);
-          const selectedAppointment = appointments.find(
-            (a) => a.id === parseInt(id)
-          );
-          if (selectedAppointment) {
-            setAppointment(selectedAppointment);
-          } else {
-            setError("Appointment not found.");
-          }
-        } catch (err) {
-          setError("Failed to load appointment details.");
-        } finally {
-          setLoading(false);
+      try {
+        const apptRes = await fetch(`${API_URL}/appointments/${id}`, {
+          signal: controller.signal,
+        });
+        if (!apptRes.ok) throw new Error("Appointment not found");
+        const appt = await apptRes.json();
+
+        if (appt.patientId !== parseInt(user.id)) {
+          setError("Access denied.");
+          return;
         }
+
+        const clinicRes = await fetch(`${API_URL}/clinics/${appt.clinicId}`, {
+          signal: controller.signal,
+        });
+        const clinicData = clinicRes.ok ? await clinicRes.json() : null;
+
+        setAppointment(appt);
+        setClinic(clinicData);
+      } catch (err) {
+        setError(err.message || "Failed to load appointment.");
+      } finally {
+        setLoading(false);
       }
     };
+
     loadAppointment();
+    return () => controller.abort();
   }, [user, id]);
 
   const handleBack = () => {
@@ -45,11 +61,7 @@ const AppointmentDetail = () => {
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-600">{error}</p>;
   if (!appointment)
-    return (
-      <p className="text-center text-gray-500">
-        No appointment data available.
-      </p>
-    );
+    return <p className="text-center text-gray-500">No data.</p>;
 
   return (
     <DashboardLayout>
@@ -62,13 +74,13 @@ const AppointmentDetail = () => {
             <div className="flex items-center space-x-4">
               <BriefcaseMedical className="w-6 h-6 text-green-600" />
               <h2 className="text-xl font-semibold text-gray-800">
-                {appointment.clinicName}
+                {clinic?.name || appointment.clinicName}
               </h2>
             </div>
             <div className="flex items-center space-x-4">
               <MapPin className="w-6 h-6 text-blue-600" />
               <p className="text-gray-600">
-                {appointment.location || "Location not specified"}
+                {clinic?.location || "Location not available"}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -82,7 +94,7 @@ const AppointmentDetail = () => {
             <div>
               <p className="text-sm font-medium text-gray-700">Doctor:</p>
               <p className="text-gray-600">
-                {appointment.doctorName || "Not assigned"}
+                {appointment.doctor || "Not assigned"}
               </p>
             </div>
             <div>
@@ -93,8 +105,17 @@ const AppointmentDetail = () => {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-700">Status:</p>
-              <p className="text-gray-600">Upcoming</p>{" "}
-              {/* Could be dynamic based on date */}
+              <p
+                className={`text-gray-600 font-medium ${
+                  appointment.status === "Completed"
+                    ? "text-green-600"
+                    : appointment.status === "Cancelled"
+                    ? "text-red-600"
+                    : "text-blue-600"
+                }`}
+              >
+                {appointment.status}
+              </p>
             </div>
           </div>
           <div className="mt-6">
