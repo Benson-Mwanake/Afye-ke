@@ -1,3 +1,4 @@
+// src/pages/PatientDashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Calendar,
@@ -14,8 +15,10 @@ import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 
+const API_URL = "http://localhost:4000";
+
 /* ------------------------------------------------------------------ */
-/*  Re-usable cards – unchanged except for the data source            */
+/*  Re-usable UI components – unchanged                               */
 /* ------------------------------------------------------------------ */
 const PatientStatCard = ({
   title,
@@ -25,7 +28,7 @@ const PatientStatCard = ({
   trendValue,
   navigateTo,
 }) => {
-  const colorMap = {
+  const colors = {
     green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
     blue: { bg: "bg-indigo-600", text: "text-white", trend: "text-indigo-200" },
     "dark-green": {
@@ -39,16 +42,12 @@ const PatientStatCard = ({
       trend: "text-blue-200",
     },
   };
-  const { bg, text, trend } = colorMap[color] || {
-    bg: "bg-gray-600",
-    text: "text-white",
-    trend: "text-gray-200",
-  };
+  const { bg, text, trend } = colors[color] || colors.green;
 
   return (
     <a
       href={navigateTo || "#"}
-      className={`${bg} p-6 sm:p-7 md:p-8 rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-2xl flex flex-col justify-between h-full`}
+      className={`${bg} p-6 sm:p-7 md:p-8 rounded-xl shadow-lg transition-shadow hover:shadow-2xl flex flex-col justify-between h-full`}
     >
       <div className="flex items-center justify-between mb-2">
         <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>
@@ -76,7 +75,7 @@ const QuickActionCard = ({
 }) => (
   <button
     onClick={onClick}
-    className="bg-white p-5 rounded-xl shadow-md border border-gray-100 text-left transition-all duration-200 hover:shadow-lg hover:border-green-300 flex items-center space-x-4 w-full h-full"
+    className="bg-white p-5 rounded-xl shadow-md border border-gray-100 text-left transition-all hover:shadow-lg hover:border-green-300 flex items-center space-x-4 w-full h-full"
   >
     <div className={`p-3 rounded-full ${iconBg} flex-shrink-0`}>
       <Icon className={`w-6 h-6 ${iconColor}`} />
@@ -129,29 +128,13 @@ const AppointmentRow = ({
   </div>
 );
 
-const EducationCard = ({ title, subtitle, readTime }) => (
-  <div className="bg-white p-5 rounded-xl shadow-md border border-gray-100 h-full flex flex-col justify-between transition-all duration-300 cursor-pointer hover:shadow-lg hover:border-green-400 hover:scale-[1.02]">
-    <div>
-      <h4 className="font-bold text-lg text-gray-900 mb-1 line-clamp-1">
-        {title}
-      </h4>
-      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{subtitle}</p>
-    </div>
-    <div className="text-xs text-gray-500 font-medium flex items-center mt-2">
-      <BookOpen className="w-3 h-3 mr-1" />
-      {readTime}
-    </div>
-  </div>
-);
-
 /* ------------------------------------------------------------------ */
-/*  Dashboard component – now fetches real data from json-server      */
+/*  Dashboard – FULLY FIXED: savedClinics from /users                  */
 /* ------------------------------------------------------------------ */
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-
-  /* ---------- State for the four coloured cards ---------- */
+  const { user: authUser } = useAuth(); // may be partial
+  const [user, setUser] = useState(null); // full user from DB
   const [stats, setStats] = useState([
     {
       title: "Upcoming Appointments",
@@ -184,100 +167,152 @@ const PatientDashboard = () => {
   ]);
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
-  const [articlesRead, setArticlesRead] = useState(0);
+  const [clinicsMap, setClinicsMap] = useState({});
 
-  /* ---------- Load everything from the API ---------- */
+  // -------------------------------------------------
+  // 1. Load FULL user from /users
+  // -------------------------------------------------
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user?.id) return;
+    if (!authUser?.id) return;
 
+    const ctrl = new AbortController();
+
+    const loadFullUser = async () => {
       try {
-        /* 1. Appointments – only those belonging to the logged-in patient */
-        const apptRes = await fetch(`/appointments?patientId=${user.id}`);
-        const allAppts = await apptRes.json();
-        const upcoming = allAppts.filter(
-          (a) => a.status === "Confirmed" || a.status === "Pending"
-        );
-
-        /* 2. Saved clinics – you can store an array of clinicIds on the user */
-        const savedClinics = user.savedClinics || [];
-
-        /* 3. Articles read – for demo we count all articles (replace later) */
-        const artRes = await fetch("/articles");
-        const allArticles = await artRes.json();
-
-        /* 4. Health checkups – count appointments with service “Checkup” */
-        const checkups = allAppts.filter((a) =>
-          a.service?.toLowerCase().includes("checkup")
-        );
-
-        /* ---- Update the coloured cards ---- */
-        setStats((prev) =>
-          prev.map((s) => {
-            if (s.title === "Upcoming Appointments")
-              return {
-                ...s,
-                value: upcoming.length,
-                trend:
-                  upcoming.length > 0
-                    ? `${upcoming.length} upcoming`
-                    : "No upcoming",
-              };
-            if (s.title === "Saved Clinics")
-              return {
-                ...s,
-                value: savedClinics.length,
-                trend:
-                  savedClinics.length > 0
-                    ? `${savedClinics.length} saved`
-                    : "None saved",
-              };
-            if (s.title === "Articles Read")
-              return {
-                ...s,
-                value: allArticles.length, // replace with real read-count later
-                trend: "Great reading streak",
-              };
-            if (s.title === "Health Checkups")
-              return {
-                ...s,
-                value: checkups.length,
-                trend:
-                  checkups.length > 0
-                    ? `${checkups.length} this year`
-                    : "Due soon",
-              };
-            return s;
-          })
-        );
-
-        setUpcomingAppointments(upcoming.slice(0, 3));
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
+        const res = await fetch(`${API_URL}/users/${authUser.id}`, {
+          signal: ctrl.signal,
+        });
+        if (res.ok) {
+          const fullUser = await res.json();
+          setUser(fullUser);
+        } else {
+          setUser(authUser); // fallback
+        }
+      } catch (e) {
+        if (e.name !== "AbortError") console.error(e);
+        setUser(authUser);
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 30_000); // refresh every 30 s
-    return () => clearInterval(interval);
+    loadFullUser();
+    return () => ctrl.abort();
+  }, [authUser]);
+
+  // -------------------------------------------------
+  // 2. Load stats + appointments
+  // -------------------------------------------------
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const ctrl = new AbortController();
+
+    const refresh = async () => {
+      try {
+        // Appointments
+        const apptRes = await fetch(
+          `${API_URL}/appointments?patientId=${user.id}`,
+          { signal: ctrl.signal }
+        );
+        const allAppts = apptRes.ok ? await apptRes.json() : [];
+
+        const upcoming = allAppts.filter((a) =>
+          ["Confirmed", "Pending", "Scheduled"].includes(a.status)
+        );
+        const checkups = allAppts.filter(
+          (a) =>
+            a.status === "Completed" &&
+            (a.service?.toLowerCase().includes("checkup") ||
+              a.notes?.toLowerCase().includes("checkup"))
+        );
+
+        // Saved Clinics – from FULL user
+        const savedCount = Array.isArray(user.savedClinics)
+          ? user.savedClinics.length
+          : 0;
+
+        // Articles
+        const artRes = await fetch(`${API_URL}/articles`, {
+          signal: ctrl.signal,
+        });
+        const articles = artRes.ok ? await artRes.json() : [];
+        const published = articles.filter((a) => a.published).length;
+
+        // Clinic map
+        const clinRes = await fetch(`${API_URL}/clinics`, {
+          signal: ctrl.signal,
+        });
+        const clinics = clinRes.ok ? await clinRes.json() : [];
+        const map = {};
+        clinics.forEach((c) => (map[c.id] = c.name));
+        setClinicsMap(map);
+
+        // Update stats
+        setStats([
+          {
+            title: "Upcoming Appointments",
+            value: upcoming.length,
+            icon: Calendar,
+            color: "green",
+            trend: upcoming.length
+              ? `${upcoming.length} upcoming`
+              : "No upcoming",
+          },
+          {
+            title: "Saved Clinics",
+            value: savedCount,
+            icon: MapPin,
+            color: "blue",
+            trend: savedCount ? `${savedCount} saved` : "None saved",
+          },
+          {
+            title: "Articles Read",
+            value: published,
+            icon: BookOpen,
+            color: "dark-green",
+            trend: "Stay informed!",
+          },
+          {
+            title: "Health Checkups",
+            value: checkups.length,
+            icon: Heart,
+            color: "light-blue",
+            trend: checkups.length
+              ? `${checkups.length} this year`
+              : "Due soon",
+          },
+        ]);
+
+        setUpcomingAppointments(upcoming.slice(0, 3));
+      } catch (e) {
+        if (e.name !== "AbortError") console.error(e);
+      }
+    };
+
+    refresh();
+    const int = setInterval(refresh, 30_000);
+    return () => {
+      ctrl.abort();
+      clearInterval(int);
+    };
   }, [user]);
 
-  /* ---------- Cancel appointment (PATCH to json-server) ---------- */
+  // -------------------------------------------------
+  // Cancel appointment
+  // -------------------------------------------------
   const handleCancelAppointment = async (id) => {
-    if (!window.confirm("Cancel this appointment? This cannot be undone."))
-      return;
+    if (!window.confirm("Cancel this appointment?")) return;
 
     try {
-      await fetch(`/appointments/${id}`, {
+      await fetch(`${API_URL}/appointments/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Cancelled" }),
       });
-      // Refresh UI
-      const res = await fetch(`/appointments?patientId=${user.id}`);
-      const all = await res.json();
-      const upcoming = all.filter(
-        (a) => a.status === "Confirmed" || a.status === "Pending"
+
+      const res = await fetch(`${API_URL}/appointments?patientId=${user.id}`);
+      const all = res.ok ? await res.json() : [];
+      const upcoming = all.filter((a) =>
+        ["Confirmed", "Pending", "Scheduled"].includes(a.status)
       );
       setUpcomingAppointments(upcoming.slice(0, 3));
 
@@ -287,73 +322,56 @@ const PatientDashboard = () => {
             ? {
                 ...s,
                 value: upcoming.length,
-                trend:
-                  upcoming.length > 0
-                    ? `${upcoming.length} upcoming`
-                    : "No upcoming",
+                trend: upcoming.length
+                  ? `${upcoming.length} upcoming`
+                  : "No upcoming",
               }
             : s
         )
       );
-      alert("Appointment cancelled.");
-    } catch (err) {
-      alert("Failed to cancel.");
+      alert("Cancelled");
+    } catch {
+      alert("Failed");
     }
   };
 
-  /* ---------- Health-education static data (replace with API later) ---------- */
-  const healthEducation = [
-    {
-      id: 1,
-      title: "Disease Prevention",
-      subtitle: "Understanding Malaria Prevention",
-      readTime: "5 min read",
-    },
-    {
-      id: 2,
-      title: "Nutrition",
-      subtitle: "Nutrition Tips for Healthy Living",
-      readTime: "4 min read",
-    },
-    {
-      id: 3,
-      title: "Mental Health",
-      subtitle: "Mental Health Awareness",
-      readTime: "6 min read",
-    },
-    {
-      id: 4,
-      title: "First Aid Basics",
-      subtitle: "Handling common injuries",
-      readTime: "8 min read",
-    },
-  ];
+  // -------------------------------------------------
+  // Render
+  // -------------------------------------------------
+  if (!user) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-10 text-gray-600">
+          Loading profile...
+        </div>
+      </DashboardLayout>
+    );
+  }
 
-  /* ------------------------------------------------------------------ */
   return (
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
-          Welcome back, {user?.fullName?.split(" ")[0] || "Patient"}!
+          Welcome back, {user.fullName.split(" ")[0]}!
         </h1>
-        <p className="text-lg text-gray-600">Here's your health overview</p>
+        <p className="text-lg text-gray-600">Your health overview</p>
       </div>
 
-      {/* ----- STAT CARDS ----- */}
+      {/* STAT CARDS */}
       <section className="mb-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          {stats.map((stat) => (
+          {stats.map((s) => (
             <PatientStatCard
-              key={stat.title}
-              {...stat}
+              key={s.title}
+              {...s}
               navigateTo={
-                stat.title === "Upcoming Appointments"
+                s.title === "Upcoming Appointments"
                   ? "/appointments"
-                  : stat.title === "Saved Clinics"
+                  : s.title === "Saved Clinics"
                   ? "/saved-clinics"
-                  : stat.title === "Articles Read"
+                  : s.title === "Articles Read"
                   ? "/articles"
-                  : stat.title === "Health Checkups"
+                  : s.title === "Health Checkups"
                   ? "/checkups"
                   : "#"
               }
@@ -362,8 +380,9 @@ const PatientDashboard = () => {
         </div>
       </section>
 
-      {/* ----- MAIN GRID ----- */}
+      {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT */}
         <div className="lg:col-span-2 space-y-8">
           {/* Quick actions */}
           <div>
@@ -406,22 +425,22 @@ const PatientDashboard = () => {
               </h2>
               <button
                 onClick={() => navigate("/appointments")}
-                className="text-sm font-medium text-green-600 hover:text-green-700 transition duration-150"
+                className="text-sm font-medium text-green-600 hover:text-green-700"
               >
                 View All
               </button>
             </div>
             <div className="divide-y divide-gray-100">
-              {upcomingAppointments.length > 0 ? (
-                upcomingAppointments.map((appt) => (
+              {upcomingAppointments.length ? (
+                upcomingAppointments.map((a) => (
                   <AppointmentRow
-                    key={appt.id}
-                    clinic={appt.clinicName}
-                    doctor={appt.doctorName || "Dr. Not Assigned"}
-                    service={appt.service || "General"}
-                    date={appt.date}
-                    time={appt.time}
-                    id={appt.id}
+                    key={a.id}
+                    clinic={clinicsMap[a.clinicId] || a.clinicName || "Unknown"}
+                    doctor={a.doctor || "Dr. Not Assigned"}
+                    service={a.service || "General"}
+                    date={a.date}
+                    time={a.time}
+                    id={a.id}
                     navigate={navigate}
                     onCancel={handleCancelAppointment}
                   />
@@ -435,32 +454,27 @@ const PatientDashboard = () => {
           </div>
         </div>
 
-        {/* ----- RIGHT SIDEBAR ----- */}
+        {/* RIGHT SIDEBAR */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Profile mini-card */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center">
             <div className="w-16 h-16 bg-blue-500 text-white font-bold text-2xl rounded-full flex items-center justify-center mb-4">
-              {user?.fullName
-                ?.split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase() || "P"}
+              {(
+                user.fullName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("") || "P"
+              ).toUpperCase()}
             </div>
-            <h3 className="text-xl font-bold text-gray-800">
-              {user?.fullName || "Patient"}
-            </h3>
-            <p className="text-sm text-gray-500 mb-4">
-              {user?.email || "patient@afyalink.ke"}
-            </p>
+            <h3 className="text-xl font-bold text-gray-800">{user.fullName}</h3>
+            <p className="text-sm text-gray-500 mb-4">{user.email}</p>
             <button
               onClick={() => navigate("/profile")}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition duration-150 bg-blue-50 px-4 py-2 rounded-lg"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg"
             >
               View Profile
             </button>
           </div>
 
-          {/* Health reminder */}
           <div className="bg-green-50 p-6 rounded-xl border-l-4 border-green-500 shadow-md">
             <div className="flex items-center mb-3">
               <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
@@ -472,13 +486,12 @@ const PatientDashboard = () => {
             </p>
             <button
               onClick={() => navigate("/find-clinics")}
-              className="w-full text-white bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 transition shadow-md font-medium"
+              className="w-full text-white bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 shadow-md font-medium"
             >
               Book Now
             </button>
           </div>
 
-          {/* Emergency contacts */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h4 className="text-lg font-bold text-gray-800 mb-3">
               Emergency Contacts
@@ -510,24 +523,6 @@ const PatientDashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* ----- HEALTH EDUCATION SECTION ----- */}
-      <section className="mt-10">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Health Education</h2>
-          <button
-            onClick={() => navigate("/all-health-education")}
-            className="text-sm font-medium text-green-600 hover:text-green-700 transition duration-150"
-          >
-            View All
-          </button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          {healthEducation.map((article) => (
-            <EducationCard key={article.id} {...article} />
-          ))}
-        </div>
-      </section>
     </DashboardLayout>
   );
 };
