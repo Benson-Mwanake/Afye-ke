@@ -1,5 +1,6 @@
+// src/hooks/layouts/AdminLayout.jsx
 import React, { useState } from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   LayoutDashboard,
@@ -13,16 +14,13 @@ import {
   Heart,
 } from "lucide-react";
 
-const AdminLayout = () => {
+const AdminLayout = ({ children }) => {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  console.log("AdminLayout: User:", user, "Location:", location.pathname);
-
   if (loading) {
-    console.log("AdminLayout: Loading state active");
     return (
       <div className="flex items-center justify-center min-h-screen">
         Loading...
@@ -39,13 +37,13 @@ const AdminLayout = () => {
   ];
 
   const handleLogout = () => {
-    console.log("AdminLayout: Logging out");
     logout();
     navigate("/login");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+      {/* Header */}
       <header className="bg-white shadow-md sticky top-0 z-40">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -56,14 +54,13 @@ const AdminLayout = () => {
                 Admin
               </span>
             </div>
+
+            {/* Desktop Nav */}
             <nav className="hidden md:flex space-x-4 lg:space-x-8 items-center">
               {navItems.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => {
-                    console.log("AdminLayout: Navigating to:", item.path);
-                    navigate(item.path);
-                  }}
+                  onClick={() => navigate(item.path)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition duration-150 ${
                     location.pathname === item.path
                       ? "bg-green-50 text-green-700 font-semibold"
@@ -88,10 +85,12 @@ const AdminLayout = () => {
                 <span>Logout</span>
               </button>
             </nav>
+
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -102,16 +101,14 @@ const AdminLayout = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Nav */}
         {isMobileMenuOpen && (
           <div className="md:hidden px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => {
-                  console.log(
-                    "AdminLayout: Navigating to (mobile):",
-                    item.path
-                  );
                   navigate(item.path);
                   setIsMobileMenuOpen(false);
                 }}
@@ -133,14 +130,10 @@ const AdminLayout = () => {
           </div>
         )}
       </header>
+
+      {/* Main Content */}
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-          {console.log(
-            "AdminLayout: Rendering Outlet for path:",
-            location.pathname
-          )}
-          <Outlet />
-        </div>
+        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">{children}</div>
       </main>
     </div>
   );
