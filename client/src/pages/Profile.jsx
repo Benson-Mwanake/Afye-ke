@@ -1,7 +1,10 @@
+// src/pages/PatientProfile.jsx
 import React, { useState, useEffect } from "react";
 import { Calendar, ClipboardList, Pencil, Save, XCircle } from "lucide-react";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
+
+const API_URL = "http://localhost:4000";
 
 // Reusable input field
 const EditableField = ({
@@ -42,11 +45,26 @@ const AppointmentHistoryRow = ({ clinic, doctor, service, date, status }) => (
         </p>
         <div className="flex items-center text-sm text-gray-500 mt-1">
           <Calendar className="w-3 h-3 mr-1" />
-          {date}
+          {new Date(date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
         </div>
       </div>
     </div>
-    <span className="text-xs font-semibold px-3 py-1 rounded-full text-green-700 bg-green-100 mt-3 sm:mt-0">
+    <span
+      className={`text-xs font-semibold px-3 py-1 rounded-full mt-3 sm:mt-0
+        ${
+          status === "Confirmed"
+            ? "text-blue-700 bg-blue-100"
+            : status === "Completed"
+            ? "text-green-700 bg-green-100"
+            : status === "Cancelled"
+            ? "text-red-700 bg-red-100"
+            : "text-gray-700 bg-gray-100"
+        }`}
+    >
       {status}
     </span>
   </div>
@@ -60,62 +78,94 @@ const PatientProfile = () => {
   const [clinics, setClinics] = useState({});
   const [loading, setLoading] = useState(true);
   const [apptLoading, setApptLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Load user profile + clinics map
   useEffect(() => {
-    if (user) {
-      setFormData({
-        fullName: user.fullName || "",
-        email: user.email || "",
-        phone: user.phoneNumber || "",
-        dob: user.profile?.dob || "",
-        gender: user.profile?.gender || "",
-        country: user.profile?.country || "",
-        bloodType: user.profile?.bloodType || "Unknown",
-        allergies: user.profile?.allergies || "",
-        emergencyContact: user.profile?.emergencyContact || "",
-      });
-
-      // Load all clinics to map clinicId → name
-      const fetchClinics = async () => {
-        try {
-          const res = await fetch("/clinics");
-          const data = await res.json();
-          const map = {};
-          data.forEach((c) => (map[c.id] = c.name));
-          setClinics(map);
-        } catch (err) {
-          console.error("Failed to load clinics:", err);
-        }
-      };
-
-      fetchClinics();
+    if (!user?.id || user.role !== "patient") {
       setLoading(false);
+      return;
     }
+
+    const controller = new AbortController();
+
+    const fetchProfileAndClinics = async () => {
+      try {
+        setFormData({
+          fullName: user.fullName || "",
+          email: user.email || "",
+          phone: user.phoneNumber || "",
+          dob: user.profile?.dob || "",
+          gender: user.profile?.gender || "",
+          country: user.profile?.country || "",
+          bloodType: user.profile?.bloodType || "Unknown",
+          allergies: user.profile?.allergies || "",
+          emergencyContact: user.profile?.emergencyContact || "",
+        });
+
+        // Fetch clinics map
+        const clinicsRes = await fetch(`${API_URL}/clinics`, {
+          signal: controller.signal,
+        });
+        if (!clinicsRes.ok) throw new Error("Failed to load clinics");
+        const clinicsData = await clinicsRes.json();
+        const map = {};
+        clinicsData.forEach((c) => (map[c.id] = c.name));
+        setClinics(map);
+
+        setError(null);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Profile load error:", err);
+          setError(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileAndClinics();
+    return () => controller.abort();
   }, [user]);
 
-  // Load patient appointments
+  // Load ALL appointments (Confirmed + Completed + Pending)
   useEffect(() => {
-    const fetchAppointments = async () => {
-      if (!user?.id) return;
+    if (!user?.id || user.role !== "patient") {
+      setApptLoading(false);
+      return;
+    }
 
+    const controller = new AbortController();
+
+    const fetchAppointments = async () => {
       try {
-        const res = await fetch(`/appointments?patientId=${user.id}`);
+        const res = await fetch(
+          `${API_URL}/appointments?patientId=${user.id}`,
+          { signal: controller.signal }
+        );
+        if (!res.ok) {
+          console.error("Failed to load appointments:", res.status);
+          return;
+        }
         const data = await res.json();
 
-        const completed = data
-          .filter((a) => a.status === "Completed")
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        // SHOW ALL: Confirmed + Completed + Pending + Cancelled
+        const allAppointments = data.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
 
-        setAppointments(completed);
+        setAppointments(allAppointments);
       } catch (err) {
-        console.error("Failed to load appointments:", err);
+        if (err.name !== "AbortError") {
+          console.error("Appointments fetch error:", err);
+        }
       } finally {
         setApptLoading(false);
       }
     };
 
     fetchAppointments();
+    return () => controller.abort();
   }, [user]);
 
   const handleChange = (field, value) => {
@@ -139,19 +189,19 @@ const PatientProfile = () => {
     };
 
     try {
-      const res = await fetch(`/users/${user.id}`, {
+      const res = await fetch(`${API_URL}/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
+
       if (!res.ok) throw new Error("Save failed");
 
-      alert("Profile saved to server!");
+      alert("Profile saved successfully!");
       setIsEditing(false);
-      window.location.reload();
     } catch (err) {
+      console.error("Save error:", err);
       alert("Failed to save. Is json-server running?");
-      console.error(err);
     }
   };
 
@@ -170,11 +220,11 @@ const PatientProfile = () => {
     setIsEditing(false);
   };
 
-  if (!user) {
+  if (!user || user.role !== "patient") {
     return (
       <DashboardLayout>
         <div className="text-center py-10 text-gray-600">
-          Please log in to view your profile.
+          Only patients can view this profile.
         </div>
       </DashboardLayout>
     );
@@ -185,6 +235,20 @@ const PatientProfile = () => {
       <DashboardLayout>
         <div className="text-center py-10 text-gray-600">
           Loading profile...
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-10 text-red-600">
+          <p>{error}</p>
+          <p className="text-sm mt-2">
+            Make sure <code>json-server</code> is running on{" "}
+            <code>http://localhost:4000</code>
+          </p>
         </div>
       </DashboardLayout>
     );
@@ -276,7 +340,7 @@ const PatientProfile = () => {
           </div>
         </div>
 
-        {/* Right: Form */}
+        {/* Right: Form + Appointments */}
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Info */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
@@ -394,7 +458,7 @@ const PatientProfile = () => {
                     />
                   ))
               ) : (
-                <p className="text-gray-500 py-4">No past appointments.</p>
+                <p className="text-gray-500 py-4">No appointments found.</p>
               )}
             </div>
           </div>
