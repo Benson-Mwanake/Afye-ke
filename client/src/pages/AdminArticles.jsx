@@ -1,12 +1,12 @@
+// src/pages/AdminArticles.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AdminLayout from "../hooks/layouts/AdminLayout";
-import { ClipboardList, Clock, X } from "lucide-react";
+import { ClipboardList, Clock, X, TrendingUp } from "lucide-react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-// Validation Schema
 const ArticleSchema = Yup.object().shape({
   title: Yup.string()
     .min(3, "Title must be at least 3 characters")
@@ -22,16 +22,19 @@ const ArticleSchema = Yup.object().shape({
   published: Yup.boolean(),
 });
 
-// Article Row
 const AdminArticleRow = ({
   title,
   category,
   date,
   published,
+  isTrending,
   onEdit,
   onPublish,
   onDelete,
+  onToggleTrending,
 }) => {
+  const isTrendingBool = isTrending === true;
+
   return (
     <div className="py-4 flex justify-between items-center space-x-4 border-b border-gray-100 last:border-b-0">
       <div className="flex items-center space-x-4 flex-grow">
@@ -50,34 +53,55 @@ const AdminArticleRow = ({
             {date}
           </div>
         </div>
-        <span
-          className={`text-xs font-semibold px-2 py-0.5 rounded ${
-            published
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
-          }`}
-        >
-          {published ? "Published" : "Draft"}
-        </span>
+
+        <div className="flex gap-2">
+          <span
+            className={`text-xs font-semibold px-2 py-0.5 rounded ${
+              published
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+            }`}
+          >
+            {published ? "Published" : "Draft"}
+          </span>
+          {isTrendingBool && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-orange-100 text-orange-700 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              Trending
+            </span>
+          )}
+        </div>
       </div>
-      <div className="flex space-x-2">
+
+      <div className="flex space-x-2 text-xs">
         <button
           onClick={onEdit}
-          className="text-xs font-medium text-blue-600 hover:text-blue-700"
+          className="font-medium text-blue-600 hover:text-blue-700"
         >
           Edit
         </button>
         <span className="text-gray-300">|</span>
         <button
           onClick={onPublish}
-          className="text-xs font-medium text-blue-600 hover:text-blue-700"
+          className="font-medium text-blue-600 hover:text-blue-700"
         >
           {published ? "Unpublish" : "Publish"}
         </button>
         <span className="text-gray-300">|</span>
         <button
+          onClick={onToggleTrending}
+          className={`font-medium ${
+            isTrendingBool
+              ? "text-orange-600 hover:text-orange-700"
+              : "text-gray-600 hover:text-gray-700"
+          }`}
+        >
+          {isTrendingBool ? "Remove Trending" : "Make Trending"}
+        </button>
+        <span className="text-gray-300">|</span>
+        <button
           onClick={onDelete}
-          className="text-xs font-medium text-red-600 hover:text-red-700"
+          className="font-medium text-red-600 hover:text-red-700"
         >
           Delete
         </button>
@@ -86,13 +110,12 @@ const AdminArticleRow = ({
   );
 };
 
-// Article Modal
 const ArticleModal = ({ isOpen, onClose, initialValues, onSubmit, isEdit }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
+      <div className="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full max-h-screen overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">
             {isEdit ? "Edit Article" : "New Article"}
@@ -126,6 +149,7 @@ const ArticleModal = ({ isOpen, onClose, initialValues, onSubmit, isEdit }) => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Content
@@ -142,37 +166,41 @@ const ArticleModal = ({ isOpen, onClose, initialValues, onSubmit, isEdit }) => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Category
-                </label>
-                <Field
-                  type="text"
-                  name="category"
-                  className="border p-2 w-full rounded"
-                />
-                <ErrorMessage
-                  name="category"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Category
+                  </label>
+                  <Field
+                    type="text"
+                    name="category"
+                    className="border p-2 w-full rounded"
+                  />
+                  <ErrorMessage
+                    name="category"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Read Time
+                  </label>
+                  <Field
+                    type="text"
+                    name="readTime"
+                    className="border p-2 w-full rounded"
+                    placeholder="e.g., 5 min"
+                  />
+                  <ErrorMessage
+                    name="readTime"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Read Time
-                </label>
-                <Field
-                  type="text"
-                  name="readTime"
-                  className="border p-2 w-full rounded"
-                  placeholder="e.g., 5 min"
-                />
-                <ErrorMessage
-                  name="readTime"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Image URL
@@ -188,12 +216,22 @@ const ArticleModal = ({ isOpen, onClose, initialValues, onSubmit, isEdit }) => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-              <label className="flex items-center mb-4">
-                <Field type="checkbox" name="published" className="mr-2" />
-                <span className="text-sm font-medium text-gray-700">
-                  Publish
-                </span>
-              </label>
+
+              <div className="flex items-center gap-6 mb-4">
+                <label className="flex items-center">
+                  <Field type="checkbox" name="published" className="mr-2" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Publish
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <Field type="checkbox" name="isTrending" className="mr-2" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Make Trending
+                  </span>
+                </label>
+              </div>
+
               <div className="flex space-x-2">
                 <button
                   type="submit"
@@ -234,7 +272,13 @@ const AdminArticles = () => {
         const res = await fetch("http://localhost:4000/articles");
         if (!res.ok) throw new Error("Failed to fetch articles");
         const data = await res.json();
-        setArticles(data);
+
+        const fixedData = data.map((article) => ({
+          ...article,
+          isTrending: article.isTrending === true ? true : false,
+        }));
+
+        setArticles(fixedData);
       } catch (err) {
         console.error("Articles load error:", err);
         alert(`Failed to load articles: ${err.message}`);
@@ -256,13 +300,15 @@ const AdminArticles = () => {
         date: new Date().toISOString().split("T")[0],
         author: user?.fullName || "Admin",
         summary: values.content.slice(0, 100) + "...",
+        isTrending: !!values.isTrending,
       };
-      await fetch("http://localhost:4000/articles", {
+      const res = await fetch("http://localhost:4000/articles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newArticle),
       });
-      setArticles((prev) => [...prev, newArticle]);
+      const created = await res.json();
+      setArticles((prev) => [...prev, created]);
       setIsModalOpen(false);
     } catch (err) {
       alert("Failed to create article");
@@ -273,16 +319,22 @@ const AdminArticles = () => {
 
   const handleEdit = async (values, { setSubmitting }) => {
     try {
-      await fetch(`http://localhost:4000/articles/${editArticle.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          summary: values.content.slice(0, 100) + "...",
-        }),
-      });
+      const updated = {
+        ...values,
+        summary: values.content.slice(0, 100) + "...",
+        isTrending: !!values.isTrending,
+      };
+      const res = await fetch(
+        `http://localhost:4000/articles/${editArticle.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        }
+      );
+      const saved = await res.json();
       setArticles((prev) =>
-        prev.map((a) => (a.id === editArticle.id ? { ...a, ...values } : a))
+        prev.map((a) => (a.id === editArticle.id ? saved : a))
       );
       setIsModalOpen(false);
       setEditArticle(null);
@@ -295,16 +347,36 @@ const AdminArticles = () => {
 
   const handlePublish = async (id, published) => {
     try {
-      await fetch(`http://localhost:4000/articles/${id}`, {
+      const res = await fetch(`http://localhost:4000/articles/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ published: !published }),
       });
-      setArticles((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, published: !published } : a))
-      );
+      const updated = await res.json();
+      setArticles((prev) => prev.map((a) => (a.id === id ? updated : a)));
     } catch (err) {
       alert("Failed to update article");
+    }
+  };
+
+  const handleToggleTrending = async (id, current) => {
+    const newTrending = !current;
+    try {
+      const res = await fetch(`http://localhost:4000/articles/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isTrending: newTrending }),
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      const updatedArticle = await res.json();
+
+      setArticles((prev) =>
+        prev.map((a) => (a.id === id ? updatedArticle : a))
+      );
+    } catch (err) {
+      alert("Failed to update trending status");
     }
   };
 
@@ -360,11 +432,15 @@ const AdminArticles = () => {
                 category={article.category}
                 date={article.date}
                 published={article.published}
+                isTrending={article.isTrending}
                 onEdit={() => {
                   setEditArticle(article);
                   setIsModalOpen(true);
                 }}
                 onPublish={() => handlePublish(article.id, article.published)}
+                onToggleTrending={() =>
+                  handleToggleTrending(article.id, article.isTrending)
+                }
                 onDelete={() => handleDelete(article.id)}
               />
             ))
@@ -388,6 +464,7 @@ const AdminArticles = () => {
             readTime: "",
             image: "",
             published: false,
+            isTrending: false,
           }
         }
         onSubmit={editArticle ? handleEdit : handleCreate}
