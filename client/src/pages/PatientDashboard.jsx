@@ -1,4 +1,3 @@
-// src/pages/PatientDashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Calendar,
@@ -7,262 +6,94 @@ import {
   Heart,
   BriefcaseMedical,
   Clock,
-  Phone,
-  Mail,
-  CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
+import api from "../services/api";
 
-const API_URL = "http://127.0.0.1:5000";
-
-/* ------------------------------------------------------------------ */
-/*  Re-usable UI components – unchanged                               */
-/* ------------------------------------------------------------------ */
-const PatientStatCard = ({
-  title,
-  value,
-  icon: Icon,
-  color,
-  trendValue,
-  navigateTo,
-}) => {
-  const colors = {
-    green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
-    blue: { bg: "bg-indigo-600", text: "text-white", trend: "text-indigo-200" },
-    "dark-green": {
-      bg: "bg-teal-600",
-      text: "text-white",
-      trend: "text-teal-200",
-    },
-    "light-blue": {
-      bg: "bg-blue-600",
-      text: "text-white",
-      trend: "text-blue-200",
-    },
-  };
-  const { bg, text, trend } = colors[color] || colors.green;
-
-  return (
-    <a
-      href={navigateTo || "#"}
-      className={`${bg} p-6 sm:p-7 md:p-8 rounded-xl shadow-lg transition-shadow hover:shadow-2xl flex flex-col justify-between h-full`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>
-          {title}
-        </h3>
-        <div className={`p-2 sm:p-3 rounded-full bg-white bg-opacity-20`}>
-          <Icon className={`w-6 h-6 sm:w-7 sm:h-7 ${text}`} />
-        </div>
-      </div>
-      <p className={`mt-1 text-3xl sm:text-4xl font-extrabold ${text}`}>
-        {value}
-      </p>
-      <p className={`mt-2 text-sm ${trend} font-medium`}>{trendValue}</p>
-    </a>
-  );
-};
-
-const QuickActionCard = ({
-  title,
-  description,
-  icon: Icon,
-  onClick,
-  iconColor,
-  iconBg,
-}) => (
-  <button
-    onClick={onClick}
-    className="bg-white p-5 rounded-xl shadow-md border border-gray-100 text-left transition-all hover:shadow-lg hover:border-green-300 flex items-center space-x-4 w-full h-full"
-  >
-    <div className={`p-3 rounded-full ${iconBg} flex-shrink-0`}>
-      <Icon className={`w-6 h-6 ${iconColor}`} />
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-500 mt-1">{description}</p>
-    </div>
-  </button>
-);
-
-const AppointmentRow = ({
-  clinic,
-  doctor,
-  service,
-  date,
-  time,
-  id,
-  navigate,
-  onCancel,
-}) => (
-  <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-    <div className="flex items-start space-x-4">
-      <BriefcaseMedical className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
-      <div>
-        <h4 className="font-semibold text-gray-800">{clinic}</h4>
-        <p className="text-sm text-gray-600">
-          {doctor} • {service}
-        </p>
-        <div className="flex items-center text-sm text-gray-500 mt-1">
-          <Clock className="w-3 h-3 mr-1" />
-          {date} @ {time}
-        </div>
-      </div>
-    </div>
-    <div className="flex gap-2 mt-3 sm:mt-0">
-      <button
-        onClick={() => navigate(`/appointment/${id}`)}
-        className="text-sm font-medium text-green-600 border border-green-600 px-3 py-1.5 rounded-lg hover:bg-green-50 transition"
-      >
-        Details
-      </button>
-      <button
-        onClick={() => onCancel(id)}
-        className="text-sm font-medium text-red-600 border border-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition"
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-);
-
-/* ------------------------------------------------------------------ */
-/*  Dashboard – FULLY FIXED: savedClinics from /users                  */
-/* ------------------------------------------------------------------ */
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const { user: authUser } = useAuth(); // may be partial
-  const [user, setUser] = useState(null); // full user from DB
-  const [stats, setStats] = useState([
-    {
-      title: "Upcoming Appointments",
-      value: 0,
-      icon: Calendar,
-      color: "green",
-      trend: "Loading…",
-    },
-    {
-      title: "Saved Clinics",
-      value: 0,
-      icon: MapPin,
-      color: "blue",
-      trend: "Loading…",
-    },
-    {
-      title: "Articles Read",
-      value: 0,
-      icon: BookOpen,
-      color: "dark-green",
-      trend: "Loading…",
-    },
-    {
-      title: "Health Checkups",
-      value: 0,
-      icon: Heart,
-      color: "light-blue",
-      trend: "Loading…",
-    },
-  ]);
-
+  const { user, loading } = useAuth();
+  const [stats, setStats] = useState([]);
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [clinicsMap, setClinicsMap] = useState({});
 
-  // -------------------------------------------------
-  // 1. Load FULL user from /users
-  // -------------------------------------------------
-  useEffect(() => {
-    if (!authUser?.id) return;
+  // ✅ Centralized function to load appointments & stats
+  const loadAppointments = async () => {
+    try {
+      const res = await api.get(`/appointments?patientId=${user.id}`);
+      const allAppts = res.data;
+      const upcoming = allAppts.filter(a =>
+        ["Confirmed", "Pending", "Scheduled"].includes(a.status)
+      );
+      const checkups = allAppts.filter(
+        a =>
+          a.status === "Completed" &&
+          (a.service?.toLowerCase().includes("checkup") ||
+            a.notes?.toLowerCase().includes("checkup"))
+      );
 
-    const ctrl = new AbortController();
+      setUpcomingAppointments(upcoming.slice(0, 3));
 
-    const loadFullUser = async () => {
-      try {
-        const res = await fetch(`${API_URL}/users/${authUser.id}`, {
-          signal: ctrl.signal,
-        });
-        if (res.ok) {
-          const fullUser = await res.json();
-          setUser(fullUser);
-        } else {
-          setUser(authUser); // fallback
-        }
-      } catch (e) {
-        if (e.name !== "AbortError") console.error(e);
-        setUser(authUser);
-      }
-    };
+      setStats(prev =>
+        prev.map(s =>
+          s.title === "Upcoming Appointments"
+            ? {
+                ...s,
+                value: upcoming.length,
+                trend: upcoming.length ? `${upcoming.length} upcoming` : "No upcoming",
+              }
+            : s
+        )
+      );
 
-    loadFullUser();
-    return () => ctrl.abort();
-  }, [authUser]);
+      return { upcoming, checkups };
+    } catch (err) {
+      console.error("Failed to load appointments:", err);
+    }
+  };
 
-  // -------------------------------------------------
-  // 2. Load stats + appointments
-  // -------------------------------------------------
+  // Fetch stats & appointments
   useEffect(() => {
     if (!user?.id) return;
 
     const ctrl = new AbortController();
 
-    const refresh = async () => {
+    const fetchData = async () => {
       try {
         // Appointments
-        const apptRes = await fetch(
-          `${API_URL}/appointments?patientId=${user.id}`,
-          { signal: ctrl.signal }
-        );
-        const allAppts = apptRes.ok ? await apptRes.json() : [];
-
-        const upcoming = allAppts.filter((a) =>
-          ["Confirmed", "Pending", "Scheduled"].includes(a.status)
-        );
-        const checkups = allAppts.filter(
-          (a) =>
-            a.status === "Completed" &&
-            (a.service?.toLowerCase().includes("checkup") ||
-              a.notes?.toLowerCase().includes("checkup"))
-        );
-
-        // Saved Clinics – from FULL user
-        const savedCount = Array.isArray(user.savedClinics)
-          ? user.savedClinics.length
-          : 0;
+        const { checkups } = await loadAppointments();
 
         // Articles
-        const artRes = await fetch(`${API_URL}/articles`, {
-          signal: ctrl.signal,
-        });
-        const articles = artRes.ok ? await artRes.json() : [];
-        const published = articles.filter((a) => a.published).length;
+        const artRes = await api.get("/articles", { signal: ctrl.signal });
+        const published = artRes.data.filter(a => a.published).length;
 
-        // Clinic map
-        const clinRes = await fetch(`${API_URL}/clinics`, {
-          signal: ctrl.signal,
-        });
-        const clinics = clinRes.ok ? await clinRes.json() : [];
+        // Clinics
+        const clinRes = await api.get("/clinics", { signal: ctrl.signal });
         const map = {};
-        clinics.forEach((c) => (map[c.id] = c.name));
+        clinRes.data.forEach(c => (map[c.id] = c.name));
         setClinicsMap(map);
 
-        // Update stats
-        setStats([
+        // Stats
+        setStats(prev => [
           {
             title: "Upcoming Appointments",
-            value: upcoming.length,
+            value: prev.find(s => s.title === "Upcoming Appointments")?.value || 0,
             icon: Calendar,
             color: "green",
-            trend: upcoming.length
-              ? `${upcoming.length} upcoming`
-              : "No upcoming",
+            trend:
+              prev.find(s => s.title === "Upcoming Appointments")?.trend ||
+              "No upcoming",
           },
           {
             title: "Saved Clinics",
-            value: savedCount,
+            value: user.savedClinics?.length || 0,
             icon: MapPin,
             color: "blue",
-            trend: savedCount ? `${savedCount} saved` : "None saved",
+            trend: user.savedClinics?.length
+              ? `${user.savedClinics.length} saved`
+              : "None saved",
           },
           {
             title: "Articles Read",
@@ -276,252 +107,114 @@ const PatientDashboard = () => {
             value: checkups.length,
             icon: Heart,
             color: "light-blue",
-            trend: checkups.length
-              ? `${checkups.length} this year`
-              : "Due soon",
+            trend: checkups.length ? `${checkups.length} this year` : "Due soon",
           },
         ]);
-
-        setUpcomingAppointments(upcoming.slice(0, 3));
-      } catch (e) {
-        if (e.name !== "AbortError") console.error(e);
+      } catch (err) {
+        if (err.name !== "AbortError") console.error(err);
       }
     };
 
-    refresh();
-    const int = setInterval(refresh, 30_000);
+    fetchData();
+    const interval = setInterval(fetchData, 30_000);
     return () => {
       ctrl.abort();
-      clearInterval(int);
+      clearInterval(interval);
     };
   }, [user]);
 
-  // -------------------------------------------------
-  // Cancel appointment
-  // -------------------------------------------------
   const handleCancelAppointment = async (id) => {
     if (!window.confirm("Cancel this appointment?")) return;
-
     try {
-      await fetch(`${API_URL}/appointments/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Cancelled" }),
-      });
-
-      const res = await fetch(`${API_URL}/appointments?patientId=${user.id}`);
-      const all = res.ok ? await res.json() : [];
-      const upcoming = all.filter((a) =>
-        ["Confirmed", "Pending", "Scheduled"].includes(a.status)
-      );
-      setUpcomingAppointments(upcoming.slice(0, 3));
-
-      setStats((prev) =>
-        prev.map((s) =>
-          s.title === "Upcoming Appointments"
-            ? {
-                ...s,
-                value: upcoming.length,
-                trend: upcoming.length
-                  ? `${upcoming.length} upcoming`
-                  : "No upcoming",
-              }
-            : s
-        )
-      );
+      await api.patch(`/appointments/${id}`, { status: "Cancelled" });
+      await loadAppointments(); // ✅ Refresh appointments & stats
       alert("Cancelled");
     } catch {
       alert("Failed");
     }
   };
 
-  // -------------------------------------------------
-  // Render
-  // -------------------------------------------------
-  if (!user) {
+  // Loading state
+  if (loading || !user) {
     return (
       <DashboardLayout>
-        <div className="text-center py-10 text-gray-600">
-          Loading profile...
-        </div>
+        <div className="text-center py-10 text-gray-600">Loading dashboard...</div>
       </DashboardLayout>
     );
   }
 
+  // UI Components
+  const PatientStatCard = ({ title, value, icon: Icon, color, trend }) => {
+    const colors = {
+      green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
+      blue: { bg: "bg-indigo-600", text: "text-white", trend: "text-indigo-200" },
+      "dark-green": { bg: "bg-teal-600", text: "text-white", trend: "text-teal-200" },
+      "light-blue": { bg: "bg-blue-600", text: "text-white", trend: "text-blue-200" },
+    };
+    const { bg, text, trend: trendColor } = colors[color] || colors.green;
+    return (
+      <div className={`${bg} p-6 rounded-xl shadow-lg flex flex-col justify-between h-full`}>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>{title}</h3>
+          <div className="p-2 rounded-full bg-white bg-opacity-20">
+            <Icon className={`w-6 h-6 ${text}`} />
+          </div>
+        </div>
+        <p className={`mt-1 text-3xl sm:text-4xl font-extrabold ${text}`}>{value}</p>
+        <p className={`mt-2 text-sm ${trendColor} font-medium`}>{trend}</p>
+      </div>
+    );
+  };
+
+  const AppointmentRow = ({ appt }) => (
+    <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+      <div className="flex items-start space-x-4">
+        <BriefcaseMedical className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+        <div>
+          <h4 className="font-semibold text-gray-800">{clinicsMap[appt.clinicId] || "Clinic"}</h4>
+          <p className="text-sm text-gray-600"> {appt.doctorName} • {appt.service} </p>
+          <div className="flex items-center text-sm text-gray-500 mt-1">
+            <Clock className="w-3 h-3 mr-1" /> {appt.date} @ {appt.time}
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-2 mt-3 sm:mt-0">
+        <button
+          onClick={() => navigate(`/appointment/${appt.id}`)}
+          className="text-sm font-medium text-green-600 border border-green-600 px-3 py-1.5 rounded-lg hover:bg-green-50 transition"
+        >
+          Details
+        </button>
+        <button
+          onClick={() => handleCancelAppointment(appt.id)}
+          className="text-sm font-medium text-red-600 border border-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
-          Welcome back, {user.fullName.split(" ")[0]}!
-        </h1>
-        <p className="text-lg text-gray-600">Your health overview</p>
+      {/*  Welcome message */}
+      <div className="mb-6 text-lg font-semibold text-gray-700">
+        Welcome back, {user.fullName}!
       </div>
 
-      {/* STAT CARDS */}
-      <section className="mb-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          {stats.map((s) => (
-            <PatientStatCard
-              key={s.title}
-              {...s}
-              navigateTo={
-                s.title === "Upcoming Appointments"
-                  ? "/appointments"
-                  : s.title === "Saved Clinics"
-                  ? "/saved-clinics"
-                  : s.title === "Articles Read"
-                  ? "/articles"
-                  : s.title === "Health Checkups"
-                  ? "/checkups"
-                  : "#"
-              }
-            />
-          ))}
-        </div>
-      </section>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {stats.map((s, i) => (
+          <PatientStatCard key={i} {...s} />
+        ))}
+      </div>
 
-      {/* MAIN GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* LEFT */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Quick actions */}
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <QuickActionCard
-                title="Find Clinics"
-                description="Search for healthcare providers near you"
-                icon={MapPin}
-                onClick={() => navigate("/find-clinics")}
-                iconColor="text-blue-600"
-                iconBg="bg-blue-100"
-              />
-              <QuickActionCard
-                title="Symptom Checker"
-                description="Check your symptoms with AI assistance"
-                icon={Heart}
-                onClick={() => navigate("/symptom-checker")}
-                iconColor="text-red-600"
-                iconBg="bg-red-100"
-              />
-              <QuickActionCard
-                title="Health Tips"
-                description="Read articles and health education"
-                icon={BookOpen}
-                onClick={() => navigate("/health-tips")}
-                iconColor="text-green-600"
-                iconBg="bg-green-100"
-              />
-            </div>
-          </div>
-
-          {/* Upcoming appointments */}
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">
-                Upcoming Appointments
-              </h2>
-              <button
-                onClick={() => navigate("/appointments")}
-                className="text-sm font-medium text-green-600 hover:text-green-700"
-              >
-                View All
-              </button>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {upcomingAppointments.length ? (
-                upcomingAppointments.map((a) => (
-                  <AppointmentRow
-                    key={a.id}
-                    clinic={clinicsMap[a.clinicId] || a.clinicName || "Unknown"}
-                    doctor={a.doctor || "Dr. Not Assigned"}
-                    service={a.service || "General"}
-                    date={a.date}
-                    time={a.time}
-                    id={a.id}
-                    navigate={navigate}
-                    onCancel={handleCancelAppointment}
-                  />
-                ))
-              ) : (
-                <p className="text-gray-500 pt-4">
-                  No upcoming appointments scheduled.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDEBAR */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center">
-            <div className="w-16 h-16 bg-blue-500 text-white font-bold text-2xl rounded-full flex items-center justify-center mb-4">
-              {(
-                user.fullName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("") || "P"
-              ).toUpperCase()}
-            </div>
-            <h3 className="text-xl font-bold text-gray-800">{user.fullName}</h3>
-            <p className="text-sm text-gray-500 mb-4">{user.email}</p>
-            <button
-              onClick={() => navigate("/profile")}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-lg"
-            >
-              View Profile
-            </button>
-          </div>
-
-          <div className="bg-green-50 p-6 rounded-xl border-l-4 border-green-500 shadow-md">
-            <div className="flex items-center mb-3">
-              <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-              <h4 className="font-semibold text-green-800">Health Reminder</h4>
-            </div>
-            <p className="text-sm text-green-700 mb-4">
-              Don't forget your <strong>annual checkup</strong> is coming up
-              soon!
-            </p>
-            <button
-              onClick={() => navigate("/find-clinics")}
-              className="w-full text-white bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600 shadow-md font-medium"
-            >
-              Book Now
-            </button>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h4 className="text-lg font-bold text-gray-800 mb-3">
-              Emergency Contacts
-            </h4>
-            <div className="space-y-3">
-              <div className="p-3 bg-red-50 rounded-lg flex items-center justify-between border-l-4 border-red-400">
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-5 h-5 text-red-600" />
-                  <div>
-                    <p className="font-semibold text-red-800">
-                      Emergency Hotline
-                    </p>
-                    <p className="text-sm text-red-600">999</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-lg flex items-center justify-between border-l-4 border-gray-300">
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-5 h-5 text-gray-600" />
-                  <div>
-                    <p className="font-semibold text-gray-800">
-                      AfyaLink Support
-                    </p>
-                    <p className="text-sm text-gray-600">+254 700 000 000</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-white p-6 rounded-xl shadow-md">
+        <h3 className="text-lg font-semibold mb-4">Upcoming Appointments</h3>
+        {upcomingAppointments.length ? (
+          upcomingAppointments.map(a => <AppointmentRow key={a.id} appt={a} />)
+        ) : (
+          <p className="text-gray-500">No upcoming appointments</p>
+        )}
       </div>
     </DashboardLayout>
   );
