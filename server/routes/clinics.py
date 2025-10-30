@@ -1,70 +1,65 @@
-from flask import Blueprint, request
-from flask_restful import Api, Resource
-from extensions import db
-from models import Clinic
+from flask import Blueprint, jsonify, request
+from models import Clinic, User
 from schemas import ClinicSchema
-from utils import rbac_required, paginate_query
+from extensions import db
+from flask_jwt_extended import create_access_token
 
-bp = Blueprint("clinics", __name__)
-api = Api(bp)
+bp = Blueprint("clinics", __name__, url_prefix="/clinics")
 
 clinic_schema = ClinicSchema()
 clinics_schema = ClinicSchema(many=True)
 
+# ----------------------------
+# List all clinics (optional limit)
+# ----------------------------
+@bp.route("/", methods=["GET"])
+def list_clinics():
+    q = Clinic.query
+    limit = request.args.get("_limit", type=int)
+    if limit:
+        items = q.limit(limit).all()
+    else:
+        items = q.all()
+    return jsonify(clinics_schema.dump(items))
 
-class ClinicsList(Resource):
-    def get(self):
-        # Support _limit for frontend health probe
-        limit = request.args.get("_limit")
-        if limit:
-            try:
-                items = Clinic.query.limit(int(limit)).all()
-                return clinics_schema.dump(items)
-            except:
-                pass
-        page = request.args.get("page", 1)
-        per_page = request.args.get("per_page")
-        q = Clinic.query.order_by(Clinic.name)
-        p = paginate_query(q, page, per_page)
-        return {
-            "items": clinics_schema.dump(p["items"]),
-            "total": p["total"],
-            "pages": p["pages"],
-            "page": p["page"],
-            "per_page": p["per_page"],
+# ----------------------------
+# Get single clinic by ID
+# ----------------------------
+@bp.route("/<int:clinic_id>", methods=["GET"])
+def get_clinic(clinic_id):
+    clinic = Clinic.query.get_or_404(clinic_id)
+    return jsonify(clinic_schema.dump(clinic))
+
+# ----------------------------
+# Clinic login
+# ----------------------------
+@bp.route("/login", methods=["POST"])
+def clinic_login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"message": "Email and password are required"}), 400
+
+    # Authenticate against the User table for role="clinic"
+    user = User.query.filter_by(email=email, role="clinic").first()
+    if not user:
+        return jsonify({"message": "Clinic not found. Please log in as a clinic."}), 404
+
+    if not user.check_password(password):
+        return jsonify({"message": "Incorrect password"}), 401
+
+    # Generate JWT token
+    token = create_access_token(identity={"id": user.id, "role": user.role})
+
+    return jsonify({
+        "message": "Login successful",
+        "token": token,
+        "clinic": {
+            "id": user.id,
+            "name": user.full_name,
+            "email": user.email,
+            "phone": user.phone_number
         }
-
-    @rbac_required("clinics:write")
-    def post(self):
-        data = request.get_json() or {}
-        clinic = clinic_schema.load(data)
-        db.session.add(clinic)
-        db.session.commit()
-        return clinic_schema.dump(clinic), 201
-
-
-class ClinicDetail(Resource):
-    def get(self, clinic_id):
-        c = Clinic.query.get_or_404(clinic_id)
-        return clinic_schema.dump(c), 200
-
-    @rbac_required("clinics:write")
-    def patch(self, clinic_id):
-        c = Clinic.query.get_or_404(clinic_id)
-        data = request.get_json() or {}
-        for k, v in data.items():
-            if hasattr(c, k):
-                setattr(c, k, v)
-        db.session.commit()
-        return clinic_schema.dump(c), 200
-
-    @rbac_required("clinics:write")
-    def delete(self, clinic_id):
-        c = Clinic.query.get_or_404(clinic_id)
-        db.session.delete(c)
-        db.session.commit()
-        return {"msg": "deleted"}, 204
-
-
-api.add_resource(ClinicsList, "/")
-api.add_resource(ClinicDetail, "/<int:clinic_id>")
+    })
