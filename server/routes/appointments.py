@@ -1,48 +1,63 @@
-from flask import Blueprint, request
-from flask_restful import Api, Resource
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
-from models import Appointment
-from utils import rbac_required
+from models import Appointment, Clinic, User
+from schemas import AppointmentSchema
 
-bp = Blueprint("appointments", __name__)
-api = Api(bp)
+bp = Blueprint("appointments", __name__, url_prefix="/appointments")
+appt_schema = AppointmentSchema()
+appts_schema = AppointmentSchema(many=True)
 
+@bp.route("/", methods=["GET"])
+@jwt_required()
+def list_appointments():
+    identity = get_jwt_identity()
+    user_id = identity["id"] if isinstance(identity, dict) else identity
+    patient_q = request.args.get("patientId", type=int)
+    if patient_q:
+        current_user = User.query.get(user_id)
+        if current_user.role != "admin" and current_user.id != patient_q:
+            return jsonify({"msg": "Not authorized"}), 403
+        appts = Appointment.query.filter_by(patient_id=patient_q).all()
+    else:
+        appts = Appointment.query.filter_by(patient_id=user_id).all()
 
-class AppointmentList(Resource):
-    def get(self):
-        items = Appointment.query.order_by(Appointment.date.desc()).all()
-        return [
-            {
-                "id": a.id,
-                "patientId": a.patient_id,
-                "clinicId": a.clinic_id,
-                "clinicName": a.clinic_name,
-                "doctor": a.doctor,
-                "service": a.service,
-                "date": a.date,
-                "time": a.time,
-                "status": a.status,
-                "notes": a.notes,
-            }
-            for a in items
-        ]
-
-    def post(self):
-        data = request.get_json() or {}
-        a = Appointment(
-            patient_id=int(data.get("patientId")),
-            clinic_id=int(data.get("clinicId")),
-            clinic_name=data.get("clinicName"),
-            doctor=data.get("doctor"),
-            service=data.get("service"),
-            date=data.get("date"),
-            time=data.get("time"),
-            status=data.get("status"),
-            notes=data.get("notes"),
-        )
-        db.session.add(a)
-        db.session.commit()
-        return {"msg": "created", "id": a.id}, 201
+    return jsonify(appts_schema.dump(appts))
 
 
-api.add_resource(AppointmentList, "/")
+@bp.route("/", methods=["POST"])
+@jwt_required()
+def create_appointment():
+    identity = get_jwt_identity()
+    user_id = identity["id"] if isinstance(identity, dict) else identity
+    data = request.get_json() or {}
+    required = ["clinicId", "date", "time"]
+    for r in required:
+        if r not in data:
+            return jsonify({"msg": f"Missing field {r}"}), 400
+
+    appt = Appointment(
+        patient_id=user_id,
+        clinic_id=data.get("clinicId"),
+        clinic_name=data.get("clinicName"),
+        doctor=data.get("doctor"),
+        service=data.get("service"),
+        date=data.get("date"),
+        time=data.get("time"),
+        status=data.get("status", "Pending"),
+        notes=data.get("notes"),
+    )
+    db.session.add(appt)
+    db.session.commit()
+    return jsonify(appt_schema.dump(appt)), 201
+
+
+@bp.route("/<int:appt_id>", methods=["GET"])
+@jwt_required()
+def get_appointment(appt_id):
+    user_id = get_jwt_identity()
+    appt = Appointment.query.get_or_404(appt_id)
+    current_user = User.query.get(user_id)
+    if current_user.role != "admin" and appt.patient_id != user_id:
+        return jsonify({"msg": "Not authorized"}), 403
+    return jsonify(appt_schema.dump(appt))

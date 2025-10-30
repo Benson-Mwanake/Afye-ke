@@ -49,6 +49,7 @@ class Clinic(db.Model):
     doctors = db.Column(JSONB)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     images = db.relationship("Image", backref="clinic", lazy="select")
+    password = db.Column(db.String(200))  # hashed password ideally
 
 
 class Appointment(db.Model):
@@ -103,3 +104,17 @@ class SymptomHistory(db.Model):
     result = db.Column(JSONB)
     timestamp = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Report(db.Model):
+    __tablename__ = "reports"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(200), nullable=False)
+    category = db.Column(db.String(100), nullable=False)
+    author = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    summary = db.Column(db.Text, nullable=True)
+    content = db.Column(db.Text, nullable=True)
+
+    def __repr__(self):
+        return f"<Report {self.title}>"
