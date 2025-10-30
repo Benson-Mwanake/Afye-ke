@@ -1,245 +1,152 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../services/api"; // Axios instance configured to send the JWT token
 
-const API_URL = "http://localhost:4000";
+// The API_URL constant for the mock server is no longer needed
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // NOTE: Keeping allUsers for compatibility, but security checks are now handled
+  // by the secure backend /auth endpoints.
   const [allUsers, setAllUsers] = useState([]);
 
-  // Load current user from localStorage + enrich with full data
+  // --- 1. INITIAL USER LOAD ---
   useEffect(() => {
-    const stored = localStorage.getItem("currentUser");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
+    const storedUser = localStorage.getItem("currentUser");
+    const storedToken = localStorage.getItem("authToken"); // Check for the JWT token
 
-        // If we only have minimal data, fetch full user
-        if (parsed.id && !parsed.phoneNumber) {
-          fetch(`${API_URL}/users/${parsed.id}`)
-            .then((res) => {
-              if (res.ok) return res.json();
-              throw new Error("User not found");
-            })
-            .then((fullUser) => {
-              const enriched = {
-                id: fullUser.id,
-                fullName: fullUser.fullName,
-                email: fullUser.email,
-                phoneNumber: fullUser.phoneNumber,
-                role: fullUser.role,
-                clinicId: fullUser.clinicId,
-                profile: fullUser.profile || {
-                  dob: "",
-                  gender: "",
-                  country: "",
-                  bloodType: "",
-                  allergies: "",
-                  emergencyContact: "",
-                },
-                savedClinics: fullUser.savedClinics || [],
-              };
-              setUser(enriched);
-              localStorage.setItem("currentUser", JSON.stringify(enriched));
-            })
-            .catch(() => {
-              setUser({
-                id: parsed.id,
-                fullName: parsed.fullName || "",
-                email: parsed.email,
-                role: parsed.role,
-                clinicId: parsed.clinicId,
-                savedClinics: parsed.savedClinics || [],
-              });
-            });
-        } else {
-          setUser({
-            ...parsed,
-            savedClinics: parsed.savedClinics || [],
-          });
-        }
+    if (storedUser && storedToken) {
+      try {
+        const parsed = JSON.parse(storedUser);
+
+        // Use the stored complete user object and ensure defaults are safe
+        setUser({
+          ...parsed,
+          profile: parsed.profile || {
+            dob: "",
+            gender: "",
+            country: "",
+            bloodType: "",
+            allergies: "",
+            emergencyContact: "",
+          },
+          savedClinics: parsed.savedClinics || [],
+        });
       } catch (err) {
-        console.error("Failed to parse stored user:", err);
+        console.error("Failed to parse stored user or token missing:", err);
+        // Clear session data if parsing fails
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("authToken");
       }
     }
     setLoading(false);
   }, []);
 
-  // Load all users (for signup checks)
+  // --- 2. LOAD ALL USERS (Optional for the new backend) ---
   useEffect(() => {
     const fetchUsers = async () => {
+      // NOTE: Using 'api.get' requires a valid JWT. This fetch might fail if
+      // the user is logged out, which is now expected behavior for a secure app.
       try {
-        const res = await fetch(`${API_URL}/users`);
-        if (!res.ok) throw new Error("Failed to load users");
-        const data = await res.json();
-        setAllUsers(data);
+        const res = await api.get("/users");
+        setAllUsers(res.data);
       } catch (err) {
-        console.error("AuthContext → API Error:", err);
-        alert(
-          "Backend not running. Run: npx json-server --watch db.json --port 4000"
+        console.warn(
+          "Could not load all users via API. This may be expected if endpoint is protected and user is not authenticated.",
+          err
         );
       }
     };
-    fetchUsers();
-  }, []);
+    // Fetch users if we detect a logged-in user
+    if (!loading && user) {
+      fetchUsers();
+    }
+  }, [loading, user]);
 
-  // LOGIN: Overloaded — accepts (email, password, role) OR (fullUserObject)
-  const login = async (arg1, password, role) => {
-    // Case 1: Full user object (from toggleSavedClinic)
-    if (typeof arg1 === "object" && !password && !role) {
-      const userObj = arg1;
+  // --- 3. SECURE LOGIN IMPLEMENTATION (JWT INTEGRATION) ---
+  const login = async (emailOrObj, password, role) => {
+    // Case 1: Full user object (from internal updates, like toggleSavedClinic)
+    if (typeof emailOrObj === "object" && !password && !role) {
+      const userObj = emailOrObj;
       setUser(userObj);
       localStorage.setItem("currentUser", JSON.stringify(userObj));
       return true;
     }
 
-    // Case 2: Normal login with email/password/role
-    const email = arg1;
-    const normalizedRole = (role || "").toLowerCase();
-
-    let users = [];
+    // Case 2: Secure JWT Login with email/password (Replaced mock API logic)
     try {
-      const res = await fetch(`${API_URL}/users`);
-      if (!res.ok) throw new Error("Failed to fetch users");
-      users = await res.json();
-    } catch (err) {
-      console.error("Login fetch error:", err);
-      alert("Backend not running.");
-      return false;
-    }
-
-    const found = users.find(
-      (u) =>
-        u.email === email &&
-        u.password === password &&
-        (!normalizedRole || u.role === normalizedRole)
-    );
-
-    if (!found) {
-      alert("Invalid email, password, or role.");
-      return false;
-    }
-
-    let fullUser = found;
-    try {
-      const userRes = await fetch(`${API_URL}/users/${found.id}`);
-      if (userRes.ok) {
-        fullUser = await userRes.json();
-      }
-    } catch (err) {
-      console.warn("Could not fetch full user, using minimal data", err);
-    }
-
-    const userObj = {
-      id: fullUser.id,
-      fullName: fullUser.fullName,
-      email: fullUser.email,
-      phoneNumber: fullUser.phoneNumber,
-      role: fullUser.role,
-      clinicId: fullUser.clinicId,
-      profile: fullUser.profile || {
-        dob: "",
-        gender: "",
-        country: "",
-        bloodType: "",
-        allergies: "",
-        emergencyContact: "",
-      },
-      savedClinics: fullUser.savedClinics || [],
-    };
-
-    setUser(userObj);
-    setAllUsers(users);
-    localStorage.setItem("currentUser", JSON.stringify(userObj));
-    return true;
-  };
-
-  // SIGNUP: unchanged
-  const signup = async (fullName, email, phoneNumber, password, role) => {
-    const normalizedRole = role.toLowerCase();
-
-    if (allUsers.some((u) => u.email === email)) {
-      alert("Email already exists.");
-      return false;
-    }
-
-    let clinicId = null;
-
-    if (normalizedRole === "clinic") {
-      const newClinic = {
-        id: Date.now().toString(),
-        name: fullName,
-        location: "Nairobi",
-        coordinates: [-1.2921, 36.8219],
-        services: ["General Checkup"],
-        rating: 0,
-        reviews: 0,
-        phone: phoneNumber,
-        email: email,
-        operatingHours: "Mon-Fri: 9AM-5PM",
-        verified: false,
-        status: "pending",
-      };
-
-      try {
-        const clinicRes = await fetch(`${API_URL}/clinics`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newClinic),
-        });
-        if (!clinicRes.ok) throw new Error("Failed to create clinic");
-        const savedClinic = await clinicRes.json();
-        clinicId = savedClinic.id;
-      } catch (err) {
-        console.error("Clinic creation failed:", err);
-        alert("Failed to create clinic account.");
-        return false;
-      }
-    }
-
-    const newUser = {
-      id: Date.now().toString(),
-      fullName,
-      email,
-      phoneNumber,
-      password,
-      role: normalizedRole,
-      clinicId,
-      profile: {
-        dob: "",
-        gender: "",
-        country: "",
-        bloodType: "",
-        allergies: "",
-        emergencyContact: "",
-      },
-      savedClinics: [],
-    };
-
-    try {
-      const res = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
+      const res = await api.post("/auth/login", {
+        email: emailOrObj,
+        password,
+        role: role, // Ensure role is passed for server validation
       });
 
-      if (!res.ok) throw new Error("Signup failed");
+      // Server returns access_token and user object 'u'
+      const { access_token, user: u } = res.data;
 
-      const savedUser = await res.json();
-      const updatedUsers = [...allUsers, savedUser];
-      setAllUsers(updatedUsers);
+      // 1. Store the JWT token for future authenticated requests
+      localStorage.setItem("authToken", access_token);
 
+      // 2. Map and store the user object using new camelCase fields
       const userObj = {
-        id: savedUser.id,
-        fullName: savedUser.fullName,
-        email: savedUser.email,
-        phoneNumber: savedUser.phoneNumber,
-        role: savedUser.role,
-        clinicId: savedUser.clinicId,
-        profile: savedUser.profile,
-        savedClinics: savedUser.savedClinics || [],
+        id: u.id,
+        fullName: u.fullName,
+        email: u.email,
+        phoneNumber: u.phoneNumber,
+        role: u.role,
+        clinicId: u.clinicId,
+        profile: u.profile || {},
+        savedClinics: u.savedClinics || [],
+      };
+
+      setUser(userObj);
+      localStorage.setItem("currentUser", JSON.stringify(userObj));
+      return true;
+    } catch (err) {
+      console.error("Login failed", err);
+      // Log the error message from the backend response (safer than alert)
+      console.log(
+        "Login Error:",
+        err.response?.data?.msg ||
+          "Login failed due to network error or invalid credentials."
+      );
+      return false;
+    }
+  };
+
+  // --- 4. SECURE SIGNUP IMPLEMENTATION (JWT INTEGRATION) ---
+  const signup = async (fullName, email, phoneNumber, password, role) => {
+    // Removed all frontend checks and clinic creation logic.
+    // The secure backend handles email uniqueness, user creation, and clinic creation atomically.
+
+    try {
+      const res = await api.post("/auth/register", {
+        fullName,
+        email,
+        phoneNumber,
+        password,
+        role,
+      });
+
+      // Server returns access_token and the newly created user object 'u'
+      const { access_token, user: u } = res.data;
+
+      // 1. Store the JWT token
+      localStorage.setItem("authToken", access_token);
+
+      // 2. Map and store the user object
+      const userObj = {
+        id: u.id,
+        fullName: u.fullName,
+        email: u.email,
+        phoneNumber: u.phoneNumber,
+        role: u.role,
+        clinicId: u.clinicId,
+        profile: u.profile || {},
+        savedClinics: u.savedClinics || [],
       };
 
       setUser(userObj);
@@ -247,13 +154,17 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } catch (err) {
-      console.error("Signup error:", err);
-      alert("Signup failed. Try again.");
+      console.error("Signup failed", err);
+      // Log the error message from the backend response
+      console.log(
+        "Signup Error:",
+        err.response?.data?.msg || "Signup failed. Please check your data."
+      );
       return false;
     }
   };
 
-  // TOGGLE SAVED CLINIC
+  // --- 5. TOGGLE SAVED CLINIC (Using secure 'api' instance) ---
   const toggleSavedClinic = async (clinicId) => {
     if (!user || user.role !== "patient") return false;
 
@@ -264,15 +175,13 @@ export const AuthProvider = ({ children }) => {
       : [...new Set([...saved, clinicId])];
 
     try {
-      const res = await fetch(`${API_URL}/users/${user.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ savedClinics: updatedSaved }),
+      // Use the 'api' instance (Axios) which automatically includes the JWT token
+      const res = await api.patch(`/users/${user.id}`, {
+        savedClinics: updatedSaved,
       });
 
-      if (!res.ok) throw new Error("Failed to update");
-
-      const updatedUser = await res.json();
+      // The response already contains the updated user object
+      const updatedUser = res.data;
 
       const fullUser = {
         id: updatedUser.id,
@@ -285,18 +194,24 @@ export const AuthProvider = ({ children }) => {
         savedClinics: updatedUser.savedClinics || [],
       };
 
-      // This now works safely
+      // Use the overloaded login function to safely update local state and storage
       login(fullUser);
       return true;
     } catch (err) {
       console.error("toggleSavedClinic error:", err);
+      console.log(
+        "Toggle Clinic Error:",
+        err.response?.data?.msg || "Failed to update saved clinics."
+      );
       return false;
     }
   };
 
+  // --- 6. LOGOUT (Clearing both user and token) ---
   const logout = () => {
     setUser(null);
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("authToken"); // Critical for JWT sessions
   };
 
   const value = {

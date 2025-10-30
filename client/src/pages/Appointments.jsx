@@ -8,7 +8,7 @@ import ListItem from "../components/ui/ListItem";
 import { BriefcaseMedical } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const Appointments = () => {
   const navigate = useNavigate();

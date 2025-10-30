@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 import EditPatientModal from "../components/clinics/EditPatientModal";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const ClinicPatients = () => {
   const { user } = useAuth();

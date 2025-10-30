@@ -1,89 +1,68 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
+from flask_restful import Api, Resource
 from extensions import db
-from models import User, Profile
-from schemas import UserSchema
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from models import User, Role
+from flask_jwt_extended import create_access_token
 
-bp = Blueprint("auth", __name__, url_prefix="/api/auth")
-user_schema = UserSchema()
-
-@bp.route("/register", methods=["POST"])
-def register():
-    json_data = request.get_json()
-    if not json_data:
-        return jsonify({"msg": "No input provided"}), 400
-
-    # validate input
-    try:
-        data = user_schema.load(json_data)
-    except Exception as e:
-        return jsonify({"msg": "Validation error", "errors": getattr(e, 'messages', str(e))}), 400
-
-    # check if email exists
-    if User.query.filter_by(email=data["email"]).first():
-        return jsonify({"msg": "Email already registered"}), 400
-
-    # create user
-    user = User(
-        full_name=data.get("fullName"),
-        email=data.get("email"),
-        phone_number=data.get("phoneNumber"),
-        role=data.get("role")
-    )
-    user.password_hash = generate_password_hash(data["password"])
-
-    # create profile
-    profile_data = data.get("profile", {})
-    profile = Profile(
-        dob=profile_data.get("dob"),
-        gender=profile_data.get("gender"),
-        country=profile_data.get("country"),
-        blood_type=profile_data.get("bloodType"),
-        allergies=profile_data.get("allergies"),
-        emergency_contact=profile_data.get("emergencyContact"),
-        user=user
-    )
-
-    db.session.add(user)
-    db.session.add(profile)
-    db.session.commit()
-
-    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+bp = Blueprint("auth", __name__)
+api = Api(bp)
 
 
-    return jsonify({
-        "msg": "User created",
-        "access_token": access_token,
-        "user": user_schema.dump(user)
-    }), 201
+def user_public(user):
+    return {
+        "id": user.id,
+        "fullName": user.full_name,
+        "email": user.email,
+        "phoneNumber": user.phone_number,
+        "role": user.role,
+        "clinicId": user.clinic_id,
+        "profile": user.profile or {},
+        "savedClinics": user.saved_clinics or [],
+    }
 
 
-@bp.route("/login", methods=["POST"])
-def login():
-    json_data = request.get_json()
-    if not json_data or not json_data.get("email") or not json_data.get("password"):
-        return jsonify({"msg": "Missing email or password"}), 400
+class Register(Resource):
+    def post(self):
+        data = request.get_json() or {}
+        email = data.get("email")
+        if not email or not data.get("password"):
+            return {"msg": "email and password required"}, 400
+        if User.query.filter_by(email=email).first():
+            return {"msg": "email exists"}, 400
 
-    user = User.query.filter_by(email=json_data["email"]).first()
-    if not user or not check_password_hash(user.password_hash, json_data["password"]):
-        return jsonify({"msg": "Invalid credentials"}), 401
+        user = User(
+            full_name=data.get("fullName", ""),
+            email=email,
+            phone_number=data.get("phoneNumber"),
+            role=data.get("role", Role.PATIENT),
+            profile=data.get("profile", {}),
+            saved_clinics=data.get("savedClinics", []),
+        )
+        user.set_password(data.get("password"))
+        db.session.add(user)
+        db.session.commit()
 
-    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+        token = create_access_token(
+            identity=user.id, additional_claims={"role": user.role}
+        )
+        return {"access_token": token, "user": user_public(user)}, 201
 
 
-    return jsonify({
-        "msg": "Login successful",
-        "access_token": access_token,
-        "user": user_schema.dump(user)
-    }), 200
+class Login(Resource):
+    def post(self):
+        data = request.get_json() or {}
+        email = data.get("email")
+        password = data.get("password")
+        if not email or not password:
+            return {"msg": "missing credentials"}, 400
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            return {"msg": "bad credentials"}, 401
+        token = create_access_token(
+            identity=user.id, additional_claims={"role": user.role}
+        )
+        return {"access_token": token, "user": user_public(user)}, 200
 
 
-@bp.route("/me", methods=["GET"])
-@jwt_required()
-def me():
-    uid = get_jwt_identity()
-    user = User.query.get(uid)
-    if not user:
-        return jsonify({"msg": "User not found"}), 404
-    return jsonify(user_schema.dump(user))
+api.add_resource(Register, "/register")
+api.add_resource(Login, "/login")

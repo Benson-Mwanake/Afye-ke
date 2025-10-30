@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import BookingForm from "./BookingForm";
 import DashboardLayout from "../../hooks/layouts/DashboardLayout";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const ClinicDetail = () => {
   const { id } = useParams();

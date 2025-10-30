@@ -269,7 +269,7 @@ const AdminArticles = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("http://localhost:4000/articles");
+        const res = await fetch("http://127.0.0.1:5000/articles");
         if (!res.ok) throw new Error("Failed to fetch articles");
         const data = await res.json();
 
@@ -302,7 +302,7 @@ const AdminArticles = () => {
         summary: values.content.slice(0, 100) + "...",
         isTrending: !!values.isTrending,
       };
-      const res = await fetch("http://localhost:4000/articles", {
+      const res = await fetch("http://127.0.0.1:5000/articles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newArticle),
@@ -325,7 +325,7 @@ const AdminArticles = () => {
         isTrending: !!values.isTrending,
       };
       const res = await fetch(
-        `http://localhost:4000/articles/${editArticle.id}`,
+        `http://127.0.0.1:5000/articles/${editArticle.id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -347,7 +347,7 @@ const AdminArticles = () => {
 
   const handlePublish = async (id, published) => {
     try {
-      const res = await fetch(`http://localhost:4000/articles/${id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/articles/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ published: !published }),
@@ -362,7 +362,7 @@ const AdminArticles = () => {
   const handleToggleTrending = async (id, current) => {
     const newTrending = !current;
     try {
-      const res = await fetch(`http://localhost:4000/articles/${id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/articles/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isTrending: newTrending }),
@@ -383,7 +383,7 @@ const AdminArticles = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this article?")) return;
     try {
-      await fetch(`http://localhost:4000/articles/${id}`, {
+      await fetch(`http://127.0.0.1:5000/articles/${id}`, {
         method: "DELETE",
       });
       setArticles((prev) => prev.filter((a) => a.id !== id));

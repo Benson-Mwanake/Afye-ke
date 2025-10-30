@@ -65,7 +65,7 @@ const AdminApprovals = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("http://localhost:4000/clinics?status=pending");
+        const res = await fetch("http://127.0.0.1:5000/clinics?status=pending");
         if (!res.ok) throw new Error("Failed to fetch pending clinics");
         const data = await res.json();
         setClinics(data);
@@ -84,7 +84,7 @@ const AdminApprovals = () => {
 
   const handleApprove = async (id) => {
     try {
-      await fetch(`http://localhost:4000/clinics/${id}`, {
+      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "approved", verified: true }),
@@ -98,7 +98,7 @@ const AdminApprovals = () => {
   const handleReject = async (id) => {
     if (!window.confirm("Reject this clinic?")) return;
     try {
-      await fetch(`http://localhost:4000/clinics/${id}`, {
+      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected", verified: false }),

@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const ClinicAppointments = () => {
   const { user } = useAuth();

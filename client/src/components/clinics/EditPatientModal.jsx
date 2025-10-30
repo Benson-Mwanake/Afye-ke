@@ -43,7 +43,7 @@ const EditPatientModal = ({ patient, onClose, onSave }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/users/${patient.id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/users/${patient.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

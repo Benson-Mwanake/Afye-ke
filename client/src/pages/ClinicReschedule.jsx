@@ -14,7 +14,7 @@ const ClinicReschedule = () => {
 
   useEffect(() => {
     const fetchAppt = async () => {
-      const res = await fetch(`http://localhost:4000/appointments/${id}`);
+      const res = await fetch(`http://127.0.0.1:5000/appointments/${id}`);
       const data = await res.json();
       setAppt(data);
       setDate(data.date);
@@ -25,7 +25,7 @@ const ClinicReschedule = () => {
   }, [id]);
 
   const handleSave = async () => {
-    await fetch(`http://localhost:4000/appointments/${id}`, {
+    await fetch(`http://127.0.0.1:5000/appointments/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ date, time }),

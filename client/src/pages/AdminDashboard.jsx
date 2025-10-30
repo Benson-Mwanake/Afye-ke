@@ -128,10 +128,10 @@ const AdminDashboard = () => {
       try {
         const [clinicsRes, usersRes, appointmentsRes, articlesRes] =
           await Promise.all([
-            fetch("http://localhost:4000/clinics"),
-            fetch("http://localhost:4000/users"),
-            fetch("http://localhost:4000/appointments"),
-            fetch("http://localhost:4000/articles"),
+            fetch("http://127.0.0.1:5000/clinics"),
+            fetch("http://127.0.0.1:5000/users"),
+            fetch("http://127.0.0.1:5000/appointments"),
+            fetch("http://127.0.0.1:5000/articles"),
           ]);
 
         if (
@@ -199,7 +199,7 @@ const AdminDashboard = () => {
   // Actions
   const handleApprove = async (id) => {
     try {
-      await fetch(`http://localhost:4000/clinics/${id}`, {
+      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "approved", verified: true }),
@@ -217,7 +217,7 @@ const AdminDashboard = () => {
   const handleReject = async (id) => {
     if (!window.confirm("Reject this clinic?")) return;
     try {
-      await fetch(`http://localhost:4000/clinics/${id}`, {
+      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected", verified: false }),
