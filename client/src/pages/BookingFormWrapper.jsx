@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BookingForm from "../components/clinics/BookingForm";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 export default function BookingFormWrapper() {
   const { id } = useParams(); // ← "1", "p1", "1761381889773"

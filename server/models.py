@@ -1,30 +1,29 @@
-import uuid
-from extensions import db
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import UUID
+from extensions import db
+from sqlalchemy.dialects.postgresql import JSONB
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class Profile(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    dob = db.Column(db.String(20))
-    gender = db.Column(db.String(20))
-    country = db.Column(db.String(50))
-    blood_type = db.Column(db.String(5))
-    allergies = db.Column(db.String(255))
-    emergency_contact = db.Column(db.String(255))
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"), nullable=False)
+class Role:
+    ADMIN = "admin"
+    MANAGER = "manager"
+    CLINIC = "clinic"
+    PATIENT = "patient"
 
 
 class User(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    full_name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20))
-    password_hash = db.Column(db.String(512))
-    role = db.Column(db.String(20), nullable=False)
-    clinic_id = db.Column(UUID(as_uuid=True), db.ForeignKey("clinic.id"), nullable=True)
-    profile = db.relationship("Profile", backref="user", uselist=False)
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    full_name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone_number = db.Column(db.String(50))
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(50), default=Role.PATIENT)
+    profile = db.Column(JSONB, default={})
+    clinic_id = db.Column(db.Integer, nullable=True)
+    saved_clinics = db.Column(JSONB, default=[])
+    blocked = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -34,63 +33,73 @@ class User(db.Model):
 
 
 class Clinic(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = db.Column(db.String(100))
+    __tablename__ = "clinics"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255))
-    coordinates = db.Column(db.PickleType)
-    services = db.Column(db.PickleType)
-    rating = db.Column(db.Float, default=0)
-    reviews = db.Column(db.Integer, default=0)
-    phone = db.Column(db.String(20))
-    email = db.Column(db.String(100))
-    operating_hours = db.Column(db.String(50))
+    coordinates = db.Column(JSONB)
+    services = db.Column(JSONB)
+    rating = db.Column(db.Float)
+    reviews = db.Column(db.Integer)
+    phone = db.Column(db.String(50))
+    email = db.Column(db.String(120))
+    operating_hours = db.Column(JSONB)
     verified = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(20), default="pending")
+    status = db.Column(db.String(50))
+    doctors = db.Column(JSONB)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    images = db.relationship("Image", backref="clinic", lazy="select")
 
 
-class Booking(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    patient_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user.id"))
-    clinic_id = db.Column(UUID(as_uuid=True), db.ForeignKey("clinic.id"))
-    clinic_name = db.Column(db.String(100))
-    doctor = db.Column(db.String(100))
-    service = db.Column(db.String(100))
-    date = db.Column(db.String(20))
-    time = db.Column(db.String(10))
-    status = db.Column(db.String(20), default="Pending")
-    notes = db.Column(db.String(255))
-
-
-class CHV(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    full_name = db.Column(db.String(100))
-    phone_number = db.Column(db.String(20))
-    assigned_patients = db.Column(db.PickleType)
+class Appointment(db.Model):
+    __tablename__ = "appointments"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    patient_id = db.Column(db.Integer, nullable=False)
+    clinic_id = db.Column(db.Integer, nullable=False)
+    clinic_name = db.Column(db.String(255))
+    doctor = db.Column(db.String(255))
+    service = db.Column(db.String(255))
+    date = db.Column(db.String(50))
+    time = db.Column(db.String(50))
+    status = db.Column(db.String(50))
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Article(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = db.Column(db.String(255))
-    category = db.Column(db.String(50))
-    author = db.Column(db.String(100))
-    date = db.Column(db.String(20))
-    read_time = db.Column(db.String(20))
-    image = db.Column(db.String(255))
-    summary = db.Column(db.String(255))
+    __tablename__ = "articles"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(500))
+    category = db.Column(db.String(200))
+    author = db.Column(db.String(200))
+    date = db.Column(db.String(50))
+    read_time = db.Column(db.String(50))
+    image = db.Column(db.String(500))
+    summary = db.Column(db.Text)
     content = db.Column(db.Text)
     published = db.Column(db.Boolean, default=True)
+    is_trending = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Many-to-many table for saved clinics
-saved_clinics = db.Table(
-    "saved_clinics",
-    db.Column("user_id", UUID(as_uuid=True), db.ForeignKey("user.id"), primary_key=True),
-    db.Column("clinic_id", UUID(as_uuid=True), db.ForeignKey("clinic.id"), primary_key=True)
-)
 
-# Add this inside the User class (after profile relationship)
-User.saved_clinics = db.relationship(
-    "Clinic",
-    secondary=saved_clinics,
-    backref=db.backref("saved_by_users", lazy="dynamic")
-)
+class Image(db.Model):
+    __tablename__ = "images"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    public_id = db.Column(db.String(255))
+    url = db.Column(db.String(500))
+    width = db.Column(db.Integer)
+    height = db.Column(db.Integer)
+    clinic_id = db.Column(db.Integer, db.ForeignKey("clinics.id"), nullable=True)
+    uploaded_by = db.Column(db.Integer, nullable=True)
+    meta_data = db.Column(JSONB)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class SymptomHistory(db.Model):
+    __tablename__ = "symptom_history"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    symptoms = db.Column(db.Text)
+    result = db.Column(JSONB)
+    timestamp = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

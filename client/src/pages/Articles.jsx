@@ -4,7 +4,7 @@ import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { BookOpen, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const ArticleCard = ({ id, title, summary, readTime }) => {
   const navigate = useNavigate();

@@ -14,7 +14,7 @@ const ClinicSchedule = () => {
     const fetchAppts = async () => {
       if (!user?.clinicId) return;
       const res = await fetch(
-        `http://localhost:4000/appointments?clinicId=${user.clinicId}`
+        `http://127.0.0.1:5000/appointments?clinicId=${user.clinicId}`
       );
       const data = await res.json();
       setAppointments(data);

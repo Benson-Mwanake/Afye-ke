@@ -59,7 +59,7 @@ const AdminReports = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("http://localhost:4000/appointments");
+        const res = await fetch("http://127.0.0.1:5000/appointments");
         if (!res.ok) throw new Error("Failed to fetch appointments");
         const data = await res.json();
         setAppointments(data);

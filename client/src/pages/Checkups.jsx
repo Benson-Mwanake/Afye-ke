@@ -5,7 +5,7 @@ import { Calendar, AlertCircle, CheckCircle, Plus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "http://127.0.0.1:5000";
 
 const CheckupItem = ({ title, date, status, clinic, onBook }) => {
   const isDone = status === "Completed";

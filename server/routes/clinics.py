@@ -1,97 +1,70 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
+from flask_restful import Api, Resource
 from extensions import db
-from models import Clinic, User
+from models import Clinic
 from schemas import ClinicSchema
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from functools import wraps
-import uuid
+from utils import rbac_required, paginate_query
 
-bp = Blueprint("clinics", __name__, url_prefix="/api/clinics")
+bp = Blueprint("clinics", __name__)
+api = Api(bp)
+
 clinic_schema = ClinicSchema()
-clinic_list_schema = ClinicSchema(many=True)
+clinics_schema = ClinicSchema(many=True)
 
-# ---------------------------
-# Decorators
-# ---------------------------
-def admin_required(fn):
-    @wraps(fn)
-    @jwt_required()
-    def wrapper(*args, **kwargs):
-        claims = get_jwt()
-        if claims.get("role") != "admin":
-            return jsonify({"msg": "Admins only"}), 403
-        return fn(*args, **kwargs)
-    return wrapper
 
-# ---------------------------
-# Routes
-# ---------------------------
+class ClinicsList(Resource):
+    def get(self):
+        # Support _limit for frontend health probe
+        limit = request.args.get("_limit")
+        if limit:
+            try:
+                items = Clinic.query.limit(int(limit)).all()
+                return clinics_schema.dump(items)
+            except:
+                pass
+        page = request.args.get("page", 1)
+        per_page = request.args.get("per_page")
+        q = Clinic.query.order_by(Clinic.name)
+        p = paginate_query(q, page, per_page)
+        return {
+            "items": clinics_schema.dump(p["items"]),
+            "total": p["total"],
+            "pages": p["pages"],
+            "page": p["page"],
+            "per_page": p["per_page"],
+        }
 
-# GET all clinics (any logged-in user)
-@bp.route("/", methods=["GET"])
-def list_clinics():
-    clinics = Clinic.query.all()
-    return jsonify(clinic_list_schema.dump(clinics))
-
-# GET single clinic by UUID (any logged-in user)
-@bp.route("/<uuid:clinic_id>", methods=["GET"])
-def get_clinic(clinic_id):
-    clinic = Clinic.query.get_or_404(clinic_id)
-    return jsonify(clinic_schema.dump(clinic))
-
-# Toggle save clinic for a user (any logged-in user)
-@bp.route("/<uuid:clinic_id>/save", methods=["POST"])
-@jwt_required()
-def toggle_save_clinic(clinic_id):
-    uid = get_jwt_identity()
-    user = User.query.get(uid)
-    clinic = Clinic.query.get_or_404(clinic_id)
-    if clinic in user.saved_clinics:
-        user.saved_clinics.remove(clinic)
+    @rbac_required("clinics:write")
+    def post(self):
+        data = request.get_json() or {}
+        clinic = clinic_schema.load(data)
+        db.session.add(clinic)
         db.session.commit()
-        return jsonify({"msg": "Clinic removed from saved list"})
-    else:
-        user.saved_clinics.append(clinic)
+        return clinic_schema.dump(clinic), 201
+
+
+class ClinicDetail(Resource):
+    def get(self, clinic_id):
+        c = Clinic.query.get_or_404(clinic_id)
+        return clinic_schema.dump(c), 200
+
+    @rbac_required("clinics:write")
+    def patch(self, clinic_id):
+        c = Clinic.query.get_or_404(clinic_id)
+        data = request.get_json() or {}
+        for k, v in data.items():
+            if hasattr(c, k):
+                setattr(c, k, v)
         db.session.commit()
-        return jsonify({"msg": "Clinic saved"})
+        return clinic_schema.dump(c), 200
 
-# Create a new clinic (admin only)
-@bp.route("/", methods=["POST"])
-@admin_required
-def create_clinic():
-    json_data = request.get_json()
-    if not json_data:
-        return jsonify({"msg": "No input provided"}), 400
-    try:
-        clinic = clinic_schema.load(json_data, session=db.session)
-    except Exception as e:
-        return jsonify({"msg": "Validation error", "errors": str(e)}), 400
+    @rbac_required("clinics:write")
+    def delete(self, clinic_id):
+        c = Clinic.query.get_or_404(clinic_id)
+        db.session.delete(c)
+        db.session.commit()
+        return {"msg": "deleted"}, 204
 
-    db.session.add(clinic)
-    db.session.commit()
-    return jsonify(clinic_schema.dump(clinic)), 201
 
-# Update clinic (admin only)
-@bp.route("/<uuid:clinic_id>", methods=["PUT"])
-@admin_required
-def update_clinic(clinic_id):
-    clinic = Clinic.query.get_or_404(clinic_id)
-    json_data = request.get_json()
-    if not json_data:
-        return jsonify({"msg": "No input provided"}), 400
-    try:
-        updated_clinic = clinic_schema.load(json_data, instance=clinic, session=db.session)
-    except Exception as e:
-        return jsonify({"msg": "Validation error", "errors": str(e)}), 400
-
-    db.session.commit()
-    return jsonify(clinic_schema.dump(updated_clinic)), 200
-
-# Delete clinic (admin only)
-@bp.route("/<uuid:clinic_id>", methods=["DELETE"])
-@admin_required
-def delete_clinic(clinic_id):
-    clinic = Clinic.query.get_or_404(clinic_id)
-    db.session.delete(clinic)
-    db.session.commit()
-    return jsonify({"msg": "Clinic deleted"}), 200
+api.add_resource(ClinicsList, "/")
+api.add_resource(ClinicDetail, "/<int:clinic_id>")

@@ -1,13 +1,24 @@
 import os
-from datetime import timedelta
+from dotenv import load_dotenv
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+load_dotenv()
+
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-please-change")
+    FLASK_ENV = os.getenv("FLASK_ENV", "development")
+    SECRET_KEY = os.getenv("SECRET_KEY", "change-me")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-change-me")
+
+    # Use the DB URL you provided
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "postgresql://jesse:qwerty@localhost:5432/afya_ke"
+        "DATABASE_URL",
+        "postgresql+psycopg2://postgres:password@localhost:5432/afyalink",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-change-me")
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
+    ITEMS_PER_PAGE = int(os.getenv("ITEMS_PER_PAGE", 12))
+
+    # SendGrid & Cloudinary (disabled/mocked by default)
+    SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
+    CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
+    CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")
+    CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
