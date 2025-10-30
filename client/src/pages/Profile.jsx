@@ -212,8 +212,8 @@ const PatientProfile = () => {
       phone: user?.phoneNumber || "",
       dob: user?.profile?.dob || "",
       gender: user?.profile?.gender || "",
-      country: user?.profile?.country || "",
-      bloodType: user?.profile?.bloodType || "Unknown",
+      country: user?.profile?.country || "Kenya",
+      bloodType: user?.profile?.bloodType || "B positive",
       allergies: user?.profile?.allergies || "",
       emergencyContact: user?.profile?.emergencyContact || "",
     });
