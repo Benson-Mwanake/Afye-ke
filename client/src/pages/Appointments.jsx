@@ -105,7 +105,7 @@ const Appointments = () => {
                 No appointments scheduled yet.
               </p>
               <p className="text-sm text-gray-400 mt-2">
-                Book an appointment to get started.
+                Go to your dashboard to view your Appointments.
               </p>
             </div>
           )}

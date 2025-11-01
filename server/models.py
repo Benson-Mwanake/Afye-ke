@@ -2,6 +2,7 @@ from datetime import datetime
 from extensions import db
 from sqlalchemy.dialects.postgresql import JSONB
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 class Role:
@@ -49,7 +50,10 @@ class Clinic(db.Model):
     doctors = db.Column(JSONB)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     images = db.relationship("Image", backref="clinic", lazy="select")
-    password = db.Column(db.String(200))  # hashed password ideally
+    password = db.Column(db.String(200))
+    opening_time = db.Column(db.String, nullable=True)
+    closing_time = db.Column(db.String, nullable=True)
+  # hashed password ideally
 
 
 class Appointment(db.Model):
@@ -105,16 +109,41 @@ class SymptomHistory(db.Model):
     timestamp = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Review(db.Model):
+    __tablename__ = "reviews"
+    id = db.Column(db.Integer, primary_key=True)
+    clinic_id = db.Column(db.Integer, db.ForeignKey("clinics.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    comment = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+from extensions import db
+from datetime import datetime
 
 class Report(db.Model):
-    __tablename__ = "reports"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(200), nullable=False)
-    category = db.Column(db.String(100), nullable=False)
-    author = db.Column(db.String(100), nullable=False)
+    __tablename__ = 'reports'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    category = db.Column(db.String(80))
+    summary = db.Column(db.Text)
+    content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    summary = db.Column(db.Text, nullable=True)
-    content = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(50), default="Pending")
+
+    # Foreign keys
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    clinic_id = db.Column(db.Integer, db.ForeignKey('clinics.id'), nullable=True)
+
+    # Relationships
+    user = db.relationship("User", backref="reports", lazy=True)
+    clinic = db.relationship("Clinic", backref="reports", lazy=True)
 
     def __repr__(self):
         return f"<Report {self.title}>"
+
+    
+
+    

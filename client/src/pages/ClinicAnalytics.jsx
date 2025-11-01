@@ -38,8 +38,18 @@ const ClinicAnalytics = () => {
       }
 
       try {
-        const res = await fetch(`${API_URL}/appointments?clinicId=${clinicId}`);
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${API_URL}/appointments?clinicId=${clinicId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error(`Failed to fetch appointments: ${res.status}`);
+
         const appts = await res.json();
+
+        if (!Array.isArray(appts)) {
+          throw new Error("Invalid appointments data from server");
+        }
 
         const monthly = Array(12).fill(0);
         const services = {};
@@ -67,21 +77,10 @@ const ClinicAnalytics = () => {
         });
 
         const monthNames = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
         ];
 
-        // TOP 6 SERVICES (for vertical chart)
         const serviceData = Object.entries(services)
           .map(([name, value]) => ({
             name: name.length > 20 ? name.substring(0, 17) + "..." : name,
@@ -199,43 +198,36 @@ const ClinicAnalytics = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* TOP SERVICES – HORIZONTAL BARS, NAME + BAR */}
+          {/* Top Services */}
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Top Services
             </h2>
 
             <div className="space-y-4">
-              {stats.services.map((service, index) => (
-                <div key={index} className="flex items-center space-x-4">
-                  {/* Service Name */}
-                  <div className="w-40 text-sm font-medium text-gray-700 truncate">
-                    {service.name}
-                  </div>
-
-                  {/* Bar */}
-                  <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden">
-                    <div
-                      className="absolute top-0 left-0 h-full bg-green-500 rounded-full flex items-center justify-end pr-2 text-white text-xs font-bold"
-                      style={{
-                        width: `${
-                          (service.value /
-                            Math.max(
-                              ...stats.services.map((s) => s.value),
-                              1
-                            )) *
-                          100
-                        }%`,
-                      }}
-                    >
-                      {service.value}
+              {stats.services.length > 0 ? (
+                stats.services.map((service, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <div className="w-40 text-sm font-medium text-gray-700 truncate">
+                      {service.name}
+                    </div>
+                    <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                      <div
+                        className="absolute top-0 left-0 h-full bg-green-500 rounded-full flex items-center justify-end pr-2 text-white text-xs font-bold"
+                        style={{
+                          width: `${
+                            (service.value /
+                              Math.max(...stats.services.map((s) => s.value), 1)) *
+                            100
+                          }%`,
+                        }}
+                      >
+                        {service.value}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-
-              {/* Fallback if no data */}
-              {stats.services.length === 0 && (
+                ))
+              ) : (
                 <p className="text-center text-gray-500 py-8">
                   No appointments yet
                 </p>
@@ -251,11 +243,7 @@ const ClinicAnalytics = () => {
               Appointment Status
             </h2>
             <div className="flex flex-col md:flex-row items-center gap-8">
-              <ResponsiveContainer
-                width="100%"
-                height={280}
-                className="max-w-xs"
-              >
+              <ResponsiveContainer width="100%" height={280} className="max-w-xs">
                 <PieChart>
                   <Pie
                     data={stats.statusBreakdown}
@@ -281,13 +269,9 @@ const ClinicAnalytics = () => {
                         className="w-4 h-4 rounded-full"
                         style={{ backgroundColor: COLORS[i % COLORS.length] }}
                       />
-                      <span className="font-medium text-gray-700">
-                        {item.name}
-                      </span>
+                      <span className="font-medium text-gray-700">{item.name}</span>
                     </div>
-                    <span className="font-bold text-gray-900">
-                      {item.value}
-                    </span>
+                    <span className="font-bold text-gray-900">{item.value}</span>
                   </div>
                 ))}
               </div>

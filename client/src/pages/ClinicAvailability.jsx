@@ -7,23 +7,17 @@ import {
   Filter,
   CheckCircle,
   XCircle,
-  Edit3,
-  User,
-  Phone,
-  Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
-
-const API_URL = "http://127.0.0.1:5000";
+import api from "../services/api"; // <-- your axios instance
 
 const ClinicAppointments = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [appointments, setAppointments] = useState([]);
-  const [patientsMap, setPatientsMap] = useState({});
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterDate, setFilterDate] = useState("");
@@ -37,19 +31,9 @@ const ClinicAppointments = () => {
       }
 
       try {
-        const [apptRes, patientRes] = await Promise.all([
-          fetch(`${API_URL}/appointments?clinicId=${user.clinicId}`),
-          fetch(`${API_URL}/users?role=patient`),
-        ]);
-
-        const [appts, patients] = await Promise.all([
-          apptRes.json(),
-          patientRes.json(),
-        ]);
-
-        const map = {};
-        patients.forEach((p) => (map[p.id] = p));
-        setPatientsMap(map);
+        // Fetch appointments for this clinic (backend should include patientName)
+        const res = await api.get(`/appointments?clinicId=${user.clinicId}`);
+        const appts = Array.isArray(res.data) ? res.data : [];
 
         // Sort by date and time
         const sorted = appts.sort((a, b) => {
@@ -70,6 +54,7 @@ const ClinicAppointments = () => {
   }, [user]);
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-GB", {
       weekday: "short",
@@ -80,40 +65,44 @@ const ClinicAppointments = () => {
   };
 
   const formatTime = (time) => {
+    if (!time) return "—";
     const [h, m] = time.split(":");
     const hour = parseInt(h);
     return `${hour > 12 ? hour - 12 : hour}:${m} ${hour >= 12 ? "PM" : "AM"}`;
   };
 
   const handleComplete = async (id) => {
-    await fetch(`${API_URL}/appointments/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "Completed" }),
-    });
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Completed" } : a))
-    );
+    try {
+      await api.patch(`/appointments/${id}`, { status: "Completed" });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status: "Completed" } : a))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to mark appointment as completed");
+    }
   };
 
   const handleCancel = async (id) => {
     if (!window.confirm("Cancel this appointment?")) return;
-    await fetch(`${API_URL}/appointments/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "Cancelled" }),
-    });
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Cancelled" } : a))
-    );
+    try {
+      await api.patch(`/appointments/${id}`, { status: "Cancelled" });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status: "Cancelled" } : a))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to cancel appointment");
+    }
   };
 
   const filtered = appointments.filter((appt) => {
-    const patient = patientsMap[appt.patientId] || {};
+    const patientName = appt.patientName || "Unknown";
+
     const matchesSearch =
-      (patient.fullName || "").toLowerCase().includes(search.toLowerCase()) ||
-      (patient.email || "").toLowerCase().includes(search.toLowerCase()) ||
-      (patient.phoneNumber || "").includes(search);
+      patientName.toLowerCase().includes(search.toLowerCase()) ||
+      (appt.patientEmail || "").toLowerCase().includes(search.toLowerCase()) ||
+      (appt.patientPhone || "").includes(search);
 
     const matchesStatus =
       filterStatus === "all" || appt.status === filterStatus;
@@ -205,7 +194,7 @@ const ClinicAppointments = () => {
           ) : (
             <div className="space-y-4">
               {filtered.map((appt) => {
-                const patient = patientsMap[appt.patientId] || {};
+                const patientName = appt.patientName || "Unknown";
                 const isPast =
                   new Date(appt.date) < new Date().setHours(0, 0, 0, 0);
                 const isToday =
@@ -230,111 +219,18 @@ const ClinicAppointments = () => {
                     key={appt.id}
                     className="border rounded-lg p-4 hover:shadow-md transition"
                   >
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0">
-                      {/* Left: Patient & Service */}
-                      <div className="flex items-start space-x-4 flex-1">
-                        <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                          {(patient.fullName || "?")
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase()}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">
-                            {patient.fullName || "Unknown Patient"}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {appt.service || "General Checkup"}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-1">
-                            <span className="flex items-center">
-                              <Calendar className="w-3.5 h-3.5 mr-1" />
-                              {formatDate(appt.date)}
-                            </span>
-                            <span className="flex items-center">
-                              <Clock className="w-3.5 h-3.5 mr-1" />
-                              {formatTime(appt.time)}
-                            </span>
-                            {isToday && (
-                              <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                                Today
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {patientName}
+                        </p>
+                        <p className="text-sm text-gray-500">{appt.service}</p>
+                        <p className="text-sm text-gray-500">{formatDate(appt.date)} at {formatTime(appt.time)}</p>
                       </div>
-
-                      {/* Right: Status & Actions */}
-                      <div className="flex items-center space-x-3">
-                        <span
-                          className={`flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}
-                        >
-                          {statusIcon}
-                          <span>{appt.status}</span>
-                        </span>
-
-                        {appt.status === "Pending" ||
-                        appt.status === "Confirmed" ? (
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleComplete(appt.id)}
-                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
-                              title="Complete"
-                            >
-                              <CheckCircle className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => handleCancel(appt.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                              title="Cancel"
-                            >
-                              <XCircle className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                navigate(`/clinic-reschedule/${appt.id}`)
-                              }
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                              title="Reschedule"
-                            >
-                              <Edit3 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              navigate(`/clinic-reschedule/${appt.id}`)
-                            }
-                            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
-                            title="Reschedule"
-                          >
-                            <Edit3 className="w-5 h-5" />
-                          </button>
-                        )}
+                      <div className={`px-3 py-1 rounded-full text-sm font-medium ${statusClass} flex items-center space-x-1`}>
+                        {statusIcon}
+                        <span>{appt.status}</span>
                       </div>
-                    </div>
-
-                    {/* Patient Contact (mobile) */}
-                    <div className="md:hidden mt-3 pt-3 border-t border-gray-100 text-sm text-gray-600">
-                      <p className="flex items-center">
-                        <Mail className="w-3.5 h-3.5 mr-1" /> {patient.email}
-                      </p>
-                      <p className="flex items-center mt-1">
-                        <Phone className="w-3.5 h-3.5 mr-1" />{" "}
-                        {patient.phoneNumber}
-                      </p>
-                    </div>
-
-                    {/* Patient Contact (desktop) */}
-                    <div className="hidden md:flex justify-end space-x-4 text-sm text-gray-600 mt-3">
-                      <span className="flex items-center">
-                        <Mail className="w-3.5 h-3.5 mr-1" /> {patient.email}
-                      </span>
-                      <span className="flex items-center">
-                        <Phone className="w-3.5 h-3.5 mr-1" />{" "}
-                        {patient.phoneNumber}
-                      </span>
                     </div>
                   </div>
                 );

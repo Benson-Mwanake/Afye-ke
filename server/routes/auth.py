@@ -15,6 +15,7 @@ def register():
     data = request.get_json()
     full_name = data.get("full_name")
     email = data.get("email")
+    phone_number = data.get("phone_number") or data.get("phoneNumber")  # ✅ phone support
     password = data.get("password")
     role = data.get("role", Role.PATIENT)
 
@@ -28,6 +29,7 @@ def register():
     user = User(
         full_name=full_name,
         email=email,
+        phone_number=phone_number,  # ✅ Added this line to save phone number
         password_hash=hashed_password,
         role=role
     )
@@ -38,7 +40,7 @@ def register():
         clinic = Clinic(
             name=clinic_name,
             location=data.get("location", ""),
-            phone=data.get("phone", ""),
+            phone=data.get("phone", phone_number or ""),  # ✅ fallback to same phone number
             email=email,
             password=password  # optional, only for reference
         )
@@ -61,10 +63,12 @@ def register():
             "id": user.id,
             "full_name": user.full_name,
             "email": user.email,
+            "phone_number": user.phone_number,  # ✅ Added to response
             "role": user.role,
             "clinic_id": getattr(user, "clinic_id", None)
         }
     }), 201
+
 
 # LOGIN USER
 @bp.route("/login", methods=["POST"])
@@ -98,10 +102,12 @@ def login():
             "id": user.id,
             "full_name": user.full_name,
             "email": user.email,
+            "phone_number": user.phone_number,  # ✅ Added to response
             "role": user.role,
             "clinic_id": getattr(user, "clinic_id", None)
         }
     }), 200
+
 
 # PROFILE
 @bp.route("/profile", methods=["GET"])
@@ -116,6 +122,7 @@ def profile():
         "id": user.id,
         "full_name": user.full_name,
         "email": user.email,
+        "phone_number": user.phone_number,  # ✅ Added here too
         "role": user.role,
         "clinic_id": getattr(user, "clinic_id", None)
     }), 200

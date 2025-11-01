@@ -6,9 +6,7 @@ import {
   Clock3,
   CheckCircle,
   Star,
-  MapPin,
   Clock,
-  BarChart2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -16,9 +14,7 @@ import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 
 const API_URL = "http://127.0.0.1:5000";
 
-// ------------------------------------------------------------------
-// 1. Stat Card
-// ------------------------------------------------------------------
+// --- ClinicStatCard (no changes) ---
 const ClinicStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   const colorMap = {
     green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
@@ -52,9 +48,7 @@ const ClinicStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   );
 };
 
-// ------------------------------------------------------------------
-// 2. Appointment Row
-// ------------------------------------------------------------------
+// --- ClinicAppointmentRow (no changes) ---
 const ClinicAppointmentRow = ({
   patientName,
   initial,
@@ -125,104 +119,71 @@ const ClinicAppointmentRow = ({
   );
 };
 
-// ------------------------------------------------------------------
-// 3. Operating Hours Component
-// ------------------------------------------------------------------
-const OperatingHours = ({ hours }) => {
-  const today = new Date().toLocaleString("en-us", { weekday: "long" });
-
-  return (
-    <div className="space-y-1.5">
-      {hours.map((slot) => {
-        const isToday = slot.day === today;
-        const timeText = slot.closed ? "Closed" : `${slot.open} – ${slot.close}`;
-
-        return (
-          <div
-            key={slot.day}
-            className={`flex justify-between items-center py-1.5 px-2 rounded-md transition-all ${
-              isToday
-                ? "bg-blue-50 border-l-4 border-blue-500 font-semibold"
-                : "hover:bg-gray-50"
-            }`}
-          >
-            <span className={`text-sm ${isToday ? "text-blue-900" : "text-gray-700"}`}>
-              {slot.day}
-            </span>
-            <span
-              className={`text-sm font-medium ${
-                slot.closed ? "text-red-600" : isToday ? "text-blue-700" : "text-gray-800"
-              }`}
-            >
-              {timeText}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-// ------------------------------------------------------------------
-// 4. Main Dashboard
-// ------------------------------------------------------------------
+// --- Main Dashboard ---
 const ClinicDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [clinic, setClinic] = useState(null);
   const [appointments, setAppointments] = useState([]);
-  const [patientsMap, setPatientsMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("authToken");
 
+  const loadData = async () => {
+    if (!user?.clinicId) return;
+
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [clinicRes, apptRes] = await Promise.all([
+        fetch(`${API_URL}/clinics/${user.clinicId}`, { headers }),
+        fetch(`${API_URL}/appointments?clinicId=${user.clinicId}`, { headers }),
+      ]);
+
+      if (!clinicRes.ok) throw new Error("Failed to fetch clinic");
+
+      const clinicData = await clinicRes.json();
+      const appts = await apptRes.json();
+
+      setClinic(clinicData);
+      setAppointments(appts);
+    } catch (err) {
+      console.error("Dashboard load error:", err);
+      alert(`Failed to load clinic dashboard: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      console.log("User object:", user); // Debug
-      if (!user?.clinicId) {
-        console.warn("No clinicId found for user.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [clinicRes, apptRes, patientRes] = await Promise.all([
-          fetch(`${API_URL}/clinics/${user.clinicId}`, { headers }),
-          fetch(`${API_URL}/appointments?clinicId=${user.clinicId}`, { headers }),
-          fetch(`${API_URL}/users?role=patient`, { headers }),
-        ]);
-
-        console.log("Clinic response status:", clinicRes.status);
-
-        if (!clinicRes.ok) {
-          throw new Error(`Failed to fetch clinic. Status: ${clinicRes.status}`);
-        }
-
-        const clinicData = await clinicRes.json();
-        const appts = await apptRes.json();
-        const patients = await patientRes.json();
-
-        const map = {};
-        patients.forEach((p) => (map[p.id] = p));
-        setPatientsMap(map);
-
-        setClinic(clinicData);
-        setAppointments(appts);
-      } catch (err) {
-        console.error("Dashboard load error:", err);
-        alert(`Failed to load clinic dashboard: ${err.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadData();
     const interval = setInterval(loadData, 30_000);
     return () => clearInterval(interval);
   }, [user, token]);
+
+  const updateAppointmentStatus = async (id, status) => {
+    try {
+      const res = await fetch(`${API_URL}/appointments/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update appointment");
+
+      // Update local state immediately
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status } : a))
+      );
+    } catch (err) {
+      console.error(err);
+      alert(`Error updating appointment: ${err.message}`);
+    }
+  };
 
   if (loading) {
     return (
@@ -242,15 +203,21 @@ const ClinicDashboard = () => {
     );
   }
 
+  const todayDate = new Date().toISOString().split("T")[0];
+  const uniquePatients = new Set(
+    appointments.map((a) => a.patientName || a.patientId)
+  );
+
   return (
     <ClinicDashboardLayout>
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Welcome, {clinic.name}</h1>
-        {/* Example stats */}
+
+        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <ClinicStatCard
             title="Total Patients"
-            value={new Set(appointments.map(a => a.patientId)).size}
+            value={uniquePatients.size}
             icon={Users}
             color="green"
             trendValue={`This week: ${appointments.length}`}
@@ -278,25 +245,27 @@ const ClinicDashboard = () => {
           />
         </div>
 
-        {/* Example appointments */}
+        {/* Today's Appointments */}
         <h2 className="text-xl font-semibold mb-4">Today's Appointments</h2>
-        {appointments.length === 0 ? (
+        {appointments.filter(a => a.date === todayDate).length === 0 ? (
           <p>No appointments scheduled for today.</p>
         ) : (
-          appointments.map((appt) => (
-            <ClinicAppointmentRow
-              key={appt.id}
-              patientName={patientsMap[appt.patientId]?.fullName || "Unknown"}
-              initial={patientsMap[appt.patientId]?.fullName?.[0] || "?"}
-              service={appt.service || "N/A"}
-              time={appt.time || "N/A"}
-              status={appt.status}
-              isToday={appt.date === new Date().toISOString().split("T")[0]}
-              onComplete={() => console.log("Complete", appt.id)}
-              onCancel={() => console.log("Cancel", appt.id)}
-              onReschedule={() => console.log("Reschedule", appt.id)}
-            />
-          ))
+          appointments
+            .filter(a => a.date === todayDate)
+            .map((appt) => (
+              <ClinicAppointmentRow
+                key={appt.id}
+                patientName={appt.patientName || "Unknown"}
+                initial={appt.patientName?.[0] || "?"}
+                service={appt.service || "N/A"}
+                time={appt.time || "N/A"}
+                status={appt.status}
+                isToday={true}
+                onComplete={() => updateAppointmentStatus(appt.id, "Completed")}
+                onCancel={() => updateAppointmentStatus(appt.id, "Cancelled")}
+                onReschedule={() => navigate(`/appointments/${appt.id}/reschedule`)}
+              />
+            ))
         )}
       </div>
     </ClinicDashboardLayout>

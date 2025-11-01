@@ -27,41 +27,39 @@ const AdminStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   );
 };
 
-const AdminCard = ({ title, subtitle, status, actions, children }) => {
-  return (
-    <div className="group bg-white p-4 rounded-xl shadow hover:shadow-xl transition-transform transform hover:-translate-y-1 cursor-pointer relative">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
-          {status && (
-            <span
-              className={`mt-1 inline-block px-2 py-0.5 rounded text-xs font-semibold ${
-                status === "pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : status === "rejected"
-                  ? "bg-red-100 text-red-700"
-                  : "bg-green-100 text-green-700"
-              }`}
-            >
-              {status}
-            </span>
-          )}
-        </div>
-        {actions && (
-          <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2">
-            {actions.map((action, i) => (
-              <button key={i} onClick={action.onClick} className={`text-sm font-medium ${action.color}`}>
-                {action.label}
-              </button>
-            ))}
-          </div>
+const AdminCard = ({ title, subtitle, status, actions, children }) => (
+  <div className="group bg-white p-4 rounded-xl shadow hover:shadow-xl transition-transform transform hover:-translate-y-1 cursor-pointer relative">
+    <div className="flex justify-between items-start">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
+        {status && (
+          <span
+            className={`mt-1 inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+              status === "pending"
+                ? "bg-yellow-100 text-yellow-700"
+                : status === "rejected"
+                ? "bg-red-100 text-red-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
+            {status}
+          </span>
         )}
       </div>
-      {children && <div className="mt-2">{children}</div>}
+      {actions && (
+        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2">
+          {actions.map((action, i) => (
+            <button key={i} onClick={action.onClick} className={`text-sm font-medium ${action.color}`}>
+              {action.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
-  );
-};
+    {children && <div className="mt-2">{children}</div>}
+  </div>
+);
 
 // --- Edit Article Modal ---
 const EditArticleModal = ({ article, onClose, onSave }) => {
@@ -132,24 +130,25 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return;
+      setLoading(true);
       try {
-        const [clinicsRes, articlesRes, usersRes, reportsRes, appointmentsRes] = await Promise.all([
-          fetch("http://127.0.0.1:5000/clinics", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:5000/articles", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:5000/users", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:5000/reports", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://127.0.0.1:5000/appointments", { headers: { Authorization: `Bearer ${token}` } }),
-        ]);
-
-        if (!clinicsRes.ok || !articlesRes.ok || !usersRes.ok || !reportsRes.ok || !appointmentsRes.ok)
-          throw new Error("Failed to fetch data");
+        const fetchWithCatch = async url => {
+          try {
+            const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+            return await res.json();
+          } catch (err) {
+            console.error(err);
+            return [];
+          }
+        };
 
         const [clinicsData, articlesData, usersData, reportsData, appointmentsData] = await Promise.all([
-          clinicsRes.json(),
-          articlesRes.json(),
-          usersRes.json(),
-          reportsRes.json(),
-          appointmentsRes.json(),
+          fetchWithCatch("http://127.0.0.1:5000/clinics"),
+          fetchWithCatch("http://127.0.0.1:5000/articles"),
+          fetchWithCatch("http://127.0.0.1:5000/users"),
+          fetchWithCatch("http://127.0.0.1:5000/reports"),
+          fetchWithCatch("http://127.0.0.1:5000/appointments"),
         ]);
 
         setClinics(clinicsData);
@@ -159,7 +158,6 @@ const AdminDashboard = () => {
         setAppointments(appointmentsData);
       } catch (err) {
         console.error("Dashboard load error:", err);
-        alert(`Failed to load data: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -252,9 +250,7 @@ const AdminDashboard = () => {
         </div>
       </section>
 
-      {/* --- Detailed Management Sections --- */}
-
-      {/* Clinics */}
+      {/* --- Clinics --- */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Clinic Approvals</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -271,7 +267,7 @@ const AdminDashboard = () => {
         </div>
       </section>
 
-      {/* Articles */}
+      {/* --- Articles --- */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Articles Management</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -288,7 +284,7 @@ const AdminDashboard = () => {
         </div>
       </section>
 
-      {/* Users */}
+      {/* --- Users --- */}
       <section className="mb-10">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Users</h2>
@@ -310,11 +306,11 @@ const AdminDashboard = () => {
         </div>
       </section>
 
-      {/* Reports */}
+      {/* --- Reports --- */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Reports</h2>
         {reports.length === 0 ? (
-          <p className="text-gray-500">Failed to fetch reports or none available</p>
+          <p className="text-gray-500">Reports not available</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {reports.map(r => (

@@ -18,16 +18,16 @@ const AdminApprovalRow = ({
       <div className="flex items-center space-x-4 flex-grow">
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold bg-blue-500">
           {clinicName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()}
+            ?.split(" ")
+            ?.map((n) => n[0])
+            ?.join("")
+            ?.toUpperCase() || "CL"}
         </div>
         <div className="flex-1">
           <h4 className="font-semibold text-gray-800">{clinicName}</h4>
           <p className="text-sm text-gray-600 line-clamp-1">{location}</p>
           <p className="text-sm text-gray-600 line-clamp-1">
-            {services.join(", ")}
+            {services?.join(", ") || "No services listed"}
           </p>
           <div className="flex items-center text-sm text-gray-500 mt-1">
             <Clock className="w-3 h-3 mr-1" />
@@ -62,6 +62,7 @@ const AdminApprovals = () => {
   const [clinics, setClinics] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Load pending clinics
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -78,33 +79,43 @@ const AdminApprovals = () => {
     };
 
     loadData();
-    const interval = setInterval(loadData, 30_000);
+    const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
   }, []);
 
+  // 🔹 Approve clinic
   const handleApprove = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "approved", verified: true }),
       });
+      if (!res.ok) throw new Error("Failed to approve clinic");
+
       setClinics((prev) => prev.filter((c) => c.id !== id));
+      alert("Clinic approved successfully ✅");
     } catch (err) {
-      alert("Failed to approve clinic");
+      console.error(err);
+      alert("Failed to approve clinic ❌");
     }
   };
 
+  // 🔹 Reject clinic
   const handleReject = async (id) => {
     if (!window.confirm("Reject this clinic?")) return;
     try {
-      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected", verified: false }),
       });
+      if (!res.ok) throw new Error("Failed to reject clinic");
+
       setClinics((prev) => prev.filter((c) => c.id !== id));
+      alert("Clinic rejected ❌");
     } catch (err) {
+      console.error(err);
       alert("Failed to reject clinic");
     }
   };

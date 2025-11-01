@@ -15,18 +15,51 @@ import api from "../services/api";
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [stats, setStats] = useState([]);
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [clinicsMap, setClinicsMap] = useState({});
 
-  // ✅ Centralized function to load appointments & stats
+  // ✅ Initialize stats with default structure
+  const [stats, setStats] = useState([
+    {
+      title: "Upcoming Appointments",
+      value: 0,
+      icon: Calendar,
+      color: "green",
+      trend: "No upcoming",
+    },
+    {
+      title: "Saved Clinics",
+      value: 0,
+      icon: MapPin,
+      color: "blue",
+      trend: "None saved",
+    },
+    {
+      title: "Articles Read",
+      value: 0,
+      icon: BookOpen,
+      color: "dark-green",
+      trend: "Stay informed!",
+    },
+    {
+      title: "Health Checkups",
+      value: 0,
+      icon: Heart,
+      color: "light-blue",
+      trend: "Due soon",
+    },
+  ]);
+
+  // ✅ Load appointments and update stats
   const loadAppointments = async () => {
     try {
       const res = await api.get(`/appointments?patientId=${user.id}`);
       const allAppts = res.data;
+
       const upcoming = allAppts.filter(a =>
         ["Confirmed", "Pending", "Scheduled"].includes(a.status)
       );
+
       const checkups = allAppts.filter(
         a =>
           a.status === "Completed" &&
@@ -37,24 +70,34 @@ const PatientDashboard = () => {
       setUpcomingAppointments(upcoming.slice(0, 3));
 
       setStats(prev =>
-        prev.map(s =>
-          s.title === "Upcoming Appointments"
-            ? {
-                ...s,
-                value: upcoming.length,
-                trend: upcoming.length ? `${upcoming.length} upcoming` : "No upcoming",
-              }
-            : s
-        )
+        prev.map(s => {
+          if (s.title === "Upcoming Appointments") {
+            return {
+              ...s,
+              value: upcoming.length,
+              trend: upcoming.length
+                ? `${upcoming.length} upcoming`
+                : "No upcoming",
+            };
+          }
+          if (s.title === "Health Checkups") {
+            return {
+              ...s,
+              value: checkups.length,
+              trend: checkups.length
+                ? `${checkups.length} this year`
+                : "Due soon",
+            };
+          }
+          return s;
+        })
       );
-
-      return { upcoming, checkups };
     } catch (err) {
       console.error("Failed to load appointments:", err);
     }
   };
 
-  // Fetch stats & appointments
+  // ✅ Fetch data for articles, clinics, and stats
   useEffect(() => {
     if (!user?.id) return;
 
@@ -62,12 +105,12 @@ const PatientDashboard = () => {
 
     const fetchData = async () => {
       try {
-        // Appointments
-        const { checkups } = await loadAppointments();
+        // Appointments first
+        await loadAppointments();
 
         // Articles
         const artRes = await api.get("/articles", { signal: ctrl.signal });
-        const published = artRes.data.filter(a => a.published).length;
+        const readCount = user.readArticles?.length || 0;
 
         // Clinics
         const clinRes = await api.get("/clinics", { signal: ctrl.signal });
@@ -75,55 +118,42 @@ const PatientDashboard = () => {
         clinRes.data.forEach(c => (map[c.id] = c.name));
         setClinicsMap(map);
 
-        // Stats
-        setStats(prev => [
-          {
-            title: "Upcoming Appointments",
-            value: prev.find(s => s.title === "Upcoming Appointments")?.value || 0,
-            icon: Calendar,
-            color: "green",
-            trend:
-              prev.find(s => s.title === "Upcoming Appointments")?.trend ||
-              "No upcoming",
-          },
-          {
-            title: "Saved Clinics",
-            value: user.savedClinics?.length || 0,
-            icon: MapPin,
-            color: "blue",
-            trend: user.savedClinics?.length
-              ? `${user.savedClinics.length} saved`
-              : "None saved",
-          },
-          {
-            title: "Articles Read",
-            value: published,
-            icon: BookOpen,
-            color: "dark-green",
-            trend: "Stay informed!",
-          },
-          {
-            title: "Health Checkups",
-            value: checkups.length,
-            icon: Heart,
-            color: "light-blue",
-            trend: checkups.length ? `${checkups.length} this year` : "Due soon",
-          },
-        ]);
+        // Merge stats
+        setStats(prev =>
+          prev.map(s => {
+            if (s.title === "Saved Clinics") {
+              return {
+                ...s,
+                value: user.savedClinics?.length || 0,
+                trend: user.savedClinics?.length
+                  ? `${user.savedClinics.length} saved`
+                  : "None saved",
+              };
+            }
+            if (s.title === "Articles Read") {
+              return {
+                ...s,
+                value: readCount,
+                trend: readCount ? `${readCount} read` : "Stay informed!",
+              };
+            }
+            return s;
+          })
+        );
       } catch (err) {
         if (err.name !== "AbortError") console.error(err);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 30_000);
+    const interval = setInterval(fetchData, 30000);
     return () => {
       ctrl.abort();
       clearInterval(interval);
     };
   }, [user]);
 
-  const handleCancelAppointment = async (id) => {
+  const handleCancelAppointment = async id => {
     if (!window.confirm("Cancel this appointment?")) return;
     try {
       await api.patch(`/appointments/${id}`, { status: "Cancelled" });
@@ -155,7 +185,9 @@ const PatientDashboard = () => {
     return (
       <div className={`${bg} p-6 rounded-xl shadow-lg flex flex-col justify-between h-full`}>
         <div className="flex items-center justify-between mb-2">
-          <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>{title}</h3>
+          <h3 className={`text-base sm:text-lg font-medium ${text} opacity-80`}>
+            {title}
+          </h3>
           <div className="p-2 rounded-full bg-white bg-opacity-20">
             <Icon className={`w-6 h-6 ${text}`} />
           </div>
@@ -171,8 +203,12 @@ const PatientDashboard = () => {
       <div className="flex items-start space-x-4">
         <BriefcaseMedical className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
         <div>
-          <h4 className="font-semibold text-gray-800">{clinicsMap[appt.clinicId] || "Clinic"}</h4>
-          <p className="text-sm text-gray-600"> {appt.doctorName} • {appt.service} </p>
+          <h4 className="font-semibold text-gray-800">
+            {clinicsMap[appt.clinicId] || "Clinic"}
+          </h4>
+          <p className="text-sm text-gray-600">
+            {appt.doctorName} • {appt.service}
+          </p>
           <div className="flex items-center text-sm text-gray-500 mt-1">
             <Clock className="w-3 h-3 mr-1" /> {appt.date} @ {appt.time}
           </div>
@@ -197,7 +233,7 @@ const PatientDashboard = () => {
 
   return (
     <DashboardLayout>
-      {/*  Welcome message */}
+      {/* Welcome message */}
       <div className="mb-6 text-lg font-semibold text-gray-700">
         Welcome back, {user.fullName}!
       </div>

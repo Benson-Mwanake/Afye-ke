@@ -15,34 +15,34 @@ export default function About() {
 
   const developers = [
     {
-      name: "John Mwangi",
+      name: "Benson Mwanake",
       role: "Lead Developer",
-      github: "https://github.com/johnmwangi",
+      github: "https://github.com/Benson-Mwanake",
     },
     {
-      name: "Amina Hassan",
+      name: "Lillian Cherono ",
       role: "UI/UX Designer",
-      github: "https://github.com/aminahassan",
+      github: "https://github.com/liliancherono",
     },
     {
-      name: "James Ochieng",
+      name: "Jesse Mwendwa Ndunda",
       role: "Backend Developer",
-      github: "https://github.com/jamesochieng",
+      github: "https://github.com/JesseMwendwaNdunda",
     },
   ];
 
   const leadership = [
     {
-      name: "Dr. Grace Wanjiru",
+      name: "Dr. Amina Mohammed",
       title: "Chief Medical Officer",
       bio: "Over 15 years in public health, specializing in rural healthcare.",
-      photo: "/images/dr-grace.jpg",
+      photo: "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGRvY3RvcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600",
     },
     {
       name: "Mr. Peter Kimani",
       title: "Operations Director",
       bio: "Expert in healthcare logistics with a decade of experience.",
-      photo: "/images/peter-kimani.jpg",
+      photo: "https://plus.unsplash.com/premium_photo-1682130171029-49261a5ba80a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bWFsZSUyMGJsYWNrJTIwJTIwZG9jdG9yfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
     },
   ];
 

@@ -65,8 +65,7 @@ const Signup = () => {
 
   const roles = [
     { label: "Patient", value: "patient" },
-    { label: "Clinic", value: "clinic" },
-    { label: "Admin", value: "admin" },
+    
   ];
 
   return (

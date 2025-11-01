@@ -30,26 +30,32 @@ const AdminReports = () => {
   return (
     <AdminLayout>
       <h1 className="text-2xl font-bold mb-4">Reports</h1>
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2 text-left">Title</th>
-            <th className="border px-4 py-2 text-left">Submitted By</th>
-            <th className="border px-4 py-2 text-left">Date</th>
-            <th className="border px-4 py-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reports.map(r => (
-            <tr key={r.id} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{r.title}</td>
-              <td className="border px-4 py-2">{r.submittedBy}</td>
-              <td className="border px-4 py-2">{new Date(r.date).toLocaleDateString()}</td>
-              <td className="border px-4 py-2">{r.status}</td>
+      {reports.length === 0 ? (
+        <p className="text-gray-500">No reports available</p>
+      ) : (
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2 text-left">Title</th>
+              <th className="border px-4 py-2 text-left">Submitted By</th>
+              <th className="border px-4 py-2 text-left">Date</th>
+              <th className="border px-4 py-2 text-left">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reports.map((r) => (
+              <tr key={r.id} className="hover:bg-gray-50">
+                <td className="border px-4 py-2">{r.title}</td>
+                <td className="border px-4 py-2">{r.submittedBy?.name || "Unknown"}</td>
+                <td className="border px-4 py-2">
+                  {r.date ? new Date(r.date).toLocaleDateString() : "N/A"}
+                </td>
+                <td className="border px-4 py-2">{r.status || "Pending"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </AdminLayout>
   );
 };

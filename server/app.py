@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from config import Config
-from extensions import db, ma, jwt
+from extensions import db, ma, jwt, migrate
 
 # Blueprints
 from routes.auth import bp as auth_bp
@@ -23,6 +23,7 @@ def create_app():
     db.init_app(app)
     ma.init_app(app)
     jwt.init_app(app)
+    migrate.init_app(app, db)
 
     @app.before_request
     def handle_preflight():

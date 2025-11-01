@@ -8,7 +8,7 @@ import EditPatientModal from "../components/clinics/EditPatientModal";
 const API_URL = "http://127.0.0.1:5000";
 
 const ClinicPatients = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth(); // make sure your context provides the JWT token
   const [patients, setPatients] = useState([]);
   const [lastVisitMap, setLastVisitMap] = useState({});
   const [search, setSearch] = useState("");
@@ -17,30 +17,55 @@ const ClinicPatients = () => {
 
   useEffect(() => {
     const fetchPatients = async () => {
-      if (!user?.clinicId) {
+      if (!user?.clinicId || !token) {
         setLoading(false);
         return;
       }
 
       try {
+        // 1️⃣ Fetch appointments with JWT header
         const apptRes = await fetch(
-          `${API_URL}/appointments?clinicId=${user.clinicId}`
+          `${API_URL}/appointments?clinicId=${user.clinicId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
+
+        if (!apptRes.ok) {
+          throw new Error(`Failed to fetch appointments: ${apptRes.status}`);
+        }
+
         const appts = await apptRes.json();
 
-        if (appts.length === 0) {
+        if (!Array.isArray(appts) || appts.length === 0) {
           setPatients([]);
           setLastVisitMap({});
           setLoading(false);
           return;
         }
 
+        // 2️⃣ Get unique patient IDs
         const patientIds = [...new Set(appts.map((a) => a.patientId))];
+
+        // 3️⃣ Fetch patient details with JWT header
         const patientRes = await fetch(
-          `${API_URL}/users?id=${patientIds.join("&id=")}&role=patient`
+          `${API_URL}/users?id=${patientIds.join("&id=")}&role=patient`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
+
+        if (!patientRes.ok) {
+          throw new Error(`Failed to fetch patients: ${patientRes.status}`);
+        }
+
         const patientData = await patientRes.json();
 
+        // 4️⃣ Map last visit dates
         const visitMap = {};
         appts.forEach((appt) => {
           const pid = appt.patientId;
@@ -54,14 +79,14 @@ const ClinicPatients = () => {
         setPatients(patientData);
       } catch (err) {
         console.error("Failed to load patients:", err);
-        alert("Error loading patients");
+        alert("Error loading patients: " + err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPatients();
-  }, [user]);
+  }, [user, token]);
 
   const filtered = patients.filter(
     (p) =>
@@ -70,7 +95,7 @@ const ClinicPatients = () => {
   );
 
   const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
+    if (!dateStr) return "Never visited";
     return new Date(dateStr).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -162,7 +187,6 @@ const ClinicPatients = () => {
                     </p>
                   </div>
 
-                  {/* Edit Button */}
                   <button
                     onClick={() => setEditingPatient(p)}
                     className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity text-green-600 hover:text-green-700"
@@ -177,7 +201,6 @@ const ClinicPatients = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {editingPatient && (
         <EditPatientModal
           patient={editingPatient}
