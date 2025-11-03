@@ -1,15 +1,6 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
 
-/**
- * A reusable card for quick actions/navigation links.
- * @param {object} props
- * @param {string} props.title - Title of the action.
- * @param {string} props.description - Short description of the action.
- * @param {LucideIcon} props.icon - Icon component.
- * @param {function} props.onClick - Click handler.
- * @param {string} props.colorClass - Tailwind class for icon color (e.g., 'text-green-600').
- */
 const ActionCard = ({
   title,
   description,

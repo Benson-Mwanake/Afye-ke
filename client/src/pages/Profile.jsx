@@ -140,12 +140,12 @@ const PatientProfile = () => {
     // PatientProfile.jsx
     const fetchAppointments = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // ← FIXED
+        const token = localStorage.getItem("authToken");
         const res = await fetch(
           `${API_URL}/appointments?patientId=${user.id}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // ← ADD THIS
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -171,7 +171,7 @@ const PatientProfile = () => {
   };
 
 const handleSave = async () => {
-  const token = localStorage.getItem("authToken"); // ← Use authToken
+  const token = localStorage.getItem("authToken");
   if (!token) return alert("Please log in again.");
 
   const updated = {

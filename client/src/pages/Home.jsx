@@ -69,13 +69,11 @@ const Home = () => {
       alert("Please enter a location or clinic name to search.");
     } else {
       alert(`Searching for clinics near "${searchQuery}"...`);
-      // Later: navigate(`/clinics?query=${searchQuery}`)
     }
   };
 
   const handleViewDetails = (clinicName) => {
     alert(`Opening details for ${clinicName}...`);
-    // Later: navigate(`/clinics/${id}`)
   };
 
   return (

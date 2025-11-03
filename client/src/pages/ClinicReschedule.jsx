@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Calendar, Clock, User, ArrowLeft } from "lucide-react";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
-import api from "../services/api"; // ← YOUR AXIOS INSTANCE WITH JWT
+import api from "../services/api";
 
 const ClinicReschedule = () => {
   const { id } = useParams();
@@ -17,7 +17,6 @@ const ClinicReschedule = () => {
   useEffect(() => {
     const fetchAppt = async () => {
       try {
-        // 1. Use api.get() → includes JWT
         const res = await api.get(`/appointments/${id}`);
         setAppt(res.data);
         setDate(res.data.date);
@@ -39,7 +38,6 @@ const ClinicReschedule = () => {
     }
 
     try {
-      // 2. Use api.patch() → includes JWT
       await api.patch(`/appointments/${id}`, { date, time });
       alert("Rescheduled successfully!");
       navigate("/clinic-dashboard");
@@ -65,7 +63,7 @@ const ClinicReschedule = () => {
         </h1>
 
         <div className="space-y-4">
-          {/* 3. FIXED: Show patientName, not clinicName */}
+          {/* 3 Show patientName, not clinicName */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Patient

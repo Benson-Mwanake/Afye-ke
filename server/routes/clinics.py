@@ -12,9 +12,7 @@ clinic_schema = ClinicSchema()
 clinics_schema = ClinicSchema(many=True)
 
 
-# ---------------------------------
-# 🔹 Helper: check if clinic is open now
-# ---------------------------------
+# Helper: check if clinic is open now
 def is_open_now(operating_hours):
     if not operating_hours:
         return False
@@ -33,9 +31,7 @@ def is_open_now(operating_hours):
     return False
 
 
-# ---------------------------------
-# 🔹 List all clinics with optional filters
-# ---------------------------------
+# List all clinics with optional filters
 @bp.route("/", methods=["GET"])
 def list_clinics():
     q = Clinic.query
@@ -53,9 +49,8 @@ def list_clinics():
 
     result = clinics_schema.dump(items)
 
-    # Add open_now and 24/7 flags dynamically
     for c in result:
-        hours = c.get("operating_hours") or []  # FIXED: DEFAULT TO []
+        hours = c.get("operating_hours") or []
         c["is_open_now"] = is_open_now(hours)
 
         c["is_24_7"] = len(hours) == 7 and all(
@@ -75,9 +70,7 @@ def list_clinics():
     return jsonify(result)
 
 
-# ---------------------------------
-# 🔹 Get single clinic by ID
-# ---------------------------------
+# Get single clinic by ID
 @bp.route("/<int:clinic_id>", methods=["GET"])
 def get_clinic(clinic_id):
     clinic = Clinic.query.get_or_404(clinic_id)
@@ -87,9 +80,7 @@ def get_clinic(clinic_id):
     return jsonify(data)
 
 
-# ---------------------------------
-# 🔹 Clinic login
-# ---------------------------------
+# Clinic login
 @bp.route("/login", methods=["POST"])
 def clinic_login():
     data = request.get_json()
@@ -124,9 +115,7 @@ def clinic_login():
     )
 
 
-# ---------------------------------
-# 🔹 Get all reviews for a specific clinic
-# ---------------------------------
+# Get all reviews for a specific clinic
 @bp.route("/<int:clinic_id>/reviews", methods=["GET"])
 def get_reviews(clinic_id):
     reviews = Review.query.filter_by(clinic_id=clinic_id).all()
@@ -144,9 +133,7 @@ def get_reviews(clinic_id):
     )
 
 
-# ---------------------------------
-# 🔹 Add a new review to a clinic
-# ---------------------------------
+# Add a new review to a clinic
 @bp.route("/<int:clinic_id>/reviews", methods=["POST"])
 def add_review(clinic_id):
     data = request.get_json()
@@ -170,9 +157,7 @@ def add_review(clinic_id):
     return jsonify({"message": "Review added successfully"}), 201
 
 
-# ---------------------------------
-# 🔹 PATCH route: Approve / Reject clinic (FIXED URL)
-# ---------------------------------
+# PATCH route: Approve / Reject clinic
 @bp.route("/<int:clinic_id>/status", methods=["PATCH"])
 def update_clinic_status(clinic_id):
     clinic = Clinic.query.get_or_404(clinic_id)
@@ -198,3 +183,4 @@ def update_clinic_status(clinic_id):
         ),
         200,
     )
+

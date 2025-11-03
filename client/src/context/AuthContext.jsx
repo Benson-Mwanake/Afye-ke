@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
 
-  // --- 1. INITIAL USER + TOKEN LOAD ---
+  // ---  INITIAL USER + TOKEN LOAD ---
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
     const storedToken = localStorage.getItem("authToken");
@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        setUser, // Expose setUser
+        setUser,
         token,
         loading,
         login,

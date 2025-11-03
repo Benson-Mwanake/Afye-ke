@@ -7,11 +7,9 @@ export const checkSystemHealth = async () => {
   const start = performance.now();
 
   try {
-    // 1. Check if server is up
     const res = await axios.get(`${API_BASE}/health`, { timeout: 5000 });
     const latency = Math.round(performance.now() - start);
 
-    // 2. Check DB by reading a small endpoint
     await axios.get(`${API_BASE}/clinics?_limit=1`, { timeout: 5000 });
 
     return {

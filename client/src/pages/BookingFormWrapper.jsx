@@ -6,7 +6,7 @@ import BookingForm from "../components/clinics/BookingForm";
 const API_URL = "http://127.0.0.1:5000";
 
 export default function BookingFormWrapper() {
-  const { id } = useParams(); // ← "1", "p1", "1761381889773"
+  const { id } = useParams();
   const navigate = useNavigate();
   const [clinic, setClinic] = useState(null);
   const [loading, setLoading] = useState(true);

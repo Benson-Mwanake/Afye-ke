@@ -79,7 +79,7 @@ const EditPatientModal = ({ patient, onClose, onSave }) => {
 
       if (!res.ok) {
         const err = await res.json();
-        console.error("Backend Error:", err); // Log the error for debugging
+        console.error("Backend Error:", err);
         throw new Error(err.msg || "Failed to save patient information.");
       }
 

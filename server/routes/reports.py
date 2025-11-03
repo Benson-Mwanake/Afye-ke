@@ -35,7 +35,7 @@ def get_reports():
 
     return jsonify(data), 200
 
-# ✅ Update report status (Pending → Reviewed)
+# Update report status (Pending → Reviewed)
 @bp.route("/<int:report_id>", methods=["PATCH"])
 @jwt_required()
 def update_report_status(report_id):

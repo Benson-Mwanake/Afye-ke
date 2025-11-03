@@ -51,9 +51,7 @@ export default function SavedClinics() {
   const [saved, setSaved] = useState([]);
   const [fetching, setFetching] = useState(true);
 
-  // -------------------------------------------------
-  // Load saved clinics only when auth is ready
-  // -------------------------------------------------
+
   useEffect(() => {
     if (authLoading || !user?.id) return;
 
@@ -87,17 +85,12 @@ export default function SavedClinics() {
     return () => ctrl.abort();
   }, [user, authLoading]);
 
-  // -------------------------------------------------
-  // Unsave handler – UI + server in one call
-  // -------------------------------------------------
+
   const handleUnsave = (clinicId) => {
     toggleSavedClinic(clinicId);
     setSaved((prev) => prev.filter((c) => c.id !== clinicId));
   };
 
-  // -------------------------------------------------
-  // Auth loading guard
-  // -------------------------------------------------
   if (authLoading) {
     return (
       <DashboardLayout>
@@ -124,9 +117,7 @@ export default function SavedClinics() {
     );
   }
 
-  // -------------------------------------------------
-  // Render
-  // -------------------------------------------------
+
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto py-8">

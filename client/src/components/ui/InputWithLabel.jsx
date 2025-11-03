@@ -1,17 +1,7 @@
 import React from "react";
 import { Edit } from "lucide-react";
 
-/**
- * InputWithLabel Component
- * Displays data in a read-only format or as an editable input field.
- *
- * @param {string} label - The label for the field (e.g., "Full Name").
- * @param {string} value - The current value of the field.
- * @param {boolean} isEditing - If true, displays an input field; otherwise, displays static text.
- * @param {function} onChange - Handler for input changes.
- * @param {string} type - Input type (e.g., 'text', 'email', 'date').
- * @param {boolean} disabled - Whether the input is disabled (used for read-only sections).
- */
+
 const InputWithLabel = ({
   label,
   value,
@@ -34,7 +24,7 @@ const InputWithLabel = ({
       ) : (
         <div
           className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 font-medium overflow-hidden truncate"
-          title={value} // Tooltip for truncated text
+          title={value} 
         >
           {value || <span className="text-gray-400 italic">N/A</span>}
         </div>

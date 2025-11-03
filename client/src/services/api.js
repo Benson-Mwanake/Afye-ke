@@ -6,10 +6,9 @@ const api = axios.create({
   timeout: 15000,
 });
 
-// Use the same key you save during login
 api.interceptors.request.use((cfg) => {
   try {
-    const token = localStorage.getItem("authToken"); // ← MUST MATCH login
+    const token = localStorage.getItem("authToken");
     if (token) {
       cfg.headers = cfg.headers || {};
       cfg.headers.Authorization = `Bearer ${token}`;

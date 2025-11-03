@@ -27,15 +27,6 @@ const colorMap = {
   },
 };
 
-/**
- * A reusable component to display a key metric or statistic.
- * @param {object} props
- * @param {string} props.title - The title of the statistic (e.g., "Total Patients").
- * @param {(string|number)} props.value - The main value (e.g., "1,250").
- * @param {LucideIcon} props.icon - The Lucide icon component.
- * @param {('blue'|'green'|'dark-green'|'light-blue'|'red'|'yellow')} props.color - Color key for styling.
- * @param {string} props.trendValue - A small trend or secondary descriptor.
- */
 const StatCard = ({ title, value, icon: Icon, color = "blue", trendValue }) => {
   const colors = colorMap[color] || colorMap.blue;
 

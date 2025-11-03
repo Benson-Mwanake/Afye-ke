@@ -21,9 +21,7 @@ import {
   BookOpen, // For categories
 } from "lucide-react";
 
-// --- START: Dependency Definitions (Required for consolidation) ---
 
-// Mock navigation items for the Admin, marking "Articles" as current
 const adminNavItems = [
   {
     name: "Dashboard",
@@ -49,7 +47,7 @@ const adminNavItems = [
 // 1. AdminDashboardLayout Component (Reusable)
 const AdminDashboardLayout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentPath = "/admin/articles"; // Set current path to Articles
+  const currentPath = "/admin/articles"; 
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
@@ -156,17 +154,14 @@ const AdminDashboardLayout = ({ children }) => {
   );
 };
 
-// 2. Article Stat Card Component (Updated for solid color and larger size)
+// 2. Article Stat Card Component
 const ArticleStatCard = ({ title, value, colorClass, icon: Icon }) => {
   return (
-    // Increased padding (p-8) and set to solid color for high visibility
     <div
       className={`p-8 rounded-xl shadow-lg ${colorClass} text-white transition-shadow duration-300 hover:shadow-xl flex justify-between items-center h-full`}
     >
       <div>
-        {/* Increased text size (text-5xl) */}
         <p className="text-5xl font-bold mb-1">{value}</p>
-        {/* Increased text size (text-lg) */}
         <h3 className="text-lg font-medium opacity-90">{title}</h3>
       </div>
       {Icon && <Icon className="w-10 h-10 opacity-70" />}
@@ -197,7 +192,6 @@ const StatusBadge = ({ status }) => {
 
 // 4. Category Tag Helper
 const CategoryTag = ({ category }) => {
-  // Simple color hashing based on category length for variety
   const hash = category.length % 5;
   let color = "";
   if (hash === 0) color = "bg-purple-100 text-purple-700";
@@ -213,31 +207,30 @@ const CategoryTag = ({ category }) => {
   );
 };
 
-// Mock Data for Articles (Added color classes and icons)
 const articleData = {
   stats: [
     {
       title: "Published Articles",
       value: 4,
-      colorClass: "bg-green-600", // Solid Green
+      colorClass: "bg-green-600",
       icon: FileText,
     },
     {
       title: "Drafts",
       value: 1,
-      colorClass: "bg-blue-600", // Solid Blue
+      colorClass: "bg-blue-600",
       icon: Edit,
     },
     {
       title: "Total Views",
       value: "4,070",
-      colorClass: "bg-red-600", // Solid Red
+      colorClass: "bg-red-600",
       icon: Zap,
     },
     {
       title: "Categories",
       value: 6,
-      colorClass: "bg-purple-600", // Solid Purple
+      colorClass: "bg-purple-600",
       icon: BookOpen,
     },
   ],
@@ -291,10 +284,8 @@ const articleData = {
 };
 
 const ArticleManagement = () => {
-  // State for mock data (to simulate deletion)
   const [articles, setArticles] = useState(articleData.articles);
 
-  // Simple mock action handlers
   const handleAction = (id, action) => {
     if (action === "Delete") {
       setArticles(articles.filter((article) => article.id !== id));

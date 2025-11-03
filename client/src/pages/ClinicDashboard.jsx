@@ -14,7 +14,6 @@ import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 
 const API_URL = "http://127.0.0.1:5000";
 
-// --- ClinicStatCard (no changes) ---
 const ClinicStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   const colorMap = {
     green: { bg: "bg-green-600", text: "text-white", trend: "text-green-200" },
@@ -48,7 +47,7 @@ const ClinicStatCard = ({ title, value, icon: Icon, color, trendValue }) => {
   );
 };
 
-// --- ClinicAppointmentRow (no changes) ---
+// --- ClinicAppointmentRow ---
 const ClinicAppointmentRow = ({
   patientName,
   initial,
@@ -175,7 +174,6 @@ const ClinicDashboard = () => {
 
       if (!res.ok) throw new Error("Failed to update appointment");
 
-      // Update local state immediately
       setAppointments((prev) =>
         prev.map((a) => (a.id === id ? { ...a, status } : a))
       );
