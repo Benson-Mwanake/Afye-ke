@@ -23,7 +23,7 @@ const AdminProfile = () => {
       const updateData = { ...values };
       if (!values.password) delete updateData.password;
       const token = localStorage.getItem("authToken");
-      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/users/${user.id}`, {
+      const res = await fetch(`https://afya-ke.onrender.com/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(updateData),

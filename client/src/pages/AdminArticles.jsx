@@ -103,7 +103,7 @@ const AdminArticles = () => {
     const fetchArticles = async () => {
       if (!token) return;
       try {
-        const res = await fetch("https://gadgetreview-5c3b.onrender.com/articles", { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch("https://afya-ke.onrender.com/articles", { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) throw new Error("Failed to fetch articles");
         const data = await res.json();
         setArticles(data);
@@ -120,7 +120,7 @@ const AdminArticles = () => {
   const handleDeleteArticle = async id => {
     if (!window.confirm("Delete this article?")) return;
     try {
-      await fetch(`https://gadgetreview-5c3b.onrender.com/articles/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      await fetch(`https://afya-ke.onrender.com/articles/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       setArticles(prev => prev.filter(a => a.id !== id));
     } catch {
       alert("Failed to delete article");
@@ -129,7 +129,7 @@ const AdminArticles = () => {
 
   const handleSaveArticle = async updated => {
     try {
-      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/articles/${updated.id}`, {
+      const res = await fetch(`https://afya-ke.onrender.com/articles/${updated.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(updated),

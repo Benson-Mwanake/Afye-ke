@@ -26,7 +26,7 @@ export default function AllHealthEducation() {
 
     const fetchTopics = async () => {
       try {
-        const res = await fetch("https://gadgetreview-5c3b.onrender.com/articles", {
+        const res = await fetch("https://afya-ke.onrender.com/articles", {
           signal: controller.signal,
         });
 

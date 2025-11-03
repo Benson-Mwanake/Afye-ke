@@ -60,7 +60,7 @@ export default function Checkups() {
   const [clinicMap, setClinicMap] = useState({});
 
   useEffect(() => {
-    fetch("https://gadgetreview-5c3b.onrender.com/clinics")
+    fetch("https://afya-ke.onrender.com/clinics")
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         const map = {};

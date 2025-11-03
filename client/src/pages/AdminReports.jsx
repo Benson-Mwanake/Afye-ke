@@ -10,7 +10,7 @@ const AdminReports = () => {
       try {
         if (!token) return alert("User not authenticated");
 
-        const res = await fetch("https://gadgetreview-5c3b.onrender.com/reports", {
+        const res = await fetch("https://afya-ke.onrender.com/reports", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

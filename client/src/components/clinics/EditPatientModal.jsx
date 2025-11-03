@@ -68,7 +68,7 @@ const EditPatientModal = ({ patient, onClose, onSave }) => {
     };
 
     try {
-      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/users/${patient.id}`, {
+      const res = await fetch(`https://afya-ke.onrender.com/users/${patient.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

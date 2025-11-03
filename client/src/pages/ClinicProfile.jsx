@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 
-const API_URL = "https://gadgetreview-5c3b.onrender.com";
+const API_URL = "https://afya-ke.onrender.com";
 
 const to12h = (t) => {
   if (!t || t === "Closed") return "Closed";

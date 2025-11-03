@@ -44,7 +44,7 @@ export default function ClinicBrowser() {
 
     const fetchClinics = async () => {
       try {
-        const res = await fetch("https://gadgetreview-5c3b.onrender.com/clinics", {
+        const res = await fetch("https://afya-ke.onrender.com/clinics", {
           signal: controller.signal,
         });
 

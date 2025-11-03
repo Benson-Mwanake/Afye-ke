@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
 import EditPatientModal from "../components/clinics/EditPatientModal";
 
-const API_URL = "https://gadgetreview-5c3b.onrender.com";
+const API_URL = "https://afya-ke.onrender.com";
 
 const ClinicPatients = () => {
   const { user } = useAuth();

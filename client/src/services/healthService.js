@@ -1,7 +1,7 @@
 // src/services/healthService.js
 import axios from "axios";
 
-const API_BASE = "https://gadgetreview-5c3b.onrender.com";
+const API_BASE = "https://afya-ke.onrender.com";
 
 export const checkSystemHealth = async () => {
   const start = performance.now();

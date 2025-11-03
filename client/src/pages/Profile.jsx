@@ -4,7 +4,7 @@ import { Calendar, ClipboardList, Pencil, Save, XCircle } from "lucide-react";
 import DashboardLayout from "../hooks/layouts/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "https://gadgetreview-5c3b.onrender.com";
+const API_URL = "https://afya-ke.onrender.com";
 
 // Reusable input field
 const EditableField = ({
@@ -247,7 +247,7 @@ const handleSave = async () => {
           <p>{error}</p>
           <p className="text-sm mt-2">
             Make sure <code>json-server</code> is running on{" "}
-            <code>https://gadgetreview-5c3b.onrender.com</code>
+            <code>https://afya-ke.onrender.com</code>
           </p>
         </div>
       </DashboardLayout>

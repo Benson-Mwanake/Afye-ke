@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BookingForm from "../components/clinics/BookingForm";
 
-const API_URL = "https://gadgetreview-5c3b.onrender.com";
+const API_URL = "https://afya-ke.onrender.com";
 
 export default function BookingFormWrapper() {
   const { id } = useParams();

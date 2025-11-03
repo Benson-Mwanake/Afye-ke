@@ -14,7 +14,7 @@ const ClinicSchedule = () => {
     const fetchAppts = async () => {
       if (!user?.clinicId) return;
       const res = await fetch(
-        `https://gadgetreview-5c3b.onrender.com/appointments?clinicId=${user.clinicId}`
+        `https://afya-ke.onrender.com/appointments?clinicId=${user.clinicId}`
       );
       const data = await res.json();
       setAppointments(data);

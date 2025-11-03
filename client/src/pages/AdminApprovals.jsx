@@ -66,7 +66,7 @@ const AdminApprovals = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("https://gadgetreview-5c3b.onrender.com/clinics?status=pending");
+        const res = await fetch("https://afya-ke.onrender.com/clinics?status=pending");
         if (!res.ok) throw new Error("Failed to fetch pending clinics");
         const data = await res.json();
         setClinics(data);
@@ -86,7 +86,7 @@ const AdminApprovals = () => {
   // 🔹 Approve clinic
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/clinics/${id}`, {
+      const res = await fetch(`https://afya-ke.onrender.com/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "approved", verified: true }),
@@ -105,7 +105,7 @@ const AdminApprovals = () => {
   const handleReject = async (id) => {
     if (!window.confirm("Reject this clinic?")) return;
     try {
-      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/clinics/${id}`, {
+      const res = await fetch(`https://afya-ke.onrender.com/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected", verified: false }),

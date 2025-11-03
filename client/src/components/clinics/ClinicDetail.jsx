@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import BookingForm from "./BookingForm";
 import DashboardLayout from "../../hooks/layouts/DashboardLayout";
 
-const API_URL = "https://gadgetreview-5c3b.onrender.com";
+const API_URL = "https://afya-ke.onrender.com";
 
 const ClinicDetail = () => {
   const { id } = useParams();
