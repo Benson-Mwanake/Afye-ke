@@ -85,27 +85,7 @@ const Login = () => {
               </p>
             </div>
 
-            {/* Role selector */}
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-gray-700">I am a:</p>
-              <div className="flex space-x-2 border border-gray-200 rounded-xl p-1">
-                {roles.map(({ label, value }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setRole(value)}
-                    disabled={loading}
-                    className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition duration-200 ${
-                      role === value
-                        ? "bg-green-500 text-white shadow-md"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+
 
             <form className="space-y-6" onSubmit={handleLogin}>
               {/* Email */}
