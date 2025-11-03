@@ -1,0 +1,3415 @@
+{
+  "health": {
+    "status": "ok",
+    "timestamp": "2025-04-05T10:00:00Z",
+    "version": "1.0.0"
+  },
+  "users": [
+    {
+      "id": "1",
+      "fullName": "John Doe",
+      "email": "john.doe@example.com",
+      "phoneNumber": "+254712345678",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["4", "c10", "c12"],
+      "profile": {
+        "dob": "1990-01-01",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "O+",
+        "allergies": "Penicillin",
+        "emergencyContact": "Jane Doe • +254700111111"
+      },
+      "blocked": false
+    },
+    {
+      "id": "2",
+      "fullName": "Amina Hassan",
+      "email": "amina@example.com",
+      "phoneNumber": "+254798765432",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["2", "c11"],
+      "profile": {
+        "dob": "1995-08-20",
+        "gender": "Female",
+        "country": "Mombasa",
+        "bloodType": "B-",
+        "allergies": "Dust, Pollen",
+        "emergencyContact": "Fatma Hassan • +254711222333"
+      }
+    },
+    {
+      "id": "3",
+      "fullName": "Peter Kariuki",
+      "email": "peter@test.com",
+      "phoneNumber": "+254723456789",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["1", "3"],
+      "profile": {
+        "dob": "1987-03-12",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "A+",
+        "allergies": "None",
+        "emergencyContact": "Mary Kariuki • +254722333444"
+      }
+    },
+    {
+      "id": "4",
+      "fullName": "Fatma Ali",
+      "email": "fatma@patient.com",
+      "phoneNumber": "+254711987654",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["2"],
+      "profile": {
+        "dob": "1993-11-05",
+        "gender": "Female",
+        "country": "Mombasa",
+        "bloodType": "O-",
+        "allergies": "Seafood",
+        "emergencyContact": "Ahmed Ali • +254733444555"
+      }
+    },
+    {
+      "id": "5",
+      "fullName": "Grace Wanjiku",
+      "email": "grace@test.com",
+      "phoneNumber": "+254720123456",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["4", "c14"],
+      "profile": {
+        "dob": "1980-07-22",
+        "gender": "Female",
+        "country": "Nakuru",
+        "bloodType": "AB+",
+        "allergies": "None",
+        "emergencyContact": "James Njoroge • +254721555666"
+      }
+    },
+    {
+      "id": "6",
+      "fullName": "Samuel Omondi",
+      "email": "samuel@patient.com",
+      "phoneNumber": "+254733555999",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["1", "p1"],
+      "profile": {
+        "dob": "1998-04-18",
+        "gender": "Male",
+        "country": "Kisumu",
+        "bloodType": "B+",
+        "allergies": "Peanuts",
+        "emergencyContact": "Rose Auma • +254722666777"
+      }
+    },
+    {
+      "id": "7",
+      "fullName": "Linet Chepkoech",
+      "email": "linet@test.com",
+      "phoneNumber": "+254710888999",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["p2"],
+      "profile": {
+        "dob": "2001-09-30",
+        "gender": "Female",
+        "country": "Eldoret",
+        "bloodType": "A-",
+        "allergies": "Latex",
+        "emergencyContact": "Paul Kiprop • +254723777888"
+      }
+    },
+    {
+      "id": "8",
+      "fullName": "David Mwangi",
+      "email": "david@patient.com",
+      "phoneNumber": "+254721999000",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["3"],
+      "profile": {
+        "dob": "1975-12-14",
+        "gender": "Male",
+        "country": "Thika",
+        "bloodType": "O+",
+        "allergies": "None",
+        "emergencyContact": "Esther Wambui • +254724888999"
+      }
+    },
+    {
+      "id": "9",
+      "fullName": "Zipporah Achieng",
+      "email": "zipporah@patient.com",
+      "phoneNumber": "+254705111222",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c15"],
+      "profile": {
+        "dob": "1991-05-15",
+        "gender": "Female",
+        "country": "Kisumu",
+        "bloodType": "A+",
+        "allergies": "Sulfa drugs",
+        "emergencyContact": "Joram Otieno • +254705333444"
+      }
+    },
+    {
+      "id": "10",
+      "fullName": "Mike Kipkemboi",
+      "email": "mike@patient.com",
+      "phoneNumber": "+254727555666",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["p2"],
+      "profile": {
+        "dob": "1983-10-25",
+        "gender": "Male",
+        "country": "Eldoret",
+        "bloodType": "O-",
+        "allergies": "Iodine",
+        "emergencyContact": "Naomi Chepkoech • +254727777888"
+      }
+    },
+    {
+      "id": "11",
+      "fullName": "Esther Ngugi",
+      "email": "esther@patient.com",
+      "phoneNumber": "+254734999000",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c16"],
+      "profile": {
+        "dob": "2000-02-09",
+        "gender": "Female",
+        "country": "Nairobi",
+        "bloodType": "B+",
+        "allergies": "Latex",
+        "emergencyContact": "Dennis Gitau • +254734111222"
+      }
+    },
+    {
+      "id": "12",
+      "fullName": "Job Mwangangi",
+      "email": "job@patient.com",
+      "phoneNumber": "+254701234567",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c17"],
+      "profile": {
+        "dob": "1978-06-03",
+        "gender": "Male",
+        "country": "Kisumu",
+        "bloodType": "AB-",
+        "allergies": "Dust Mites",
+        "emergencyContact": "Agnes Job • +254701876543"
+      }
+    },
+    {
+      "id": "13",
+      "fullName": "Nancy Cherono",
+      "email": "nancy@patient.com",
+      "phoneNumber": "+254726333444",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c18"],
+      "profile": {
+        "dob": "1997-11-28",
+        "gender": "Female",
+        "country": "Eldoret",
+        "bloodType": "O+",
+        "allergies": "Kiwi",
+        "emergencyContact": "Kevin Cheruiyot • +254726555666"
+      }
+    },
+    {
+      "id": "14",
+      "fullName": "George Abdi",
+      "email": "george@patient.com",
+      "phoneNumber": "+254714121212",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c19"],
+      "profile": {
+        "dob": "1985-04-04",
+        "gender": "Male",
+        "country": "Mombasa",
+        "bloodType": "A-",
+        "allergies": "Cat dander",
+        "emergencyContact": "Marium Abdi • +254714343434"
+      }
+    },
+    {
+      "id": "15",
+      "fullName": "Susan Mwai",
+      "email": "susan@patient.com",
+      "phoneNumber": "+254735202020",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c20"],
+      "profile": {
+        "dob": "1999-09-19",
+        "gender": "Female",
+        "country": "Nakuru",
+        "bloodType": "B-",
+        "allergies": "Honey",
+        "emergencyContact": "Alex Mwai • +254735404040"
+      }
+    },
+    {
+      "id": "16",
+      "fullName": "Charles Kinyua",
+      "email": "charles@patient.com",
+      "phoneNumber": "+254722808080",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c21"],
+      "profile": {
+        "dob": "1970-03-29",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "O+",
+        "allergies": "Dairy",
+        "emergencyContact": "Florence Kinyua • +254722909090"
+      }
+    },
+    {
+      "id": "17",
+      "fullName": "Wambui Njeri",
+      "email": "wambui@patient.com",
+      "phoneNumber": "+254713131313",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c22"],
+      "profile": {
+        "dob": "1994-12-01",
+        "gender": "Female",
+        "country": "Mombasa",
+        "bloodType": "A+",
+        "allergies": "Peanuts",
+        "emergencyContact": "Joseph Njeri • +254713242424"
+      }
+    },
+    {
+      "id": "18",
+      "fullName": "Kevin Rono",
+      "email": "kevin@patient.com",
+      "phoneNumber": "+254729505050",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c23"],
+      "profile": {
+        "dob": "1988-08-16",
+        "gender": "Male",
+        "country": "Eldoret",
+        "bloodType": "B+",
+        "allergies": "Shellfish",
+        "emergencyContact": "Janet Rono • +254729606060"
+      }
+    },
+    {
+      "id": "19",
+      "fullName": "Mercy Kemunto",
+      "email": "mercy@patient.com",
+      "phoneNumber": "+254707707070",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c24"],
+      "profile": {
+        "dob": "2003-01-21",
+        "gender": "Female",
+        "country": "Kisumu",
+        "bloodType": "O-",
+        "allergies": "None",
+        "emergencyContact": "Boniface Kemunto • +254707808080"
+      }
+    },
+    {
+      "id": "20",
+      "fullName": "Daniel Mutua",
+      "email": "daniel@patient.com",
+      "phoneNumber": "+254737909090",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c25"],
+      "profile": {
+        "dob": "1972-04-11",
+        "gender": "Male",
+        "country": "Nakuru",
+        "bloodType": "AB+",
+        "allergies": "Dust",
+        "emergencyContact": "Rose Mutua • +254737010101"
+      }
+    },
+    {
+      "id": "21",
+      "fullName": "Sharon Waithera",
+      "email": "sharon@patient.com",
+      "phoneNumber": "+254710202020",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c26"],
+      "profile": {
+        "dob": "1996-10-10",
+        "gender": "Female",
+        "country": "Nyeri",
+        "bloodType": "A+",
+        "allergies": "Mosquito bites",
+        "emergencyContact": "Peter Waithera • +254710303030"
+      }
+    },
+    {
+      "id": "22",
+      "fullName": "Hassan Jama",
+      "email": "hassan@patient.com",
+      "phoneNumber": "+254724404040",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c27"],
+      "profile": {
+        "dob": "1982-07-07",
+        "gender": "Male",
+        "country": "Garissa",
+        "bloodType": "O-",
+        "allergies": "None",
+        "emergencyContact": "Zahra Jama • +254724505050"
+      }
+    },
+    {
+      "id": "23",
+      "fullName": "Faith Mumo",
+      "email": "faith@patient.com",
+      "phoneNumber": "+254733606060",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c28"],
+      "profile": {
+        "dob": "1991-09-09",
+        "gender": "Female",
+        "country": "Kitale",
+        "bloodType": "B-",
+        "allergies": "Wheat",
+        "emergencyContact": "Paul Mumo • +254733707070"
+      }
+    },
+    {
+      "id": "24",
+      "fullName": "James Odhiambo",
+      "email": "james@patient.com",
+      "phoneNumber": "+254706808080",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c29"],
+      "profile": {
+        "dob": "1976-02-14",
+        "gender": "Male",
+        "country": "Homa Bay",
+        "bloodType": "A-",
+        "allergies": "Sulfa drugs",
+        "emergencyContact": "Mary Odhiambo • +254706909090"
+      }
+    },
+    {
+      "id": "25",
+      "fullName": "Cynthia Chelagat",
+      "email": "cynthia@patient.com",
+      "phoneNumber": "+254728010101",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c30"],
+      "profile": {
+        "dob": "2000-11-23",
+        "gender": "Female",
+        "country": "Kericho",
+        "bloodType": "AB-",
+        "allergies": "None",
+        "emergencyContact": "David Chelagat • +254728121212"
+      }
+    },
+    {
+      "id": "26",
+      "fullName": "Elias Mwenda",
+      "email": "elias@patient.com",
+      "phoneNumber": "+254717343434",
+      "password": "123",
+      "role": "patient",
+      "savedClinics": ["c10"],
+      "profile": {
+        "dob": "1989-05-18",
+        "gender": "Male",
+        "country": "Meru",
+        "bloodType": "O+",
+        "allergies": "Aspartame",
+        "emergencyContact": "Tabitha Mwenda • +254717565656"
+      }
+    },
+    {
+      "id": "27",
+      "fullName": "Benson Mwanake",
+      "email": "bensonmwanake79@gmail.com",
+      "phoneNumber": "0712345678",
+      "password": "qwerty",
+      "role": "patient",
+      "clinicId": null,
+      "profile": {
+        "dob": "2004-07-08",
+        "gender": "Male",
+        "country": "Nairobi",
+        "bloodType": "Unknown",
+        "allergies": "milk",
+        "emergencyContact": "jesse 0712345678"
+      },
+      "savedClinics": ["1"]
+    },
+    {
+      "id": "c1",
+      "fullName": "Westlands Family Clinic",
+      "email": "westlands@clinic.com",
+      "phoneNumber": "+254720123456",
+      "password": "west123",
+      "role": "clinic",
+      "clinicId": "1",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c2",
+      "fullName": "Mombasa Community Health Center",
+      "email": "mombasa@health.go.ke",
+      "phoneNumber": "+254711987654",
+      "password": "mombasa456",
+      "role": "clinic",
+      "clinicId": "2",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c3",
+      "fullName": "Karen Health Hub",
+      "email": "info@karenhealth.co.ke",
+      "phoneNumber": "+254733555999",
+      "password": "karen789",
+      "role": "clinic",
+      "clinicId": "3",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c4",
+      "fullName": "Nakuru General Hospital",
+      "email": "info@nakurugeneral.co.ke",
+      "phoneNumber": "+254721444555",
+      "password": "nakuru2025",
+      "role": "clinic",
+      "clinicId": "4",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "c5",
+      "fullName": "New Horizon Clinic",
+      "email": "new@clinic.com",
+      "phoneNumber": "+254733222333",
+      "password": "horizon123",
+      "role": "clinic",
+      "clinicId": "1761381889773",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    },
+    {
+      "id": "admin1",
+      "fullName": "County Health Officer",
+      "email": "admin@afyalink.com",
+      "phoneNumber": "+254700000001",
+      "password": "admin123",
+      "role": "admin",
+      "profile": {
+        "dob": "",
+        "gender": "",
+        "country": "",
+        "bloodType": "",
+        "allergies": "",
+        "emergencyContact": ""
+      }
+    }
+  ],
+  "clinics": [
+    {
+      "id": "1",
+      "name": "Westlands Family Clinic",
+      "location": "Westlands, Nairobi",
+      "coordinates": [-1.2674, 36.8119],
+      "services": [
+        "General Checkup",
+        "Lab Tests",
+        "Dental",
+        "Surgery",
+        "Pediatrics",
+        "Maternity",
+        "Vaccinations",
+        "Emergency"
+      ],
+      "rating": 4.5,
+      "reviews": 32,
+      "phone": "+254720123456",
+      "email": "westlands@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d1",
+          "name": "Dr. Sarah Chebet",
+          "specialty": "General Practitioner"
+        },
+        {
+          "id": "d2",
+          "name": "Dr. James Otieno",
+          "specialty": "Pediatrician"
+        },
+        {
+          "id": "d3",
+          "name": "Dr. Aisha Mwangi",
+          "specialty": "Dentist"
+        },
+        {
+          "id": "d4",
+          "name": "Dr. Paul Mburu",
+          "specialty": "Surgeon"
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": "2",
+      "name": "Mombasa Community Health Center",
+      "location": "Nyali, Mombasa",
+      "coordinates": [-4.0435, 39.6682],
+      "services": [
+        "Maternity",
+        "HIV Testing",
+        "Nutrition",
+        "General",
+        "Lab Tests"
+      ],
+      "rating": 4.1,
+      "reviews": 55,
+      "phone": "+254711987654",
+      "email": "mombasa@health.go.ke",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d5",
+          "name": "Dr. Amina Mohamed",
+          "specialty": "Obstetrician"
+        },
+        {
+          "id": "d6",
+          "name": "Dr. Fatma Juma",
+          "specialty": "HIV Specialist"
+        },
+        {
+          "id": "d7",
+          "name": "Dr. Hassan Ali",
+          "specialty": "Nutritionist"
+        }
+      ],
+      "images": ["/images/clinic2_1.jpg"]
+    },
+    {
+      "id": "3",
+      "name": "Karen Health Hub",
+      "location": "Karen, Nairobi",
+      "coordinates": [-1.3201, 36.7085],
+      "services": [
+        "Cardiology",
+        "Physiotherapy",
+        "Lab Tests",
+        "X-Ray",
+        "Ultrasound",
+        "24hr Emergency"
+      ],
+      "rating": 4.8,
+      "reviews": 15,
+      "phone": "+254733555999",
+      "email": "info@karenhealth.co.ke",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d8",
+          "name": "Dr. Peter Kariuki",
+          "specialty": "Cardiologist"
+        },
+        {
+          "id": "d9",
+          "name": "Dr. Lucy Wanjiru",
+          "specialty": "Physiotherapist"
+        },
+        {
+          "id": "d10",
+          "name": "Dr. Michael Njoroge",
+          "specialty": "Radiologist"
+        }
+      ],
+      "images": [
+        "/images/clinic3_1.jpg",
+        "/images/clinic3_2.jpg",
+        "/images/clinic3_3.jpg"
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Nakuru General Hospital",
+      "location": "Nakuru CBD",
+      "coordinates": [-0.3031, 36.08],
+      "services": [
+        "Emergency",
+        "Surgery",
+        "Pediatrics",
+        "General",
+        "Pharmacy",
+        "ICU"
+      ],
+      "rating": 3.9,
+      "reviews": 40,
+      "phone": "+254721444555",
+      "email": "info@nakurugeneral.co.ke",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d11",
+          "name": "Dr. James Otieno",
+          "specialty": "Emergency Medicine"
+        },
+        {
+          "id": "d12",
+          "name": "Dr. Grace Wambui",
+          "specialty": "Pediatric Surgeon"
+        },
+        {
+          "id": "d13",
+          "name": "Dr. David Kamau",
+          "specialty": "General Practitioner"
+        }
+      ],
+      "images": ["/images/clinic4_1.jpg"]
+    },
+    {
+      "id": "1761381889773",
+      "name": "New Horizon Clinic",
+      "location": "Kilimani, Nairobi",
+      "coordinates": [-1.2921, 36.8219],
+      "services": ["General Checkup", "Vaccinations", "Nutrition Counseling"],
+      "rating": 4.2,
+      "reviews": 10,
+      "phone": "+254733222333",
+      "email": "new@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d14",
+          "name": "Dr. John Kimani",
+          "specialty": "General Practitioner"
+        },
+        {
+          "id": "d15",
+          "name": "Dr. Esther Wanjiku",
+          "specialty": "Nutritionist"
+        }
+      ],
+      "images": ["/images/clinic5_1.jpg"]
+    },
+    {
+      "id": "p1",
+      "name": "Kisumu Medical Centre",
+      "location": "Kisumu CBD",
+      "coordinates": [-0.1022, 34.7617],
+      "phone": "+254711222333",
+      "email": "kisumu@clinic.com",
+      "services": [
+        "General Checkup",
+        "Lab Tests",
+        "Physiotherapy",
+        "Minor Surgery"
+      ],
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "status": "approved",
+      "verified": true,
+      "rating": 4,
+      "reviews": 25,
+      "doctors": [
+        {
+          "id": "d16",
+          "name": "Dr. Ben Onyango",
+          "specialty": "General Practitioner"
+        },
+        {
+          "id": "d17",
+          "name": "Dr. Leah Chelagat",
+          "specialty": "Physiotherapist"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Eldoret Health Services",
+      "location": "Eldoret",
+      "coordinates": [0.5143, 35.2698],
+      "phone": "+254722333444",
+      "email": "eldoret@health.co.ke",
+      "services": [
+        "Pediatrics",
+        "Vaccinations",
+        "Family Planning",
+        "General Checkup"
+      ],
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "status": "approved",
+      "verified": true,
+      "rating": 4.6,
+      "reviews": 18,
+      "doctors": [
+        {
+          "id": "d18",
+          "name": "Dr. Kiprop Chemweno",
+          "specialty": "Pediatrician"
+        },
+        {
+          "id": "d19",
+          "name": "Dr. Jane Wanjiru",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "name": "Kibera Outreach Clinic",
+      "location": "Kibera, Nairobi",
+      "coordinates": [-1.3129, 36.7645],
+      "services": ["Maternity", "General", "Minor Injuries", "Immunization"],
+      "rating": 3.5,
+      "reviews": 8,
+      "phone": "+254734101010",
+      "email": "kibera@outreach.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d20",
+          "name": "Dr. Susan Ngugi",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "name": "Lavington Dental Spa",
+      "location": "Lavington, Nairobi",
+      "coordinates": [-1.2844, 36.7797],
+      "services": [
+        "Dental Cleaning",
+        "Root Canal",
+        "Orthodontics",
+        "Cosmetic Dentistry"
+      ],
+      "rating": 4.9,
+      "reviews": 20,
+      "phone": "+254722505050",
+      "email": "lavington@dentalspa.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "09:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "09:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "09:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "09:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "09:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "10:00",
+          "close": "14:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d21",
+          "name": "Dr. Ken Ochieng",
+          "specialty": "Dentist"
+        },
+        {
+          "id": "d22",
+          "name": "Dr. Clara Wairimu",
+          "specialty": "Orthodontist"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "name": "Malindi Beach Clinic",
+      "location": "Malindi, Kilifi",
+      "coordinates": [-3.2269, 40.1171],
+      "services": ["General", "Travel Health", "Tropical Diseases", "Pharmacy"],
+      "rating": 4.3,
+      "reviews": 12,
+      "phone": "+254715606060",
+      "email": "malindi@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d23",
+          "name": "Dr. Omar Khali",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "name": "Thika Superhighway Accident Center",
+      "location": "Kasarani, Nairobi",
+      "coordinates": [-1.2292, 36.8845],
+      "services": [
+        "Emergency",
+        "Trauma Surgery",
+        "Orthopedics",
+        "X-Ray",
+        "Ambulance Services"
+      ],
+      "rating": 4,
+      "reviews": 30,
+      "phone": "+254720999000",
+      "email": "thika@accidentcenter.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d24",
+          "name": "Dr. Dennis Mwenda",
+          "specialty": "Trauma Surgeon"
+        },
+        {
+          "id": "d25",
+          "name": "Dr. Beatrice Adhiambo",
+          "specialty": "Orthopedic Specialist"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "name": "Nyeri Highlands Clinic",
+      "location": "Nyeri CBD",
+      "coordinates": [-0.4217, 36.9536],
+      "services": [
+        "General Checkup",
+        "Lab Tests",
+        "Family Planning",
+        "Paediatrics"
+      ],
+      "rating": 4.4,
+      "reviews": 16,
+      "phone": "+254724222333",
+      "email": "nyeri@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "08:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d26",
+          "name": "Dr. Agnes Wanjiru",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "name": "Kitale Wellness Center",
+      "location": "Kitale",
+      "coordinates": [1.0213, 34.9602],
+      "services": [
+        "Nutrition Counseling",
+        "Mental Health",
+        "Wellness Programs",
+        "General"
+      ],
+      "rating": 4.7,
+      "reviews": 18,
+      "phone": "+254719000111",
+      "email": "kitale@wellness.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d27",
+          "name": "Dr. Evans Simiyu",
+          "specialty": "Psychologist"
+        },
+        {
+          "id": "d28",
+          "name": "Dr. Naomi Chepkemoi",
+          "specialty": "Nutritionist"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "name": "Garissa Urgent Care",
+      "location": "Garissa",
+      "coordinates": [-0.4578, 39.6457],
+      "services": ["Emergency", "General", "Vaccinations", "Maternity"],
+      "rating": 3.7,
+      "reviews": 10,
+      "phone": "+254738555666",
+      "email": "garissa@urgentcare.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "07:30",
+          "close": "18:30",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "07:30",
+          "close": "18:30",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "07:30",
+          "close": "18:30",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "07:30",
+          "close": "18:30",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "07:30",
+          "close": "18:30",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "08:00",
+          "close": "14:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "08:00",
+          "close": "14:00",
+          "closed": false
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d29",
+          "name": "Dr. Abdi Farah",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "name": "Kericho General Clinic",
+      "location": "Kericho",
+      "coordinates": [-0.3667, 35.35],
+      "services": ["General Checkup", "Lab Tests", "Minor Surgery", "Pharmacy"],
+      "rating": 4.2,
+      "reviews": 22,
+      "phone": "+254720102030",
+      "email": "kericho@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d30",
+          "name": "Dr. Beatrice Chepkorir",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "name": "Nairobi CBD Walk-in Clinic",
+      "location": "CBD, Nairobi",
+      "coordinates": [-1.2863, 36.8176],
+      "services": [
+        "General Checkup",
+        "Flu Shots",
+        "Travel Vaccines",
+        "Minor Injuries"
+      ],
+      "rating": 4.5,
+      "reviews": 50,
+      "phone": "+254700888999",
+      "email": "cbd@walkin.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "07:00",
+          "close": "19:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "08:00",
+          "close": "15:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d31",
+          "name": "Dr. Jane Mukami",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "name": "Nakuru Heart & Wellness Center",
+      "location": "Milimani, Nakuru",
+      "coordinates": [-0.2917, 36.0694],
+      "services": [
+        "Cardiology",
+        "Stress Testing",
+        "Nutrition",
+        "Physiotherapy"
+      ],
+      "rating": 4.6,
+      "reviews": 11,
+      "phone": "+254734555777",
+      "email": "nakuruheart@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "09:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d32",
+          "name": "Dr. Eric Omondi",
+          "specialty": "Cardiologist"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "name": "Kisii Regional Hospital",
+      "location": "Kisii CBD",
+      "coordinates": [-0.6806, 34.7672],
+      "services": ["Emergency", "General", "Maternity", "Surgery", "X-Ray"],
+      "rating": 3.8,
+      "reviews": 60,
+      "phone": "+254705111333",
+      "email": "kisii@hospital.go.ke",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": "00:00",
+          "close": "23:59",
+          "closed": false
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d33",
+          "name": "Dr. Beatrice Kerubo",
+          "specialty": "General Surgeon"
+        },
+        {
+          "id": "d34",
+          "name": "Dr. Julius Nyariki",
+          "specialty": "Emergency Physician"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "name": "Naivasha Lakeside Clinic",
+      "location": "Naivasha",
+      "coordinates": [-0.7183, 36.4344],
+      "services": [
+        "General Checkup",
+        "Pediatrics",
+        "Travel Medicine",
+        "Minor Surgery"
+      ],
+      "rating": 4.1,
+      "reviews": 14,
+      "phone": "+254722303030",
+      "email": "naivasha@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:30",
+          "close": "17:30",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d35",
+          "name": "Dr. Susan Njeri",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "name": "Kilifi Community Clinic",
+      "location": "Kilifi",
+      "coordinates": [-3.6338, 39.8517],
+      "services": [
+        "General",
+        "Immunization",
+        "Family Planning",
+        "Malaria Testing"
+      ],
+      "rating": 3.6,
+      "reviews": 9,
+      "phone": "+254711404040",
+      "email": "kilifi@clinic.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "07:30",
+          "close": "16:30",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "07:30",
+          "close": "16:30",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "07:30",
+          "close": "16:30",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "07:30",
+          "close": "16:30",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "07:30",
+          "close": "16:30",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d36",
+          "name": "Dr. Salim Mbarak",
+          "specialty": "Clinical Officer"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "name": "Embu Family Care",
+      "location": "Embu",
+      "coordinates": [-0.5333, 37.45],
+      "services": ["Pediatrics", "Maternity", "General Checkup", "Lab Tests"],
+      "rating": 4.3,
+      "reviews": 18,
+      "phone": "+254720606060",
+      "email": "embu@familycare.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "18:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "13:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d37",
+          "name": "Dr. Faith Nyambura",
+          "specialty": "Pediatrician"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "name": "Machakos General Clinic",
+      "location": "Machakos",
+      "coordinates": [-1.5167, 37.2667],
+      "services": ["General Checkup", "Pharmacy", "Minor Surgery", "Emergency"],
+      "rating": 4,
+      "reviews": 25,
+      "phone": "+254711808080",
+      "email": "machakos@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d38",
+          "name": "Dr. Joseph Nzioka",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "name": "Voi Town Health Post",
+      "location": "Voi, Taita-Taveta",
+      "coordinates": [-3.3934, 38.5447],
+      "services": ["General", "Immunization", "Basic Lab Tests"],
+      "rating": 3.5,
+      "reviews": 7,
+      "phone": "+254722909090",
+      "email": "voi@healthpost.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d39",
+          "name": "Clinical Officer Mwacharo",
+          "specialty": "Clinical Officer"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "name": "Migori Reproductive Clinic",
+      "location": "Migori",
+      "coordinates": [-1.0637, 34.4697],
+      "services": [
+        "Family Planning",
+        "Maternity",
+        "Antenatal Care",
+        "STI Testing"
+      ],
+      "rating": 4.1,
+      "reviews": 15,
+      "phone": "+254733101010",
+      "email": "migori@repro.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d40",
+          "name": "Dr. Mary Ouma",
+          "specialty": "Obstetrician/Gynaecologist"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "name": "Lamu Island Health Services",
+      "location": "Lamu Island",
+      "coordinates": [-2.2687, 40.9022],
+      "services": ["General", "Immunization", "Basic Lab Tests", "First Aid"],
+      "rating": 3.9,
+      "reviews": 5,
+      "phone": "+254710404040",
+      "email": "lamu@healthservices.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d41",
+          "name": "Dr. Zeinab Ali",
+          "specialty": "Clinical Officer"
+        }
+      ]
+    },
+    {
+      "id": "c25",
+      "name": "Kakamega County Clinic",
+      "location": "Kakamega CBD",
+      "coordinates": [0.2828, 34.7523],
+      "services": [
+        "General Checkup",
+        "Lab Tests",
+        "Paediatrics",
+        "Minor Surgery"
+      ],
+      "rating": 4,
+      "reviews": 20,
+      "phone": "+254722505050",
+      "email": "kakamega@clinic.go.ke",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d42",
+          "name": "Dr. Victor Mulwa",
+          "specialty": "General Practitioner"
+        }
+      ]
+    },
+    {
+      "id": "c26",
+      "name": "Nanyuki Military Wellness",
+      "location": "Nanyuki",
+      "coordinates": [0.0167, 37.0667],
+      "services": ["Emergency", "General", "Trauma Care", "Physiotherapy"],
+      "rating": 4.2,
+      "reviews": 10,
+      "phone": "+254700707070",
+      "email": "nanyuki@militarywellness.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d43",
+          "name": "Dr. Mark Kiptoo",
+          "specialty": "Emergency Medicine"
+        }
+      ]
+    },
+    {
+      "id": "c27",
+      "name": "Mombasa Old Town Clinic",
+      "location": "Old Town, Mombasa",
+      "coordinates": [-4.0628, 39.6706],
+      "services": [
+        "General",
+        "Basic Screening",
+        "Immunization",
+        "Malaria Treatment"
+      ],
+      "rating": 3.8,
+      "reviews": 12,
+      "phone": "+254713303030",
+      "email": "oldtown@clinic.com",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "16:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": null,
+          "close": null,
+          "closed": true
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": false,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d44",
+          "name": "Dr. Aisha Omar",
+          "specialty": "Clinical Officer"
+        }
+      ]
+    },
+    {
+      "id": "c28",
+      "name": "Narok Maa Clinic",
+      "location": "Narok",
+      "coordinates": [-1.0825, 35.8569],
+      "services": ["General", "First Aid", "Immunization", "Maternity"],
+      "rating": 4.1,
+      "reviews": 10,
+      "phone": "+254722555666",
+      "email": "narok@clinic.org",
+      "operatingHours": [
+        {
+          "day": "Monday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Tuesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Wednesday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Thursday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Friday",
+          "open": "08:00",
+          "close": "17:00",
+          "closed": false
+        },
+        {
+          "day": "Saturday",
+          "open": "09:00",
+          "close": "12:00",
+          "closed": false
+        },
+        {
+          "day": "Sunday",
+          "open": null,
+          "close": null,
+          "closed": true
+        }
+      ],
+      "verified": true,
+      "status": "approved",
+      "doctors": [
+        {
+          "id": "d45",
+          "name": "Dr. John Ole Sankale",
+          "specialty": "General Practitioner"
+        }
+      ]
+    }
+  ],
+  "appointments": [
+    {
+      "id": "1",
+      "patientId": "1",
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Sarah Chebet",
+      "service": "General Checkup",
+      "date": "2025-10-25",
+      "time": "10:30",
+      "status": "Cancelled",
+      "notes": "Annual health screening"
+    },
+    {
+      "id": "2",
+      "patientId": "2",
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Amina Mohamed",
+      "service": "Prenatal Checkup",
+      "date": "2025-10-25",
+      "time": "09:00",
+      "status": "Completed",
+      "notes": "Week 32 ultrasound"
+    },
+    {
+      "id": "3",
+      "patientId": "3",
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Aisha Mwangi",
+      "service": "Dental Cleaning",
+      "date": "2025-10-26",
+      "time": "14:00",
+      "status": "Completed",
+      "notes": "Routine dental cleaning"
+    },
+    {
+      "id": "4",
+      "patientId": "4",
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Fatma Juma",
+      "service": "HIV Testing",
+      "date": "2025-10-27",
+      "time": "11:00",
+      "status": "Completed",
+      "notes": "Routine screening"
+    },
+    {
+      "id": "5",
+      "patientId": "5",
+      "clinicId": "4",
+      "clinicName": "Nakuru General Hospital",
+      "doctor": "Dr. James Otieno",
+      "service": "Emergency",
+      "date": "2025-10-24",
+      "time": "19:30",
+      "status": "Completed",
+      "notes": "Fever and cough"
+    },
+    {
+      "id": "6",
+      "patientId": "1",
+      "clinicId": "3",
+      "clinicName": "Karen Health Hub",
+      "doctor": "Dr. Peter Kariuki",
+      "service": "Cardiology Consultation",
+      "date": "2025-11-01",
+      "time": "10:00",
+      "status": "Pending",
+      "notes": "Follow-up ECG"
+    },
+    {
+      "id": "7",
+      "patientId": "6",
+      "clinicId": "1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Sarah Chebet",
+      "service": "Vaccinations",
+      "date": "2025-10-25",
+      "time": "15:30",
+      "status": "Completed",
+      "notes": "Flu shot"
+    },
+    {
+      "id": "8",
+      "patientId": "7",
+      "clinicId": "1761381889773",
+      "clinicName": "New Horizon Clinic",
+      "doctor": "Dr. John Kimani",
+      "service": "General Checkup",
+      "date": "2025-10-30",
+      "time": "11:00",
+      "status": "Confirmed",
+      "notes": "First visit"
+    },
+    {
+      "id": "9",
+      "patientId": "8",
+      "clinicId": "3",
+      "clinicName": "Karen Health Hub",
+      "doctor": "Dr. Lucy Wanjiru",
+      "service": "Physiotherapy Session",
+      "date": "2025-10-29",
+      "time": "16:00",
+      "status": "Confirmed",
+      "notes": "Knee pain follow-up"
+    },
+    {
+      "id": "10",
+      "patientId": "2",
+      "clinicId": "2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Hassan Ali",
+      "service": "Nutrition Counseling",
+      "date": "2025-11-05",
+      "time": "10:30",
+      "status": "Pending",
+      "notes": "Postnatal diet plan"
+    },
+    {
+      "id": "11",
+      "patientId": "9",
+      "clinicId": "p1",
+      "clinicName": "Kisumu Medical Centre",
+      "doctor": "Dr. Ben Onyango",
+      "service": "Lab Tests (Full Panel)",
+      "date": "2025-11-10",
+      "time": "08:00",
+      "status": "Pending",
+      "notes": "Routine blood work"
+    },
+    {
+      "id": "12",
+      "patientId": "10",
+      "clinicId": "p2",
+      "clinicName": "Eldoret Health Services",
+      "doctor": "Dr. Kiprop Chemweno",
+      "service": "Pediatric Checkup",
+      "date": "2025-11-03",
+      "time": "14:00",
+      "status": "Confirmed",
+      "notes": "Child's 6-month check"
+    },
+    {
+      "id": "13",
+      "patientId": "11",
+      "clinicId": "c10",
+      "clinicName": "Thika Superhighway Accident Center",
+      "doctor": "Dr. Dennis Mwenda",
+      "service": "Minor Injury Check",
+      "date": "2025-10-28",
+      "time": "17:00",
+      "status": "Completed",
+      "notes": "Slight sprain from a fall"
+    },
+    {
+      "id": "14",
+      "patientId": "12",
+      "clinicId": "c13",
+      "clinicName": "Garissa Urgent Care",
+      "doctor": "Dr. Abdi Farah",
+      "service": "Malaria Screening",
+      "date": "2025-10-29",
+      "time": "09:30",
+      "status": "Confirmed",
+      "notes": "Fever and chills for 2 days"
+    },
+    {
+      "id": "15",
+      "patientId": "13",
+      "clinicId": "c14",
+      "clinicName": "Kericho General Clinic",
+      "doctor": "Dr. Beatrice Chepkorir",
+      "service": "Vaccinations",
+      "date": "2025-11-15",
+      "time": "11:30",
+      "status": "Pending",
+      "notes": "Typhoid and Yellow Fever"
+    },
+    {
+      "id": "16",
+      "patientId": "14",
+      "clinicId": "c9",
+      "clinicName": "Malindi Beach Clinic",
+      "doctor": "Dr. Omar Khali",
+      "service": "Travel Health Consultation",
+      "date": "2025-10-31",
+      "time": "10:00",
+      "status": "Confirmed",
+      "notes": "Advice for inland travel"
+    },
+    {
+      "id": "17",
+      "patientId": "15",
+      "clinicId": "c8",
+      "clinicName": "Lavington Dental Spa",
+      "doctor": "Dr. Ken Ochieng",
+      "service": "Root Canal Consultation",
+      "date": "2025-11-04",
+      "time": "15:00",
+      "status": "Pending",
+      "notes": "Severe toothache"
+    },
+    {
+      "id": "18",
+      "patientId": "16",
+      "clinicId": "c1",
+      "clinicName": "Westlands Family Clinic",
+      "doctor": "Dr. Paul Mburu",
+      "service": "Minor Surgery Follow-up",
+      "date": "2025-10-28",
+      "time": "11:00",
+      "status": "Completed",
+      "notes": "Wound check"
+    },
+    {
+      "id": "19",
+      "patientId": "17",
+      "clinicId": "c2",
+      "clinicName": "Mombasa Community Health Center",
+      "doctor": "Dr. Amina Mohamed",
+      "service": "Maternity Ward Tour",
+      "date": "2025-11-08",
+      "time": "13:00",
+      "status": "Pending",
+      "notes": "Expected delivery date: Jan 2026"
+    },
+    {
+      "id": "20",
+      "patientId": "18",
+      "clinicId": "p2",
+      "clinicName": "Eldoret Health Services",
+      "doctor": "Dr. Jane Wanjiru",
+      "service": "General Checkup",
+      "date": "2025-10-29",
+      "time": "08:30",
+      "status": "Confirmed",
+      "notes": "Persistent headache"
+    },
+    {
+      "id": "21",
+      "patientId": "19",
+      "clinicId": "c17",
+      "clinicName": "Kisii Regional Hospital",
+      "doctor": "Dr. Julius Nyariki",
+      "service": "Emergency Consultation",
+      "date": "2025-10-27",
+      "time": "21:00",
+      "status": "Completed",
+      "notes": "Stomach flu treatment"
+    },
+    {
+      "id": "22",
+      "patientId": "20",
+      "clinicId": "c4",
+      "clinicName": "Nakuru General Hospital",
+      "doctor": "Dr. David Kamau",
+      "service": "Pharmacy Consultation",
+      "date": "2025-11-02",
+      "time": "12:00",
+      "status": "Pending",
+      "notes": "Medication review"
+    },
+    {
+      "id": "23",
+      "patientId": "21",
+      "clinicId": "c11",
+      "clinicName": "Nyeri Highlands Clinic",
+      "doctor": "Dr. Agnes Wanjiru",
+      "service": "Family Planning Advice",
+      "date": "2025-11-06",
+      "time": "14:30",
+      "status": "Pending",
+      "notes": "IUD options"
+    },
+    {
+      "id": "24",
+      "patientId": "22",
+      "clinicId": "c13",
+      "clinicName": "Garissa Urgent Care",
+      "doctor": "Dr. Abdi Farah",
+      "service": "General Checkup",
+      "date": "2025-10-29",
+      "time": "10:30",
+      "status": "Confirmed",
+      "notes": "Routine checkup"
+    },
+    {
+      "id": "25",
+      "patientId": "23",
+      "clinicId": "c12",
+      "clinicName": "Kitale Wellness Center",
+      "doctor": "Dr. Evans Simiyu",
+      "service": "Mental Health Session",
+      "date": "2025-11-07",
+      "time": "10:00",
+      "status": "Pending",
+      "notes": "Stress management"
+    },
+    {
+      "id": "26",
+      "patientId": "24",
+      "clinicId": "c15",
+      "clinicName": "Nairobi CBD Walk-in Clinic",
+      "doctor": "Dr. Jane Mukami",
+      "service": "Flu Shot",
+      "date": "2025-11-09",
+      "time": "11:00",
+      "status": "Pending",
+      "notes": "Annual flu shot"
+    },
+    {
+      "id": "27",
+      "patientId": "25",
+      "clinicId": "c14",
+      "clinicName": "Kericho General Clinic",
+      "doctor": "Dr. Beatrice Chepkorir",
+      "service": "Minor Surgery Consultation",
+      "date": "2025-10-30",
+      "time": "13:00",
+      "status": "Confirmed",
+      "notes": "Cyst removal options"
+    },
+    {
+      "id": "28",
+      "patientId": "26",
+      "clinicId": "c10",
+      "clinicName": "Thika Superhighway Accident Center",
+      "doctor": "Dr. Beatrice Adhiambo",
+      "service": "Orthopedics Consult",
+      "date": "2025-11-12",
+      "time": "15:00",
+      "status": "Pending",
+      "notes": "Chronic back pain"
+    }
+  ],
+  "articles": [
+    {
+      "id": "1",
+      "title": "5 Tips to Manage Hypertension at Home: A Kenyan Perspective",
+      "category": "Lifestyle",
+      "author": "Dr. James Otieno",
+      "date": "2025-03-20",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1615486511484-92e172cc4fe0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8SHlwZXJ0ZW5zaW9ufGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Hypertension affects millions of Kenyans. Simple lifestyle changes, incorporating local foods, can make a huge difference in managing your blood pressure at home.",
+      "content": "## 5 Tips to Manage Hypertension at Home: A Kenyan Perspective\n\n**Hypertension (High Blood Pressure) is a silent killer, affecting a growing number of Kenyans.** The good news is that with dedication and simple lifestyle adjustments, particularly those incorporating easily accessible local resources, you can effectively manage your condition and reduce the risk of serious complications like heart attack and stroke.\n\n### 1. Embrace a 'Shamba-to-Table' Low-Sodium Diet 🥗\n\nReducing salt intake is paramount. Many processed foods contain hidden sodium, but focusing on fresh, natural ingredients from your local market or 'shamba' is the best defense. \n* **Go easy on the salt shaker and avoid high-sodium condiments** like certain soy sauces or commercial stocks. Utilize natural flavour boosters. \n* **Increase potassium-rich foods:** Potassium helps balance the negative effects of sodium on blood pressure. Incorporate local staples like **sukuma wiki (collard greens), spinach, bananas, sweet potatoes, and beans** into your daily meals.\n* **The DASH Diet** (Dietary Approaches to Stop Hypertension) is highly recommended. It emphasizes vegetables, fruits, and low-fat dairy, which aligns well with a traditional Kenyan diet that is low in processed fats and high in fibre.\n\n### 2. Regular Physical Activity – Kenya Style 🏃🏾\n\nRegular exercise strengthens your heart and lowers your blood pressure. You don't need an expensive gym membership. Everyday activities in Kenya can count!\n* **Walk or Cycle More:** Instead of taking a matatu for short distances, walk. Nairobi, Mombasa, and other cities offer plenty of walking routes. A brisk 30-minute walk, five days a week, is a powerful medicine.\n* **Stair Climbing:** Use the stairs instead of the lift at work or in apartment buildings. This is an excellent burst of cardiovascular activity.\n* **Join a Community Sports Team:** Participating in local football, netball, or dance is a fun way to stay active and socially connected.\n\n### 3. Monitor Your Blood Pressure Regularly and Track It ⌚\n\nKnowing your numbers is the first step in control. A home blood pressure monitor is a vital tool.\n* **Daily Readings:** Take your blood pressure at the same time each day (e.g., morning and evening). \n* **Record and Share:** Keep a log of your readings and share this information with your healthcare provider during appointments. This provides them with a more accurate picture of your condition outside the clinic.\n* **Technology is Your Friend:** Use a simple notebook or a health app on your phone to track your trends over time.\n\n### 4. Manage Stress and Improve Sleep Quality 🧘\n\nChronic stress is a major contributor to hypertension. The hustle and bustle of modern Kenyan life can take a toll.\n* **Mindfulness and Relaxation:** Dedicate 15-20 minutes daily to quiet reflection, meditation, or simply listening to soothing music (like traditional Kenyan instruments or gospel). Deep breathing exercises can be done anywhere, even in a traffic jam.\n* **Prioritize Sleep:** Aim for 7-8 hours of quality sleep nightly. Poor sleep is linked to higher blood pressure. Establish a regular, relaxing bedtime routine to help your body unwind.\n\n### 5. Adhere to Your Medication Regime (If Prescribed) 💊\n\nLifestyle changes work best when combined with prescribed medication. Never adjust your dosage or stop taking medication without consulting your doctor.\n* **Be Consistent:** Set reminders to take your medication exactly as prescribed. \n* **Affordability:** Discuss generic options or alternative pharmacies with your doctor to ensure consistent access to affordable medication. Do not compromise on your treatment due to cost.\n\n**Conclusion:** Managing hypertension is a marathon, not a sprint. By incorporating these practical, localized tips into your daily routine and maintaining open communication with your clinic, you can live a longer, healthier life in control of your blood pressure.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "2",
+      "title": "Understanding Childhood Vaccinations in Kenya: The KEPI Schedule",
+      "category": "Children",
+      "author": "Ministry of Health",
+      "date": "2025-03-15",
+      "readTime": "7 min",
+      "image": "https://plus.unsplash.com/premium_photo-1674499074711-fbdfe7670ce9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8VmFjY2luYXRpb25zfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "The Kenya Expanded Programme on Immunization (KEPI) is critical. Here's a comprehensive look at the schedule and why each vaccine is vital for your child.",
+      "content": "## Understanding Childhood Vaccinations in Kenya: The KEPI Schedule\n\n**The Kenya Expanded Programme on Immunization (KEPI) is the cornerstone of public health for children in Kenya.** Vaccinations are arguably the most effective way to protect your child from life-threatening diseases. They work by preparing the body's immune system to fight off specific infections.\n\n### Why is the KEPI Schedule So Important?\n\nThe KEPI schedule is carefully determined by health experts to provide protection at the earliest possible age, when children are most vulnerable to serious infections. Following the schedule ensures your child is protected against diseases like Polio, Measles, and Tuberculosis (TB). Immunizations are available at all public health facilities and many private clinics across Kenya, usually at no cost for essential vaccines.\n\n### The Recommended KEPI Vaccination Schedule\n\nHere is a breakdown of the key vaccines your child needs, according to the Ministry of Health guidelines:\n\n| Age of Child | Vaccine(s) | Prevents Diseases |\n| :--- | :--- | :--- |\n| **Birth** | **BCG, Polio (Oral/IPV), Hepatitis B (Hep B)** | Tuberculosis (TB), Poliomyelitis, Hepatitis B |\n| **6 Weeks** | **Pentavalent (DPT-Hib-Hep B), PCV-10, Rotavirus, IPV** | Diphtheria, Pertussis, Tetanus, Haemophilus Influenzae type B, Hepatitis B, Pneumonia, Rotavirus Diarrhea, Polio |\n| **10 Weeks** | **Pentavalent (DPT-Hib-Hep B), Rotavirus** | Diphtheria, Pertussis, Tetanus, Haemophilus Influenzae type B, Hepatitis B, Rotavirus Diarrhea |\n| **14 Weeks** | **Pentavalent (DPT-Hib-Hep B), PCV-10, Polio (Oral/IPV)** | Diphtheria, Pertussis, Tetanus, Haemophilus Influenzae type B, Hepatitis B, Pneumonia, Polio |\n| **9 Months** | **Measles/Rubella (MR), Yellow Fever** | Measles, Rubella, Yellow Fever |\n| **18 Months**| **Measles/Rubella (MR) - Second Dose** | Measles, Rubella |\n\n*Note: The actual schedule may have minor variations, and your clinic will provide the most current information.*\n\n### Essential Facts for Parents\n\n1.  **Safety First:** Vaccines are safe. Any side effects are usually minor (like a slight fever or swelling at the injection site) and temporary. The risk of the diseases themselves is far greater than the risk of the vaccine.\n2.  **What if my child missed a shot?** It's common for children to miss a dose. Contact your clinic immediately. They will advise on a catch-up schedule. You rarely need to restart the entire series.\n3.  **Vaccine Availability:** KEPI vaccines are a priority and are provided freely at most government health centers and dispensaries. Private clinics may offer the same or additional vaccines (e.g., Varicella, Meningitis) for a fee.\n4.  **Protecting the Community:** When your child is vaccinated, they protect not only themselves but also others who are too young or medically unable to be vaccinated. This is called **'Herd Immunity.'**\n\nIn Kenya, where childhood infections can be severe, ensuring your child receives all scheduled immunizations is one of the most loving and critical decisions you can make for their long-term health and the health of the community. Always carry your child's Mother-Child Health Booklet (MCH Book) to every appointment. ",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "3",
+      "title": "Diabetes: Early Signs You Shouldn't Ignore in an Urban Kenyan Setting",
+      "category": "Chronic Illness",
+      "author": "Dr. Lucy Wanjiru",
+      "date": "2025-03-10",
+      "readTime": "6 min",
+      "image": "https://plus.unsplash.com/premium_photo-1680221453924-fcc37377f18e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8RGlhYmV0ZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Type 2 diabetes is on the rise in Kenya, driven by changing lifestyles. Recognizing the subtle early signs can lead to timely intervention and better management.",
+      "content": "## Diabetes: Early Signs You Shouldn't Ignore in an Urban Kenyan Setting\n\n**Type 2 Diabetes Mellitus (T2DM) is rapidly becoming a public health crisis in Kenya, particularly in urban and peri-urban areas.** This is largely attributed to increasingly sedentary lifestyles, diet changes (more processed foods, less traditional fibre), and genetic predisposition. T2DM often develops slowly, making early detection crucial for preventing devastating long-term complications like kidney failure, blindness, nerve damage, and heart disease. If you live a modern, busy life in cities like Nairobi, Mombasa, or Kisumu, pay attention to these subtle signs.\n\n### The 'Three Ps' - Classic Early Warning Signs\n\nThese are the most common signs, indicating high sugar levels (hyperglycaemia) that result in increased fluid processing by the kidneys:\n\n1.  **Polyuria (Frequent Urination):** Needing to urinate more often than usual, especially at night. This is your body trying to flush out excess glucose.\n2.  **Polydipsia (Increased Thirst):** Feeling excessively thirsty, even after drinking water, because the body is losing fluid through frequent urination.\n3.  **Polyphagia (Increased Hunger):** Feeling hungry despite eating, as glucose isn't properly entering the cells for energy.\n\n### Other Alarming Symptoms to Watch Out For\n\n* **Unexplained Weight Loss:** Despite eating more, you may lose weight because your body starts breaking down muscle and fat for energy.\n* **Fatigue and Weakness:** A constant feeling of tiredness, sometimes attributed to the daily 'hustle' in Kenyan cities, but often caused by cells being starved of glucose energy.\n* **Blurred Vision:** High blood sugar draws fluid from the lenses of your eyes, affecting your ability to focus.\n* **Slow-Healing Sores or Frequent Infections:** High blood sugar levels can weaken your immune system and impair circulation, leading to slow healing of cuts or recurring infections (like yeast infections or skin boils).\n* **Tingling or Numbness (Neuropathy):** A subtle sign, especially in the hands or feet, indicating early nerve damage from prolonged high glucose levels.\n\n### Who is at Risk in Kenya?\n\nIf any of the following apply to you, you should seek regular screening:\n\n* **Family History:** A close relative (parent, sibling) with diabetes.\n* **Weight Status:** Being overweight or obese (BMI > 25).\n* **Age:** Being over 45 years old.\n* **Gestational Diabetes:** A history of diabetes during pregnancy.\n* **Lifestyle:** Having a sedentary job and consuming a diet high in refined carbohydrates and sugary drinks.\n\n**Action is Key:** If you notice one or more of these symptoms, **do not self-medicate or dismiss it as simple fatigue.** Visit a clinic for a simple **Fasting Blood Sugar (FBS)** or a **Glycated Haemoglobin (HbA1c)** test. Early diagnosis and intervention—often through diet, exercise, and sometimes oral medication—can prevent the most severe, long-term complications of this chronic illness. Take charge of your health today.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "4",
+      "title": "Why Annual Health Checkups Save Lives: The Kenyan Reality",
+      "category": "Prevention",
+      "author": "Dr. Sarah Chebet",
+      "date": "2025-02-28",
+      "readTime": "4 min",
+      "image": "https://images.unsplash.com/photo-1606618742136-4424143d71fc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fEhlYWx0aCUyMENoZWNrdXBzfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Many Kenyans skip routine checkups, often waiting until illness is advanced. This article highlights the critical importance of a proactive annual health assessment.",
+      "content": "## Why Annual Health Checkups Save Lives: The Kenyan Reality\n\n**Many Kenyans skip annual health checkups, often due to busy schedules, perceived cost, or simply the belief that 'if I feel fine, I must be healthy.'** This is a dangerous gamble. Unlike treating an illness, a preventative health checkup focuses on your body while it's well, saving you significant time, money, and suffering in the long run. In a country where non-communicable diseases (NCDs) like hypertension, diabetes, and cancers are on the rise, prevention is the ultimate cure.\n\n### The Silent Threat of Non-Communicable Diseases (NCDs)\n\nNCDs are the leading cause of mortality globally, and Kenya is no exception. Crucially, many NCDs, such as early-stage hypertension and Type 2 diabetes, are often asymptomatic in their initial stages. You could be perfectly fine today and yet have high blood pressure silently damaging your organs. \n\n**The Annual Checkup Intervenes by:**\n\n* **Early Detection:** Catching conditions like high cholesterol, pre-diabetes, and early cancer markers when they are easiest to treat. For instance, a simple blood sugar test can identify pre-diabetes, allowing you to reverse it with diet before it becomes full-blown diabetes.\n* **Establishing Baselines:** Your doctor tracks your weight, blood pressure, cholesterol, and other key metrics over time. A subtle change year-on-year can signal a brewing problem long before you feel sick.\n* **Personalized Screening:** Based on your age, family history, and lifestyle, your doctor can recommend targeted screenings, such as mammograms, prostate exams (PSA), or cervical cancer screening, which are vital tools for catching cancer early.\n\n### What Should an Annual Checkup Cover?\n\nAn ideal annual checkup, easily accessible in most Kenyan clinics, should include:\n\n1.  **Physical Exam:** Blood pressure, heart rate, weight, and a general head-to-toe examination.\n2.  **Blood Tests:** Full Haemogram (FBC), Fasting Blood Sugar (FBS), Cholesterol and Lipids Profile, and basic kidney/liver function tests.\n3.  **Urine/Stool Analysis:** For infections or other internal markers.\n4.  **Vaccination Review:** Ensuring you are up-to-date on tetanus, flu, and other relevant adult vaccines.\n5.  **Lifestyle Counseling:** A discussion on your diet, exercise, stress levels, and alcohol/smoking habits. This is a critical opportunity for personalized advice.\n\n### Making the Checkup a Priority\n\nIn Kenya's dynamic work environment, finding time can be tough. Prioritize it like a critical business meeting. Talk to your employer about health days or wellness stipends. In the long run, investing a few hours and a modest fee for a checkup is infinitely cheaper than managing a chronic illness or emergency hospitalization.\n\n**The annual checkup is not a luxury; it is a necessity for a long, productive life.** Book your appointment today and take control of your future health.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "5",
+      "title": "Mental Health in the Workplace: A Growing Concern for Kenyan Employees",
+      "category": "Mental Health",
+      "author": "Dr. Paul Mburu",
+      "date": "2025-02-20",
+      "readTime": "8 min",
+      "image": "https://images.unsplash.com/photo-1620147461831-a97b99ade1d3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8TWVudGFsJTIwSGVhbHRofGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "With long working hours and high-pressure environments common in Kenyan businesses, mental health is a growing, yet often stigmatized, issue for employees.",
+      "content": "## Mental Health in the Workplace: A Growing Concern for Kenyan Employees\n\n**Kenya's professional landscape is fast-paced and competitive.** While this drives economic growth, it has created a silent epidemic: a deterioration of mental health among employees. Long working hours, job insecurity, economic pressure, and the pervasive culture of 'hustle' contribute to stress, burnout, anxiety, and depression. This is not just a personal problem; it’s an economic one, leading to reduced productivity, high turnover, and increased absenteeism.\n\n### The Stigma Barrier in Kenyan Workplaces\n\nOne of the biggest obstacles to addressing mental health is the deep-seated stigma. Many employees fear that admitting to mental health struggles will lead to:\n\n* **Job Loss or Demotion:** The perception that a mental health condition equates to weakness or incompetence.\n* **Social Isolation:** Fear of being judged or treated differently by colleagues and managers.\n* **Lack of Resources:** Many companies, particularly small and medium-sized enterprises (SMEs), do not offer Employee Assistance Programs (EAPs) or mental health days.\n\nEmployees often suffer in silence, leading to chronic stress, which can manifest physically as hypertension, ulcers, and persistent headaches.\n\n### Practical Steps for Employees to Manage Workplace Mental Health\n\n1.  **Set Firm Boundaries:** It's common for work to bleed into personal time. **Draw a line.** Turn off work notifications after hours and dedicate time to non-work activities. In the Kenyan context, this is essential to prevent 'Sunday Scaries' and reclaim your personal space.\n2.  **Utilize Your Leave:** Annual leave is a right, not a luxury. Take your full leave to disconnect and recharge. Even a weekend trip upcountry or to the coast can significantly reset your stress levels.\n3.  **Find a Confidant/Professional:** Talk to someone—a trusted friend, family member, or a professional counselor. Many of the newer clinics in Nairobi and other major towns (like the Kitale Wellness Center in our data!) offer discreet mental health counseling. A therapist can provide coping strategies tailored to your work life.\n4.  **The Power of Movement:** Simple activities like a walk during lunch, taking a *boda boda* for a view, or joining a corporate sports team can release endorphins and reduce stress. \n\n### What Companies Can Do to Foster a Healthy Environment\n\n1.  **Lead from the Top:** Management must openly discuss mental health to normalize it. This can be as simple as a CEO sharing their own stress management strategies.\n2.  **Implement EAPs:** Provide confidential, easy-to-access counseling services. Even a subsidized retainer for a local counseling service is a worthwhile investment.\n3.  **Promote Flexible Working:** Where possible, flexible hours or remote work options can drastically reduce commuter-related stress and improve work-life balance.\n4.  **Offer Mental Health Days:** Introduce a policy allowing employees to take a day off for mental health without needing a detailed explanation.\n\nAddressing mental health in the workplace is crucial for building a more resilient, productive, and compassionate Kenya. It requires a shift from viewing mental health as a weakness to recognizing it as a fundamental component of overall employee wellness.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "6",
+      "title": "How to Choose the Right Clinic in Nairobi: A Comprehensive Guide",
+      "category": "Healthcare Tips",
+      "author": "AfyaLink Team",
+      "date": "2025-01-15",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1631507623442-fee09e89c6a8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmlnaHQlMjBDbGluaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Nairobi has over 500 clinics, but finding the right one for your family's needs can be overwhelming. This guide breaks down the essential factors for a confident choice.",
+      "content": "## How to Choose the Right Clinic in Nairobi: A Comprehensive Guide\n\n**Nairobi, the 'Green City in the Sun,' is a hub of healthcare, boasting hundreds of clinics, hospitals, and specialized centers.** While this abundance offers choice, it can also lead to decision paralysis. Choosing the right clinic is a crucial decision that impacts your family's long-term health and financial well-being. Whether you're new to the city, switching providers, or looking for a specialist, here are the non-negotiable factors to consider.\n\n### 1. Location and Accessibility (The Nairobi Traffic Test) 📍\n\nFor routine visits, convenience is key. Consider the clinic’s proximity to your home or work, especially with Nairobi's unpredictable traffic.\n\n* **Emergency Proximity:** For serious conditions, an extra ten minutes in traffic can be critical. Check for nearby hospitals or clinics with 24-hour emergency services (like Karen Health Hub).\n* **Public Transport Access:** Can you reach the clinic easily via matatu or ride-share? Clinics near main roads or transport hubs (like Nairobi CBD Walk-in Clinic) are often better for quick visits.\n* **Specialized vs. General:** Choose a general practice clinic (like Westlands Family Clinic) for routine checkups and a specialized center (like Lavington Dental Spa) for specific needs.\n\n### 2. Services Offered and Specialist Availability 🩺\n\nEnsure the clinic's services align with your core needs. Check if they offer comprehensive care under one roof.\n\n* **In-house Facilities:** Does the clinic have its own lab, X-ray, or ultrasound? This saves you time and ensures quick diagnostic turnaround.\n* **Your Core Needs:** If you have young children, look for a clinic with dedicated pediatricians (like Eldoret Health Services). If you have a chronic condition like a heart issue, a center with a cardiologist (like Nakuru Heart & Wellness Center) is preferable.\n* **Emergency Capability:** For any major hospital, confirm the availability of services like surgery, ICU, and a fully stocked pharmacy.\n\n### 3. Verification and Accreditation (Quality Assurance) ✅\n\nIn Kenya, accreditation ensures the facility meets set quality standards.\n\n* **Verify Licenses:** Ensure the facility is licensed by the relevant body (e.g., KMPDC for hospitals and clinics, or the local county health department). Many clinics display their accreditation status proudly.\n* **Doctor Credentials:** Confirm the doctors' specialties and registration. A qualified, specialized doctor ensures you receive the highest standard of care.\n* **Check Reviews and Ratings:** Utilize platforms like AfyaLink (or similar mock platforms) to check patient reviews and average rating to gauge the quality of care and patient experience.\n\n### 4. Cost, Insurance, and Payment Plans 💰\n\nHealthcare must be financially sustainable for your family.\n\n* **Insurance Acceptance:** Confirm that the clinic accepts your health insurance provider (NHIF, private insurance, etc.) *before* your first appointment to avoid unexpected bills.\n* **Fee Structure:** Ask for a transparent fee structure for common services (e.g., consultation, blood tests). \n* **Payment Options:** Check if they accept mobile money payments (M-Pesa, etc.), which are essential for many Kenyans.\n\nChoosing a clinic is a major step towards proactive health management. By considering these four factors—location, services, verification, and cost—you can confidently select a healthcare partner that will serve your family's needs for years to come.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "7",
+      "title": "Malaria in the Coastal Region: Prevention and Latest Treatment Protocols",
+      "category": "Infectious Diseases",
+      "author": "Dr. Omar Khali",
+      "date": "2025-04-05",
+      "readTime": "6 min",
+      "image": "https://images.unsplash.com/photo-1582234033005-4f40f2f51f4c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TWFsYXJpYXxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Malaria remains a major health burden in Kenya's coastal and lake regions. Learn about current prevention methods and the latest Artemisinin-based Combination Therapies (ACTs).",
+      "content": "## Malaria in the Coastal Region: Prevention and Latest Treatment Protocols\n\n**Malaria, caused by the *Plasmodium* parasite transmitted by the female *Anopheles* mosquito, continues to be a leading cause of illness and death in Kenya.** While efforts have significantly reduced its prevalence, the disease remains endemic in the Lake Victoria basin and the coastal region, including Mombasa, Kilifi, and Kwale. For residents and tourists alike, understanding current prevention and treatment guidelines is essential.\n\n### Prevention: The Foundation of Malaria Control\n\nPrevention is the most cost-effective strategy. The key is to avoid mosquito bites, especially between dusk and dawn when the mosquitos are most active.\n\n1.  **Use of Insecticide-Treated Nets (ITNs):** This is the most crucial tool. Sleep under a properly maintained, long-lasting ITN every night. The government's mass distribution campaigns have made ITNs widely accessible.\n2.  **Indoor Residual Spraying (IRS):** In high-risk areas, the periodic spraying of indoor walls with insecticides drastically reduces the mosquito population.\n3.  **Prophylaxis for Travelers:** If you are traveling to an endemic area from a non-endemic one (e.g., Nairobi to Malindi), consult a doctor about taking chemoprophylaxis (preventive medicine) like Doxycycline or Malarone.\n4.  **Environmental Management:** Eliminate mosquito breeding sites. Drain stagnant water in discarded tires, flower pots, and open containers around your home.\n\n### Treatment: Artemisinin-based Combination Therapies (ACTs)\n\nThe standard treatment for uncomplicated *P. falciparum* malaria in Kenya has shifted to ACTs, which are highly effective and reduce the development of drug resistance.\n\n* **First-line Treatment:** The current national guideline recommends **Artemether-Lumefantrine (AL)**, commonly sold under brand names like Coartem.\n* **How ACTs Work:** They combine an artemisinin derivative (a fast-acting drug that clears most parasites quickly) with a partner drug (a longer-acting drug that eliminates the remaining parasites).\n* **Completing the Dose:** It is critical to **complete the full three-day course** of ACT, even if symptoms disappear after the first dose. Stopping early is the main driver of drug resistance.\n* **Severe Malaria:** Cases of severe malaria require immediate hospitalization and treatment with injectable artesunate. Symptoms of severe malaria include convulsions, inability to eat or drink, extreme weakness, and deep jaundice.\n\n### Community Alert and Testing\n\nIf you experience fever, chills, body aches, or headache in a malaria-prone area, seek testing immediately. Clinics like Kilifi Community Clinic offer rapid diagnostic tests (RDTs) for quick diagnosis. Early diagnosis and prompt treatment save lives. Do not rely on traditional remedies for primary treatment; they can delay effective care.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "8",
+      "title": "Nutrition for a Healthy Heart: Local Foods That Lower Cholesterol",
+      "category": "Nutrition",
+      "author": "Dr. Esther Wanjiku",
+      "date": "2025-05-12",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1542442436159-2f2771d1844d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bG93JTIwY2hvbGVzdGVyb2wlMjBkaWV0fGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "High cholesterol is a silent risk factor for heart disease. Discover how simple, affordable Kenyan foods can be your first line of defense against heart disease.",
+      "content": "## Nutrition for a Healthy Heart: Local Foods That Lower Cholesterol\n\n**Cardiovascular diseases (CVDs) are increasingly common in Kenya, and high cholesterol is a major, often preventable, risk factor.** Cholesterol itself isn't bad; your body needs it. The problem lies with excessive Low-Density Lipoprotein (LDL) cholesterol, often dubbed 'bad cholesterol,' which leads to plaque build-up in arteries. The great news is that you don't need expensive imported foods to fight it—your local market is stocked with powerful, heart-healthy options.\n\n### The Cholesterol-Lowering Power of Kenyan Staples\n\n1.  **The Mighty Legumes (Maharagwe, Njahi, Lentils):** Beans and pulses (like *maharagwe* or pigeon peas) are rich in soluble fibre. This fibre binds to cholesterol in the digestive system and removes it from the body before it can enter the bloodstream. \n    * **Recommendation:** Aim for at least 3-4 servings of beans/lentils per week. They are affordable and easy to incorporate into stews and sides.\n\n2.  **Avocado (Parachichi):** The avocado is a healthy fat superstar. It is packed with monounsaturated fats, which are scientifically proven to help lower harmful LDL levels while raising beneficial High-Density Lipoprotein (HDL) cholesterol. \n    * **Recommendation:** A quarter to a half an avocado daily in your salad or as a side is a great addition.\n\n3.  **Green Leafy Vegetables (Sukuma Wiki, Managu, Terere):** These are extremely high in lutein and carotenoids, antioxidants that can help prevent the oxidation of LDL cholesterol, a key step in plaque formation. They are also high in fibre.\n    * **Recommendation:** Increase your daily portion of cooked greens. They should form the largest part of your plate after your starch.\n\n4.  **Oats (Wimbi, Uji):** Oats contain a specific type of soluble fiber called beta-glucan, which is very effective at lowering cholesterol. While not a traditional Kenyan staple, it's becoming widely available.\n    * **Recommendation:** Start your day with a bowl of plain oat porridge (*uji*) instead of highly processed breakfast cereals.\n\n5.  **Fish (Tilapia, Omena/Dagaa):** Fatty fish like Nile Perch (Tilapia) and the small silverfish (*Omena* or *Dagaa*) are rich in Omega-3 fatty acids. Omega-3s are powerful anti-inflammatories that protect the heart and can reduce triglyceride levels.\n    * **Recommendation:** Consume fatty fish at least twice a week. *Omena* is particularly affordable and nutritious.\n\n### Lifestyle Changes Alongside Diet\n\nRemember that diet must be paired with lifestyle changes. Regular physical activity (like a brisk walk around your estate), quitting smoking, and maintaining a healthy weight are equally important to manage cholesterol and promote overall heart health. Consult your local clinic (like Nakuru Heart & Wellness Center for expert advice) and request a **Lipid Panel** test to know your numbers and monitor your progress.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "9",
+      "title": "Post-Traumatic Stress Disorder (PTSD) Awareness and Treatment in Kenya",
+      "category": "Mental Health",
+      "author": "Dr. Evans Simiyu",
+      "date": "2025-06-01",
+      "readTime": "7 min",
+      "image": "https://images.unsplash.com/photo-1549414275-c08170c8f533?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8UFRTRHxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "PTSD is a reality for many survivors of trauma, from accidents to political violence. This article explores symptoms and available treatment options in the Kenyan context.",
+      "content": "## Post-Traumatic Stress Disorder (PTSD) Awareness and Treatment in Kenya\n\n**Post-Traumatic Stress Disorder (PTSD) is a mental health condition that is triggered by experiencing or witnessing a terrifying event.** In Kenya, trauma can stem from numerous sources: road accidents, crime and violence, natural disasters, political conflict, or personal loss. While the body's 'fight or flight' response is normal immediately after a trauma, PTSD occurs when this reaction doesn't subside, causing significant distress and affecting daily life for months or even years.\n\n### Recognizing the Symptoms of PTSD\n\nPTSD is more than just feeling stressed. It is characterized by four main categories of symptoms that persist long after the danger has passed:\n\n1.  **Intrusive Memories:** This includes flashbacks (re-living the trauma as if it were happening again), nightmares, and severe emotional distress in response to reminders of the event. A survivor of a terror attack might have flashbacks when they hear a loud, unexpected noise.\n2.  **Avoidance:** Actively avoiding places, people, activities, objects, and situations that remind the person of the traumatic event. This can severely limit one's social and professional life.\n3.  **Negative Changes in Thinking and Mood:** Negative beliefs about oneself or the world (e.g., 'I am bad,' or 'The world is completely dangerous'), difficulty maintaining relationships, feeling detached, or an inability to experience positive emotions (anhedonia).\n4.  **Changes in Physical and Emotional Reactions (Arousal):** Being easily startled (hyper-vigilance), having difficulty sleeping, being irritable, angry, or displaying aggressive behavior. In the workplace, this can manifest as explosive reactions to minor irritations.\n\n### Treatment Options Available in Kenya\n\nSeeking help is a sign of strength, not weakness. Effective treatment can significantly reduce symptoms and restore quality of life.\n\n1.  **Trauma-Focused Psychotherapy:** This is the primary and most effective treatment. Cognitive Processing Therapy (CPT) and Prolonged Exposure (PE) are evidence-based methods that help people process the trauma and challenge unhelpful thoughts. Clinics like Kitale Wellness Center often have psychologists trained in these methods.\n2.  **Eye Movement Desensitization and Reprocessing (EMDR):** This therapy helps individuals process traumatic memories by having them focus on external stimuli (like a hand movement or tone) while recalling the trauma. It has been shown to be effective in many cases.\n3.  **Medication:** Antidepressants, specifically Selective Serotonin Reuptake Inhibitors (SSRIs), can help manage symptoms like depression, anxiety, and sleep issues. Medication is typically used in conjunction with psychotherapy.\n4.  **Community and Peer Support:** Sharing your experience in a safe, non-judgmental environment, such as a support group, can be incredibly validating. Local organizations and religious institutions often run these programs.\n\nIf you or someone you know is struggling, reaching out to a mental health professional is the vital first step. PTSD is a serious but treatable condition.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "10",
+      "title": "First Aid for Common Kenyan Injuries: Bumps, Cuts, and Burns",
+      "category": "Emergency Care",
+      "author": "Dr. James Otieno",
+      "date": "2025-06-15",
+      "readTime": "4 min",
+      "image": "https://images.unsplash.com/photo-1542880099-3173d1f8f309?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Rmlyc3QlMjBBaWR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Knowing basic first aid can be the difference between a minor inconvenience and a medical emergency. Be prepared to handle common injuries at home or in the workplace.",
+      "content": "## First Aid for Common Kenyan Injuries: Bumps, Cuts, and Burns\n\n**Minor accidents are a part of everyday life, whether it's a tumble at home, a kitchen burn, or a cut from DIY projects.** Knowing immediate, correct first aid can significantly reduce pain, prevent infection, and stabilize a situation until professional medical help is available. Here's how to manage three of the most common injuries in the Kenyan household.\n\n### 1. Cuts and Scrapes (Simple Wounds)\n\nFrom a kitchen knife slip to a graze from a fall, minor cuts need careful management to prevent bacterial infection.\n\n* **Stop the Bleeding:** Apply gentle, direct pressure with a clean cloth or sterile dressing for a few minutes until the bleeding stops. If blood soaks through, do not remove the cloth; add another on top.\n* **Clean the Wound:** Gently wash the wound with clean water and mild soap. **Do NOT use hydrogen peroxide or iodine on a fresh wound** as it can damage tissue. Remove any dirt or debris with sterilized tweezers.\n* **Apply Antiseptic and Cover:** Apply a thin layer of an over-the-counter antiseptic ointment. Cover the wound with a sterile bandage. Change the dressing daily or whenever it gets wet or dirty.\n* **When to Seek Help:** If the cut is deep, gaping, bleeding heavily, or if you can't clean out all the debris (e.g., glass), you may need stitches or a tetanus shot. Visit a clinic like Machakos General Clinic immediately.\n\n### 2. Minor Burns (First-Degree and Small Second-Degree)\n\nHot tea spills, touching a hot jiko, or a steam burn are common home incidents.\n\n* **The Golden Rule: Cool It Down!** Immediately hold the burn under cool (not ice-cold) running water for at least 10-20 minutes. This stops the burning process and reduces swelling. **Never apply ice, butter, or oil**; this can trap heat and worsen the damage.\n* **Remove Jewelry:** Gently remove any rings, watches, or tight clothing near the burn area before swelling begins.\n* **Dress the Burn:** Cover the cooled burn with a sterile, non-adhesive bandage to protect it from the air and infection. Do not pop blisters.\n* **When to Seek Help:** If the burn is larger than the palm of your hand, looks deep (charred or white, indicating a third-degree burn), or affects the face, joints, or genitals, seek emergency care at a 24-hour facility immediately.\n\n### 3. Bruises and Sprains (Bumps and Twists)\n\nFalls or twists can lead to bruises or a joint sprain (like a twisted ankle).\n\n* **The R.I.C.E. Principle:** This acronym is essential for soft tissue injuries:\n    * **R**est: Stop the activity that caused the injury.\n    * **I**ce: Apply a cold pack (or a bag of frozen peas wrapped in a towel) to the area for 15-20 minutes, several times a day, for the first 48 hours to reduce swelling.\n    * **C**ompression: Gently wrap the area with a compression bandage to help reduce swelling.\n    * **E**levation: Raise the injured limb above the level of the heart, if possible, to reduce swelling.\n* **When to Seek Help:** If you suspect a fracture (cannot bear weight, severe pain, joint looks deformed), or the pain and swelling do not improve after 48 hours, visit a clinic for an X-ray or a more thorough examination.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "11",
+      "title": "Antenatal Care in Kenya: What to Expect During Your Pregnancy Journey",
+      "category": "Maternity",
+      "author": "Dr. Amina Mohamed",
+      "date": "2025-07-01",
+      "readTime": "6 min",
+      "image": "https://images.unsplash.com/photo-1541708873836-8c414d799d10?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJlZ25hbmN5fGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Antenatal care (ANC) is crucial for a healthy pregnancy and safe delivery. This guide outlines the essential visits, tests, and advice for expectant mothers in Kenya.",
+      "content": "## Antenatal Care in Kenya: What to Expect During Your Pregnancy Journey\n\n**Antenatal Care (ANC) is the planned care a pregnant woman receives from a qualified health professional.** It is critical for monitoring the health of both the mother and the developing baby. Kenya’s Ministry of Health advocates for a minimum of eight ANC contacts throughout a pregnancy, especially following the WHO's new model of care. Whether you are at Mombasa Community Health Center or a private clinic, consistent attendance is key to a positive outcome.\n\n### Essential ANC Visits and What Happens\n\nANC visits involve more than just checking the baby's heartbeat; they are opportunities for screening, counseling, and preparation. \n\n| Visit | Timing | Key Focus & Tests |\n| :--- | :--- | :--- |\n| **1st Visit (Booking)** | Within the first 12 weeks | Full medical history, physical exam, full battery of lab tests (HIV, Syphilis, Hepatitis B, Blood Grouping, Haemoglobin/Anaemia check). Initiation of Iron/Folate supplements. |\n| **2nd to 8th Visits** | Regular intervals | Monitoring weight and blood pressure, checking for swelling, fetal heart rate and growth measurement (fundal height), discussing danger signs, preparing for birth, and planning for postnatal care. |\n\n### Critical Elements of Quality ANC\n\n1.  **Nutrition and Supplements:** Pregnant mothers require increased iron, folic acid, and calcium. Your clinic will provide supplements to prevent anaemia and birth defects (like spina bifida). Counseling will focus on accessing locally available nutritious foods (*mlenda, terere, eggs, fish*).\n2.  **Screening and Prevention:** ANC is vital for early screening and treatment of infections. All pregnant women are screened for HIV and Syphilis. For HIV-positive mothers, Prevention of Mother-to-Child Transmission (PMTCT) is initiated immediately. In malaria-endemic areas (like the Coast), Intermittent Preventative Treatment in Pregnancy (IPTp) is given to protect against placental malaria.\n3.  **Birth Preparedness and Complication Readiness:** This counseling prepares the mother and family for a safe delivery. It includes choosing a birth facility, identifying a birth companion, saving money for expenses, and creating a transport plan for an emergency. You will also discuss the **danger signs** to watch for (e.g., severe headache, blurring of vision, bleeding, fever).\n4.  **Cervical Cancer Screening:** Often offered during ANC, especially the first visit, as part of comprehensive women's health.\n\n**Do not underestimate the power of regular ANC.** It’s where complications like pre-eclampsia and fetal distress are caught early. Your clinic, whether public or private, is your partner in ensuring both you and your baby thrive. Adhere to your schedule, ask questions, and follow the advice of your care team. Your health and your baby's future depend on it.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "12",
+      "title": "The Role of Physiotherapy in Post-Accident Recovery and Chronic Pain",
+      "category": "Rehabilitation",
+      "author": "Dr. Lucy Wanjiru",
+      "date": "2025-07-10",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1549414275-c08170c8f533?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8UFRTRHxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Physiotherapy is crucial for restoring movement and function after injuries or managing long-term pain. Learn how this form of rehab works.",
+      "content": "## The Role of Physiotherapy in Post-Accident Recovery and Chronic Pain\n\n**Physiotherapy, or physical therapy, is a vital health profession focused on restoring and maximizing movement, strength, and functional ability.** It is not just for athletes; it’s for anyone affected by injury, illness, disability, or long periods of inactivity. In the Kenyan healthcare context, where road accidents and workplace injuries are unfortunately common, the role of a physiotherapist is paramount for a full return to daily life.\n\n### Rehabilitation After Injury or Surgery\n\nAfter a fracture, ligament tear, or major surgery, the body needs a structured program to heal correctly. A physiotherapist is the expert who guides this process.\n\n1.  **Restoring Movement (Range of Motion):** The first goal is to ensure the joint can move fully without pain. This involves gentle, passive, and active exercises to prevent stiffness (like after a knee replacement or a long cast).\n2.  **Building Strength:** Muscles weaken rapidly due to injury or lack of use. Physiotherapy provides targeted exercises using body weight, resistance bands, or light weights to safely rebuild muscle mass and support the injured area.\n3.  **Improving Balance and Coordination:** This is especially important for lower limb injuries. Exercises focus on proprioception—the body's sense of its position in space—to prevent future falls.\n\n### Managing Chronic Pain\n\nChronic pain (pain lasting longer than six months) is a debilitating condition that is often poorly managed with medication alone. Physiotherapy offers a non-pharmacological route to pain relief, focusing on the root cause.\n\n* **Back and Neck Pain:** Often caused by poor posture, sedentary work (common in Nairobi's office environments), or muscle imbalances. Therapists use manual therapy, dry needling, and specific strengthening exercises to alleviate the pressure on joints and nerves.\n* **Arthritis Management:** While physiotherapy cannot cure arthritis, it can dramatically improve quality of life. It helps maintain joint flexibility, build supportive muscle around the joint, and teach pain management techniques.\n* **Nerve Pain (Sciatica):** Specific stretching and mobility exercises can relieve pressure on the sciatic nerve, reducing the shooting pain that runs down the leg.\n\n### What to Expect During a Session\n\nAt a center like Karen Health Hub, your first session will involve a detailed assessment of your medical history, movement, pain levels, and functional goals. Treatment typically includes a combination of hands-on techniques (massage, joint mobilization) and prescribed exercises (to be done in-session and at home). The ultimate goal is to empower you to manage your condition independently and return to your optimal function.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "13",
+      "title": "Healthy Eating on a Budget: Nutritional Tips for the Kenyan Hustle",
+      "category": "Nutrition",
+      "author": "Dr. Hassan Ali",
+      "date": "2025-07-20",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1542880099-3173d1f8f309?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Rmlyc3QlMjBBaWR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Eating healthy often seems expensive, especially in a tough economy. This guide provides practical tips on getting maximum nutritional value from affordable, local Kenyan foods.",
+      "content": "## Healthy Eating on a Budget: Nutritional Tips for the Kenyan Hustle\n\n**In Kenya, the term 'hustle' is synonymous with hard work and determination, but it often leads to neglected health.** Fast food and cheap, processed snacks become a quick fix. However, eating healthy does not require a large budget. By focusing on affordable, locally sourced, and highly nutritious foods, you can dramatically improve your health without breaking the bank. This guide shows you how to eat like a champion on a typical Kenyan budget.\n\n### The Super Six: Affordable Nutritional Powerhouses\n\nPrioritize these readily available and economical staples that provide essential vitamins, minerals, and fiber:\n\n1.  **Githeri (Maize and Beans):** This simple mixture is a complete protein, offering all essential amino acids, along with high fiber for gut health. Cook a large pot on Sunday and portion it for quick, nutritious weekday lunches.\n2.  **Omena (Silver Fish/Dagaa):** *Omena* is incredibly affordable and a phenomenal source of calcium and Omega-3 fatty acids, crucial for bone and brain health. Frying it is tasty, but try stewing it with tomatoes and onions for a less oily, heart-healthier option.\n3.  **Green Leafy Vegetables (*Kales/Sukuma Wiki, Managu, Terere*):** These are nutrient-dense and often sold cheaply in large bundles (*kichwa*). They are rich in vitamins K, A, and C. Cook them lightly (steaming is best) to retain more nutrients.\n4.  **Matoke (Green Bananas):** A great source of resistant starch, which acts as a prebiotic, feeding healthy gut bacteria. It's a starchy staple that provides sustained energy without the rapid blood sugar spike of processed white starches.\n5.  **Groundnuts (Njugu):** Affordable and versatile, groundnuts are a fantastic source of plant-based protein, healthy fats, and Vitamin E. Eat them as a snack instead of processed biscuits, or use groundnut paste in your stews for thickness and protein.\n6.  **Eggs:** One of nature's perfect foods. Eggs are cheap and provide high-quality protein and a wide range of vitamins (except Vitamin C). A simple boiled egg makes a perfect, portable, and energy-sustaining breakfast or snack.\n\n### Budget-Conscious Shopping and Prep Tips\n\n* **Buy in Season and Local:** Fruits and vegetables are always cheapest and most nutritious when they are in season and bought directly from local open-air markets (*soko*) rather than supermarkets.\n* **Meal Prep:** Spend a few hours cooking staples like beans, lentils, or a large batch of *githeri* on a weekend. Having pre-cooked, healthy food makes it easier to avoid buying expensive, unhealthy meals during the week.\n* **Hydrate for Free:** Carry a reusable water bottle. Water is free and essential, and it prevents you from spending money on sugary sodas that add no nutritional value.\n\nHealthy eating is a discipline of smart choices and preparation, not a measure of wealth. Embrace the richness of Kenyan agricultural produce, and you will find your health and wallet benefit equally.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "14",
+      "title": "Understanding the Role of General Practitioners (GPs) in Kenya's Healthcare System",
+      "category": "Healthcare Tips",
+      "author": "Dr. Sarah Chebet",
+      "date": "2025-08-01",
+      "readTime": "4 min",
+      "image": "https://images.unsplash.com/photo-1579684385150-cf447f5264b1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z2VuZXJhbCUyMHByYWN0aXRpb25lcnxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Your General Practitioner is your first and most important point of contact in healthcare. Learn about their broad role, from acute care to chronic disease management and referral.",
+      "content": "## Understanding the Role of General Practitioners (GPs) in Kenya's Healthcare System\n\n**In the tiered Kenyan healthcare system, the General Practitioner (GP) is the vital gatekeeper and coordinator of your health.** Often the first face you see at a clinic like Westlands Family Clinic or a local dispensary, the GP is trained to provide comprehensive, ongoing care for all ages, genders, and health conditions. They are the backbone of primary healthcare.\n\n### The Core Functions of a GP\n\nThe GP's role extends far beyond treating the common cold. They provide holistic care that takes into account your environment, lifestyle, and full medical history.\n\n1.  **First Contact and Acute Care:** They are the first stop for almost all acute symptoms—from fevers, coughs, and infections to minor injuries. Their broad diagnostic training allows them to quickly distinguish between a mild, self-limiting illness and a severe condition that requires urgent intervention.\n2.  **Chronic Disease Management:** GPs are essential in managing long-term conditions like hypertension, diabetes, and asthma. They oversee medication, monitor blood work (like annual checkups), and provide ongoing counseling on lifestyle modifications (like diet and exercise).\n3.  **Preventive Health and Screening:** This is arguably their most critical role. They administer routine immunizations (childhood and adult), provide family planning services, conduct health education, and ensure you receive age-appropriate screenings (e.g., Pap smears, prostate checks).\n4.  **Referral and Coordination:** When a condition requires specialized care (e.g., surgery, heart issues), the GP is the one who correctly diagnoses the issue and refers you to the appropriate specialist (e.g., Dr. Peter Kariuki, Cardiologist) within the system. They then continue to coordinate care between the specialist and you, the patient, ensuring continuity.\n\n### Why Build a Relationship with a GP?\n\nHaving a consistent GP, especially at a local clinic, is invaluable:\n\n* **Holistic Knowledge:** A single GP who knows your history, your family's history, your allergies (like Penicillin for John Doe), and your general health trends over time is less likely to miss a subtle change that a new doctor might.\n* **Efficiency:** They save you time and money by preventing unnecessary visits to specialists or emergency rooms for treatable, primary care conditions.\n* **Trust and Comfort:** A familiar face builds trust, which is crucial for open discussions about sensitive health issues, including mental health.\n\nIn Kenya, where specialist access can be challenging, leveraging your GP as your primary healthcare partner ensures you receive high-quality, continuous, and well-coordinated care.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "15",
+      "title": "Dental Health 101: Preventing Cavities and Gum Disease in Adulthood",
+      "category": "Dental Health",
+      "author": "Dr. Aisha Mwangi",
+      "date": "2025-08-15",
+      "readTime": "4 min",
+      "image": "https://images.unsplash.com/photo-1563219451-9f9390234a9b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGRlbnRhbCUyMGNhcmV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Dental issues can affect your overall health. This article covers the basic pillars of oral hygiene for adults to prevent the common problems of cavities and gum disease.",
+      "content": "## Dental Health 101: Preventing Cavities and Gum Disease in Adulthood\n\n**Many people assume dental problems are an inevitable part of aging, but the truth is that most issues—cavities (dental caries) and gum disease (periodontitis)—are entirely preventable.** Excellent oral hygiene is a low-cost, high-return investment in your overall health. Poor oral health is linked to serious conditions like heart disease and diabetes, making your dentist, like Dr. Aisha Mwangi at Westlands Family Clinic, a critical part of your healthcare team.\n\n### The Two Main Villains: Plaque and Tartar\n\n* **Plaque:** A sticky film of bacteria that constantly forms on your teeth. When it interacts with sugars from food, it produces acids that erode tooth enamel, leading to cavities.\n* **Tartar (Calculus):** If plaque is not removed, it hardens into tartar, which cannot be removed by brushing alone. Tartar irritates the gums, causing inflammation, redness, and eventual gum disease.\n\n### The Pillars of Adult Oral Hygiene\n\n1.  **Brush Twice Daily, Correctly:**\n    * **Technique:** Use a soft-bristled brush. Hold it at a 45-degree angle to the gums and use gentle, short, circular strokes. Do not scrub harshly; this can wear down your gums.\n    * **Time:** Brush for a full two minutes. Many people only brush for 30 seconds. Use a timer if necessary.\n    * **Toothpaste:** Use a toothpaste containing fluoride, which is essential for re-mineralizing and strengthening enamel.\n\n2.  **Floss Daily:** Flossing removes plaque and food particles from between the teeth where a toothbrush cannot reach. This is the only effective way to prevent gum disease and cavities between teeth. **If you only brush, you are missing 35% of your tooth surface.**\n\n3.  **Mind Your Diet:**\n    * **Reduce Sugar and Processed Foods:** Limit sugary drinks, sticky sweets, and highly processed carbohydrates. The less sugar you consume, the less acid the plaque bacteria can produce.\n    * **Hydrate with Water:** Water helps rinse away food particles and acids. In Kenya, clean water is readily available and the best drink for your teeth.\n\n4.  **Regular Professional Checkups:**\n    * **Dental Visit:** See your dentist (like those at Lavington Dental Spa) every six months for a checkup and professional cleaning. This is where the dentist removes hardened tartar that you cannot remove at home.\n    * **Early Intervention:** Professional cleanings stop gum disease before it progresses, and early cavity detection means a small, easy filling instead of a costly and complex root canal.\n\nProtecting your smile is protecting your general health. Be diligent with your two-minute brushing and daily flossing, and don't skip your biannual checkups.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "16",
+      "title": "Road Safety in Kenya: Emergency Care and Trauma Prevention",
+      "category": "Emergency Care",
+      "author": "Dr. Dennis Mwenda",
+      "date": "2025-09-01",
+      "readTime": "6 min",
+      "image": "https://images.unsplash.com/photo-1620313835694-811d7311749c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fEVtZXJnZW5jeXxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Road traffic accidents (RTAs) are a leading cause of trauma in Kenya. This article focuses on prevention tips and the critical steps for immediate emergency response.",
+      "content": "## Road Safety in Kenya: Emergency Care and Trauma Prevention\n\n**Road Traffic Accidents (RTAs) are a significant public health burden in Kenya.** The Thika Superhighway Accident Center (c10) and other trauma centers frequently deal with the catastrophic results of unsafe driving. Prevention is the priority, but knowing how to react in an emergency situation is equally important for saving lives on Kenyan roads.\n\n### Prevention is Primary\n\n1.  **Buckle Up, Always:** The simplest and most effective measure. Ensure all passengers, especially children, are properly restrained. This can be the difference between a minor injury and a fatal one.\n2.  **Avoid Distractions:** Put the phone away. Distracted driving is a primary cause of accidents. The same vigilance is required for motorcyclists (*boda boda*)—focus entirely on the road.\n3.  **Do Not Drink and Drive:** Alcohol and drug impairment drastically reduce reaction time and judgment. Utilize public transport or ride-share services if you plan to consume alcohol.\n4.  **Matatu Safety:** Choose licensed and reputable public service vehicles (PSVs). If the driver is driving recklessly, do not hesitate to speak up or report the vehicle's registration number.\n5.  **Pedestrian Awareness:** Pedestrians must use footbridges and designated crossing points. Avoid walking along the roadside at night in dark clothing.\n\n### Critical Steps in an RTA Emergency\n\nIf you are a first responder or involved in a non-fatal accident, the immediate steps you take can stabilize the victim and ensure safety for all.\n\n1.  **Ensure Safety:** **Do not rush to the victim if the scene is unsafe.** First, turn on your vehicle's hazard lights, place warning triangles, and call for help immediately (police, ambulance, and your emergency contact).\n2.  **Assess and Call for Help:** Call the national emergency line (often 999 or 112, or a specific ambulance number for private services). Provide a clear, concise location and a description of the injuries. Mention if the victim is conscious, breathing, and if there is heavy bleeding.\n3.  **Airway, Breathing, Circulation (ABC):** If trained, check the victim's airway (ensure it is open), check for breathing, and check for severe bleeding. \n    * **Manage Bleeding:** Apply direct pressure to any actively bleeding wound with a clean cloth or garment. This is a life-saving measure.\n    * **Spinal Immobilization:** **Do not move a victim with suspected head, neck, or back injury** unless they are in immediate danger (e.g., car is on fire). Improper movement can cause permanent paralysis.\n4.  **Keep the Victim Warm and Calm:** Cover the victim with a blanket or jacket to prevent shock, and speak to them calmly to keep them conscious and reassured until professional medical help, like an ambulance from the Thika Superhighway Accident Center, arrives.\n\nBeing prepared for an RTA means practicing safety daily and knowing the correct response when the worst happens. Your quick thinking can save a life.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "17",
+      "title": "Women's Health: Essential Screenings for Cervical and Breast Cancer",
+      "category": "Women's Health",
+      "author": "Dr. Faith Nyambura",
+      "date": "2025-09-15",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1576091176288-ad9d6573c9c6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FuY2VyJTIwc2NyZWVuaW5nfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Cervical and breast cancers are major health threats to Kenyan women, but early detection through screening offers the best chance for cure. This guide details essential screening protocols.",
+      "content": "## Women's Health: Essential Screenings for Cervical and Breast Cancer\n\n**Cervical and breast cancers are two of the most prevalent and devastating cancers affecting women in Kenya.** The good news is that both have excellent prognosis when detected early. Regular screening is a simple, cost-effective tool that can prevent cancer from developing (cervical) or catch it in its most treatable stage (breast). Every woman, especially those accessing care at clinics like Embu Family Care or Migori Reproductive Clinic, must prioritize these simple tests.\n\n### 1. Cervical Cancer Screening: Prevention Through PAP Smear and HPV Testing\n\nCervical cancer is largely preventable because it develops slowly, usually over years, due to persistent infection with the **Human Papillomavirus (HPV)**. Screening aims to catch pre-cancerous cells or the HPV infection itself.\n\n* **The PAP Smear:** This test collects cells from the cervix to look for abnormal changes. The Ministry of Health recommends screening for sexually active women starting at age 25.\n* **Visual Inspection with Acetic Acid (VIA):** A simple, low-cost screening method widely used in public health facilities where laboratory services are limited. The health worker applies a vinegar solution to the cervix, and pre-cancerous lesions turn white.\n* **HPV Vaccine:** This is the ultimate prevention. The vaccine protects against the high-risk types of HPV that cause over 70% of cervical cancers. It is recommended for girls aged 10-14, before they become sexually active.\n* **Recommendation:** Consult your GP for the recommended frequency of screening based on your age and previous results (typically every 3-5 years if results are normal).\n\n### 2. Breast Cancer Screening: Early Detection Through CBE and Mammography\n\nBreast cancer is the leading cancer among women in Kenya. Since it cannot be prevented by a vaccine, early detection through screening is the primary tool for saving lives.\n\n* **Breast Self-Examination (BSE):** A crucial first line of defense. All women should be taught to perform a monthly BSE to become familiar with their breasts' normal feel and look. Report any changes immediately: a new lump, changes in size/shape, nipple discharge, or skin dimpling.\n* **Clinical Breast Examination (CBE):** Performed by a trained healthcare provider during your annual checkup. This is more thorough than a BSE and can detect subtle changes.\n* **Mammography:** An X-ray of the breast tissue, typically the gold standard for women over 40. It can detect tumors that are too small to be felt. Talk to your doctor about when you should start routine mammograms, especially if you have a family history of breast cancer.\n\nRegular screening is an act of self-care and empowerment. It should be a non-negotiable part of every Kenyan woman's health journey. Don't wait; book your screening today.",
+      "published": true,
+      "isTrending": true
+    },
+    {
+      "id": "18",
+      "title": "Understanding and Treating Children's Fevers: A Guide for Parents",
+      "category": "Pediatrics",
+      "author": "Dr. James Otieno",
+      "date": "2025-10-01",
+      "readTime": "4 min",
+      "image": "https://images.unsplash.com/photo-1576778401366-0777e5d23349?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hpbGRyZW4lMjBmZXZlcnxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "Fever in a child is alarming for any parent. This guide from a Pediatrician explains when to worry, when to treat at home, and the right steps to take.",
+      "content": "## Understanding and Treating Children's Fevers: A Guide for Parents\n\n**A fever is not an illness; it's a symptom, often a sign that your child's body is fighting an infection.** While a high temperature is scary, understanding when to treat and when to worry can give parents peace of mind. As a pediatrician (like Dr. James Otieno at Westlands Family Clinic), I advise parents to focus more on the child's overall behavior and appearance than on the exact number on the thermometer.\n\n### What is a Fever?\n\n* **Normal Temperature:** Approximately 37°C (98.6°F).\n* **Fever Threshold:** A temperature of 38°C (100.4°F) or higher, measured rectally, orally, or in the ear.\n\n### When to Treat the Fever at Home\n\nThe goal of treating a fever is not to get the temperature to drop back to normal immediately, but to make the child comfortable so they can rest, drink fluids, and recover. Treat based on the child's comfort level, not just the thermometer reading.\n\n1.  **Medication:** Use infant/child paracetamol (Panadol/Piriton) or ibuprofen (Nurofen), strictly according to the child's weight and the instructions on the packaging. **Never give a child aspirin** due to the risk of Reye's syndrome.\n2.  **Hydration:** Fever can lead to dehydration. Offer small, frequent sips of water, ORS (Oral Rehydration Salts), or clear soups. Dehydration is a major danger, especially if the child is also vomiting or has diarrhea.\n3.  **Light Clothing and Cooling:** Dress the child in light clothing and ensure the room is cool and well-ventilated. A lukewarm sponge bath can help, but avoid cold baths, which can cause shivering and actually raise the internal temperature.\n\n### When to Seek Urgent Medical Care\n\nThere are certain red flags that mean you need to get to a clinic (like Embu Family Care or Nakuru General Hospital) immediately, regardless of the temperature:\n\n* **Age Matters:** Any fever in a baby **under 3 months** is an emergency. Seek care immediately.\n* **Changes in Behavior:** If the child is excessively sleepy, difficult to wake up, irritable, or seems unusually confused.\n* **Breathing Difficulties:** Rapid, shallow breathing, or difficulty catching their breath.\n* **Stiff Neck or Rash:** A stiff neck or a rash that does not fade when pressed (non-blanching rash) can indicate a serious infection like meningitis.\n* **Persistent Vomiting/Diarrhea:** If the child cannot hold down fluids and shows signs of dehydration (no tears, sunken eyes, dry mouth).\n* **Fever Lasts Too Long:** A fever that persists for more than 72 hours (3 days) despite home treatment.\n\nTrust your parental instinct. If you are worried, it's always better to consult your healthcare provider to rule out anything serious.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "19",
+      "title": "Family Planning in Kenya: Options and Access to Modern Contraceptives",
+      "category": "Family Planning",
+      "author": "Dr. Mary Ouma",
+      "date": "2025-10-10",
+      "readTime": "5 min",
+      "image": "https://images.unsplash.com/photo-1508672584288-fa0f413d7d7f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZmFtaWx5JTIwcGxhbm5pbmd8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500",
+      "summary": "Family planning is vital for maternal health and economic stability. This article reviews the various modern contraceptive methods widely available in Kenyan clinics.",
+      "content": "## Family Planning in Kenya: Options and Access to Modern Contraceptives\n\n**Family Planning (FP) is a cornerstone of maternal and child health in Kenya.** It allows individuals and couples to anticipate and attain their desired number of children and the spacing and timing of their births. Access to modern contraceptives has dramatically improved maternal and child health outcomes across the country. Clinics like Migori Reproductive Clinic offer a full spectrum of confidential and accessible FP services.\n\n### The Importance of Family Planning\n\n* **Reduced Maternal Mortality:** Spacing pregnancies reduces the risk of death for the mother and child.\n* **Improved Child Health:** Allowing the mother to recover fully between pregnancies ensures she can focus on the care of her existing children.\n* **Economic Stability:** Family planning allows families to better manage their resources, leading to improved food security and education for the children.\n\n### Modern Contraceptive Methods Available\n\nChoosing the right method is a personal decision based on health, lifestyle, and desired duration. Consult your healthcare provider for counseling.\n\n| Method | Description | Duration/Frequency | Pros | Cons | Access in Kenya |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| **Injectables** | Hormonal shot (Depo-Provera/Sayana Press). | Every 2-3 months | Highly effective, private, easy to use. | Can cause irregular bleeding, minor weight gain, delayed return to fertility. | Widely available (Public & Private) |\n| **Implants** | Small rods inserted under the skin of the upper arm. | 3-5 years | Highly effective, long-lasting, reversible. | Requires minor procedure for insertion/removal, can cause changes in menstrual pattern. | Widely available (Public & Private) |\n| **IUD (Coil)** | T-shaped device inserted into the uterus (Copper or Hormonal). | 5-10 years | Highly effective, non-hormonal (Copper), no daily maintenance. | Requires a trained provider for insertion/removal, may cause heavier periods (Copper). | Widely available (Public & Private) |\n| **Oral Contraceptive Pills (OCPs)** | Daily pills containing hormones. | Daily | Easy to stop, helps regulate periods. | Must be taken daily, reduced effectiveness if doses are missed. | Widely available (Public & Private) |\n| **Male/Female Sterilization** | Permanent methods (tubal ligation for women, vasectomy for men). | Permanent | 99%+ effective. | Permanent (difficult to reverse), requires minor surgery. | Available at select hospitals/clinics |\n\n### Access and Confidentiality\n\nFamily planning services are generally **free or heavily subsidized** in public health facilities across Kenya. Confidentiality is guaranteed, encouraging young people and unmarried individuals to access services without fear of judgment. Take control of your reproductive health by visiting your local clinic for informed advice and method provision.",
+      "published": true,
+      "isTrending": false
+    },
+    {
+      "id": "20",
+      "title": "The Silent Battle: Understanding and Managing HIV in Kenya Today",
+      "category": "Chronic Illness",
+      "author": "Dr. Fatma Juma",
+      "date": "2025-10-25",
+      "readTime": "7 min",
+      "image": "https://images.unsplash.com/photo-1582234033005-4f40f2f51f4c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TUFsYXJpYXxlbnwwfHwwfHww&auto=format&fit=crop&q=60&w=500",
+      "summary": "HIV is no longer a death sentence but a manageable chronic condition. This article updates on the progress of ART, PrEP, and the 'U=U' campaign in Kenya.",
+      "content": "## The Silent Battle: Understanding and Managing HIV in Kenya Today\n\n**The narrative around HIV in Kenya has dramatically changed from a death sentence to a manageable chronic condition.** Thanks to decades of public health efforts and global access to medicine, an HIV-positive diagnosis no longer dictates one's life expectancy. The focus today is on sustained access to treatment, prevention, and the promotion of a normal, healthy life. Clinics like Mombasa Community Health Center are central to this ongoing success.\n\n### Treatment: Antiretroviral Therapy (ART) and 'U=U'\n\nThe cornerstone of HIV management is Antiretroviral Therapy (ART), which involves a combination of three or more drugs that suppress the virus. \n\n1.  **Viral Suppression:** ART reduces the amount of HIV in the body (the viral load) to very low levels. The goal is to reach **'Undetectable.'**\n2.  **U=U (Undetectable = Untransmittable):** This is a powerful and globally recognized public health message. When a person living with HIV is on effective ART and maintains an undetectable viral load for at least six months, they cannot sexually transmit the virus to others. This fact has dramatically reduced stigma and encouraged treatment adherence.\n\n### Prevention: PrEP and PEP\n\nPrevention methods have also evolved, offering powerful protection for HIV-negative individuals:\n\n* **PrEP (Pre-Exposure Prophylaxis):** A daily pill (or long-acting injectable, becoming available) taken by HIV-negative individuals at high risk of exposure (e.g., in a discordant relationship). It prevents the virus from taking hold in the body.\n* **PEP (Post-Exposure Prophylaxis):** A course of medication taken for 28 days *after* a potential exposure (e.g., condom breakage, sexual assault, needle stick). It must be started as soon as possible, ideally within 72 hours of exposure.\n\n### Access and Adherence in Kenya\n\nKenya has made tremendous strides in making HIV services accessible:\n\n* **Free ART:** Antiretroviral drugs are generally provided for free at government-run comprehensive care centers (CCCs) across the country.\n* **Testing is the First Step:** Routine testing is highly encouraged, including during antenatal care and general checkups. Knowing your status is the gateway to prevention or treatment.\n* **Addressing Stigma:** While reduced, stigma remains a challenge. Support groups and community-based programs are essential for encouraging adherence to ART, which is critical for maintaining an undetectable viral load.\n\nLiving with HIV is a journey of continuous care. With consistent ART, an HIV-positive person can expect a near-normal life span and can confidently protect their partners. The message is clear: Test, Treat, and Live Well.",
+      "published": true,
+      "isTrending": true
+    }
+  ],
+  "symptomHistory": [
+    {
+      "id": "b0d7",
+      "userId": "1",
+      "symptoms": "I’ve been coughing for a few days, feeling really tired, and I’ve lost my sense of taste. I also have a mild fever that comes and goes.",
+      "result": {
+        "assessment": "You are experiencing symptoms that could be associated with a viral infection, such as COVID-19, which requires monitoring.",
+        "possibleConditions": [
+          {
+            "name": "Possible COVID-19",
+            "urgency": "Medium",
+            "probability": "Medium",
+            "detail": "Loss of taste/smell + fever is common in COVID."
+          }
+        ],
+        "homeCare": [
+          "Rest in a cool place",
+          "Sponge with lukewarm water",
+          "Drink ORS hourly"
+        ],
+        "lightMedication": [
+          "Paracetamol 500mg every 6hrs (max 4/day)",
+          "Vitamin C + Zinc daily"
+        ],
+        "emergencySigns": [
+          "Difficulty breathing or shortness of breath (severe)",
+          "Persistent chest pain or pressure",
+          "Confusion or trouble staying awake",
+          "Bluish lips or face (low oxygen)"
+        ],
+        "urgentAdvice": "Go to hospital IMMEDIATELY if any emergency sign appears.",
+        "kenyaTips": ["Call 719 for COVID testing", "Use NHIF for free care"],
+        "sources": [
+          {
+            "title": "Kenya COVID Guidelines",
+            "uri": "https://www.health.go.ke/covid19"
+          },
+          {
+            "title": "Kenya MOH",
+            "uri": "https://www.health.go.ke"
+          }
+        ]
+      },
+      "timestamp": "2025-10-29T08:58:56.032Z"
+    },
+    {
+      "id": "c046",
+      "userId": "1",
+      "symptoms": "I’ve been feeling very tired lately, lost some weight without trying, and I found a small lump on my neck that hasn’t gone away",
+      "result": {
+        "assessment": "You are experiencing fatigue, unexplained weight loss, and a persistent lump on your neck, which may indicate an underlying health issue that requires medical attention.",
+        "possibleConditions": [
+          "Thyroid issues",
+          "Lymphadenopathy",
+          "Infections",
+          "Cancer"
+        ],
+        "homeCare": [
+          "Ensure you are eating a balanced diet rich in vitamins and minerals.",
+          "Stay hydrated by drinking plenty of water.",
+          "Get adequate rest and sleep to help your body recover."
+        ],
+        "lightMedication": [
+          "Over-the-counter pain relievers like paracetamol for discomfort.",
+          "Multivitamins to support overall health."
+        ],
+        "emergencySigns": [
+          "Difficulty breathing",
+          "Severe pain",
+          "Rapid weight loss",
+          "Fever",
+          "Night sweats"
+        ],
+        "urgentAdvice": "Go to hospital IMMEDIATELY if any emergency sign appears.",
+        "kenyaTips": ["Use NHIF for free care"],
+        "sources": [
+          {
+            "title": "Kenya MOH",
+            "uri": "https://www.health.go.ke"
+          }
+        ]
+      },
+      "timestamp": "2025-10-29T09:00:27.173Z"
+    },
+    {
+      "id": "505a",
+      "userId": "1",
+      "symptoms": "I’ve been feeling very tired lately, lost some weight without trying, and I found a small lump on my neck that hasn’t gone away",
+      "result": {
+        "assessment": "You are experiencing fatigue, unexplained weight loss, and a persistent lump on your neck, which could indicate an underlying health issue that needs attention.",
+        "possibleConditions": [
+          "Thyroid issues",
+          "Lymphadenopathy",
+          "Infections",
+          "Cancer"
+        ],
+        "homeCare": [
+          "Ensure you are eating a balanced diet rich in fruits, vegetables, and proteins.",
+          "Stay hydrated by drinking plenty of water.",
+          "Get adequate rest and sleep to help combat fatigue."
+        ],
+        "lightMedication": [
+          "Over-the-counter pain relievers like paracetamol for discomfort.",
+          "Multivitamins to support overall health."
+        ],
+        "emergencySigns": [
+          "Difficulty breathing",
+          "Severe pain",
+          "Rapid weight loss",
+          "Fever",
+          "Night sweats"
+        ],
+        "urgentAdvice": "Go to hospital IMMEDIATELY if any emergency sign appears.",
+        "kenyaTips": ["Use NHIF for free care"],
+        "sources": [
+          {
+            "title": "Kenya MOH",
+            "uri": "https://www.health.go.ke"
+          }
+        ]
+      },
+      "timestamp": "2025-10-29T09:00:54.567Z"
+    },
+    {
+      "id": "699e",
+      "userId": "1",
+      "symptoms": "I’ve been feeling very tired lately, lost some weight without trying, and I found a small lump on my neck that hasn’t gone away",
+      "result": {
+        "assessment": "The symptoms of fatigue, unexplained weight loss, and a persistent lump on the neck may indicate a serious underlying condition that requires medical evaluation.",
+        "possibleConditions": [
+          {
+            "name": "Lymphoma or other malignancies",
+            "urgency": "High",
+            "probability": "Medium",
+            "detail": "These symptoms can be associated with cancers, especially lymphatic cancers, which need prompt attention."
+          },
+          {
+            "name": "Thyroid issues",
+            "urgency": "Medium",
+            "probability": "Medium",
+            "detail": "A lump in the neck can indicate thyroid problems, which may also cause fatigue and weight changes."
+          }
+        ],
+        "homeCare": ["Rest", "Drink ORS"],
+        "lightMedication": ["Paracetamol 500mg every 6hrs"],
+        "emergencySigns": [
+          "Fever >40°C → seizures",
+          "Difficulty breathing",
+          "Severe neck swelling"
+        ],
+        "urgentAdvice": "Go to hospital NOW if any emergency sign appears. Call 0800 721 316.",
+        "kenyaTips": ["Get malaria RDT", "Dial *155# for NHIF clinic"],
+        "sources": [
+          {
+            "title": "Kenya MOH",
+            "uri": "https://www.health.go.ke"
+          }
+        ]
+      },
+      "timestamp": "2025-10-29T09:18:05.411Z"
+    },
+    {
+      "id": "9eb3",
+      "userId": "1",
+      "symptoms": "I’ve been feeling very tired lately, lost some weight without trying, and I found a small lump on my neck that hasn’t gone away",
+      "result": {
+        "assessment": "The symptoms of fatigue, unexplained weight loss, and a persistent lump on the neck may indicate a serious underlying condition that requires immediate medical evaluation.",
+        "possibleConditions": [
+          {
+            "name": "Lymphoma",
+            "urgency": "High",
+            "probability": "Medium",
+            "detail": "A type of cancer that can cause swollen lymph nodes, fatigue, and weight loss."
+          },
+          {
+            "name": "Thyroid disorder",
+            "urgency": "Medium",
+            "probability": "Medium",
+            "detail": "An imbalance in thyroid hormone levels can lead to fatigue and weight changes."
+          },
+          {
+            "name": "Tuberculosis (TB)",
+            "urgency": "High",
+            "probability": "Medium",
+            "detail": "An infectious disease that can cause weight loss, fatigue, and swollen lymph nodes."
+          }
+        ],
+        "homeCare": [],
+        "lightMedication": [],
+        "emergencySigns": ["Difficulty breathing", "Severe neck swelling"],
+        "urgentAdvice": "Go to hospital NOW if any emergency sign appears. Call 0800 721 316.",
+        "kenyaTips": [],
+        "sources": [
+          {
+            "title": "Kenya Ministry of Health",
+            "uri": "https://www.health.go.ke"
+          }
+        ]
+      },
+      "timestamp": "2025-10-29T09:20:16.429Z"
+    }
+  ]
+}
