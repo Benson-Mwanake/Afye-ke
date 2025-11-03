@@ -6,8 +6,7 @@ import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import { BriefcaseMedical, Calendar, Clock, MapPin } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = "http://127.0.0.1:5000";
+import api from "../services/api";
 
 const AppointmentDetail = () => {
   const { id } = useParams();
@@ -15,12 +14,10 @@ const AppointmentDetail = () => {
   const { user } = useAuth();
   const [appointment, setAppointment] = useState(null);
   const [clinic, setClinic] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // --- New state for services, doctors, editing ---
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
     service: "",
@@ -32,245 +29,188 @@ const AppointmentDetail = () => {
   useEffect(() => {
     if (!user?.id || !id) return;
 
-    const controller = new AbortController();
-
-    const loadAppointment = async () => {
+    const load = async () => {
       try {
-        const apptRes = await fetch(`${API_URL}/appointments/${id}`, {
-          signal: controller.signal,
-        });
-        if (!apptRes.ok) throw new Error("Appointment not found");
-        const appt = await apptRes.json();
+        setLoading(true);
 
-        if (appt.patientId !== parseInt(user.id)) {
+        // 1. Get appointment
+        const apptRes = await api.get(`/appointments/${id}`);
+        const appt = apptRes.data;
+        if (appt.patientId !== user.id) {
           setError("Access denied.");
           return;
         }
 
-        const clinicRes = await fetch(`${API_URL}/clinics/${appt.clinicId}`, {
-          signal: controller.signal,
-        });
-        const clinicData = clinicRes.ok ? await clinicRes.json() : null;
+        // 2. Get clinic
+        const clinicRes = await api.get(`/clinics/${appt.clinicId}`);
+        const clinicData = clinicRes.data;
+
+        // 3. Get doctors
+        let doctorList = [];
+        try {
+          const docRes = await api.get("/users/", {
+            params: { role: "doctor", clinicId: clinicData.id },
+          });
+          doctorList = docRes.data;
+        } catch (err) {
+          console.warn("No doctors found for clinic:", err);
+        }
 
         setAppointment(appt);
         setClinic(clinicData);
-
-        // Initialize form for editing
+        setServices(clinicData.services || []);
+        setDoctors(doctorList);
         setForm({
           service: appt.service || "",
           doctor: appt.doctor || "",
           date: appt.date || "",
           time: appt.time || "",
         });
-
-        // Load services and doctors dynamically
-        if (clinicData) {
-          setServices(clinicData.services || []);
-          const docRes = await fetch(`${API_URL}/users?role=doctor&clinicId=${clinicData.id}`);
-          const docData = docRes.ok ? await docRes.json() : [];
-          setDoctors(docData);
-        }
       } catch (err) {
-        setError(err.message || "Failed to load appointment.");
+        setError(err.response?.data?.msg || "Failed to load.");
       } finally {
         setLoading(false);
       }
     };
 
-    loadAppointment();
-    return () => controller.abort();
+    load();
   }, [user, id]);
-
-  const handleBack = () => {
-    navigate("/appointments");
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleUpdate = async () => {
     if (!form.service || !form.doctor || !form.date || !form.time) {
-      alert("Please fill all required fields");
+      alert("Fill all fields");
       return;
     }
+
     try {
-      const res = await fetch(`${API_URL}/appointments/${appointment.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) throw new Error("Failed to update appointment");
-      const updated = await res.json();
-      setAppointment(updated);
+      const res = await api.patch(`/appointments/${appointment.id}`, form);
+      setAppointment(res.data);
       setIsEditing(false);
-      alert("Appointment updated!");
+      alert("Updated!");
     } catch (err) {
-      console.error(err);
-      alert("Failed to update appointment");
+      alert(err.response?.data?.msg || "Update failed");
     }
   };
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (loading) return <p className="text-center py-8">Loading...</p>;
   if (error) return <p className="text-center text-red-600">{error}</p>;
-  if (!appointment)
-    return <p className="text-center text-gray-500">No data.</p>;
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto py-8 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-4">
-          Appointment Details
-        </h1>
+      <div className="max-w-4xl mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-4">Appointment Details</h1>
         <Card>
           <div className="space-y-6">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <BriefcaseMedical className="w-6 h-6 text-green-600" />
-              <h2 className="text-xl font-semibold text-gray-800">
-                {clinic?.name || appointment.clinicName}
-              </h2>
+              <h2 className="text-xl font-semibold">{clinic?.name}</h2>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <MapPin className="w-6 h-6 text-blue-600" />
-              <p className="text-gray-600">
-                {clinic?.location || "Location not available"}
-              </p>
+              <p>{clinic?.location}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <Calendar className="w-6 h-6 text-indigo-600" />
-              <p className="text-gray-600">{appointment.date}</p>
+              <p>{appointment.date}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <Clock className="w-6 h-6 text-teal-600" />
-              <p className="text-gray-600">{appointment.time}</p>
+              <p>{appointment.time}</p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">Doctor:</p>
-              <p className="text-gray-600">
-                {appointment.doctor || "Not assigned"}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">Service:</p>
-              <p className="text-gray-600">
-                {appointment.service || "Not specified"}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">Status:</p>
-              <p
-                className={`text-gray-600 font-medium ${
+            <p>
+              <strong>Doctor:</strong> {appointment.doctor || "Not assigned"}
+            </p>
+            <p>
+              <strong>Service:</strong> {appointment.service}
+            </p>
+            <p>
+              <strong>Status:</strong>{" "}
+              <span
+                className={
                   appointment.status === "Completed"
                     ? "text-green-600"
                     : appointment.status === "Cancelled"
                     ? "text-red-600"
                     : "text-blue-600"
-                }`}
+                }
               >
                 {appointment.status}
-              </p>
-            </div>
+              </span>
+            </p>
           </div>
 
-          {/* Edit / Reschedule Form */}
-          <div className="mt-6">
-            {!isEditing && (
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="text-white bg-blue-600 hover:bg-blue-700 mr-2"
-              >
-                Edit Appointment
-              </Button>
-            )}
-
-            {isEditing && (
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Service
-                  </label>
-                  <select
-                    name="service"
-                    value={form.service}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  >
-                    <option value="">Select service</option>
-                    {services.map((s, i) => (
-                      <option key={i} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Doctor
-                  </label>
-                  <select
-                    name="doctor"
-                    value={form.doctor}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  >
-                    <option value="">Choose a doctor</option>
-                    {doctors.map((d) => (
-                      <option key={d.id} value={d.fullName}>
-                        {d.fullName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    name="date"
-                    value={form.date}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    name="time"
-                    value={form.time}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                  />
-                </div>
-                <div className="flex space-x-2 mt-2">
-                  <Button
-                    onClick={handleUpdate}
-                    className="text-white bg-green-600 hover:bg-green-700"
-                  >
-                    Save Changes
-                  </Button>
-                  <Button
-                    onClick={() => setIsEditing(false)}
-                    className="text-white bg-gray-600 hover:bg-gray-700"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-6">
+          {!isEditing ? (
             <Button
-              onClick={handleBack}
-              className="text-white bg-gray-600 hover:bg-gray-700"
+              onClick={() => setIsEditing(true)}
+              className="mt-6 bg-blue-600 text-white"
             >
-              Back to Appointments
+              Edit Appointment
             </Button>
-          </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              <select
+                name="service"
+                value={form.service}
+                onChange={(e) => setForm({ ...form, service: e.target.value })}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select service</option>
+                {services.map((s, i) => (
+                  <option key={i} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="doctor"
+                value={form.doctor}
+                onChange={(e) => setForm({ ...form, doctor: e.target.value })}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Choose doctor</option>
+                {doctors.map((d) => (
+                  <option key={d.id} value={d.full_name}>
+                    {d.full_name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="date"
+                name="date"
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="time"
+                name="time"
+                value={form.time}
+                onChange={(e) => setForm({ ...form, time: e.target.value })}
+                className="w-full p-2 border rounded"
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleUpdate}
+                  className="bg-green-600 text-white"
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => setIsEditing(false)}
+                  className="bg-gray-600 text-white"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <Button
+            onClick={() => navigate("/appointments")}
+            className="mt-4 bg-gray-600 text-white"
+          >
+            Back
+          </Button>
         </Card>
       </div>
     </DashboardLayout>

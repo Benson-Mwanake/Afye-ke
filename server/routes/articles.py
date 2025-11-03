@@ -16,8 +16,8 @@ def get_articles():
 @bp.route("/", methods=["POST"])
 @jwt_required()
 def create_article():
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())  # ← convert to int                 # <-- now a string
+    role    = get_jwt().get("role")
     current_user = User.query.get(user_id)
     if not current_user:
         return jsonify({"msg": "User not found"}), 404
@@ -57,8 +57,8 @@ def delete_article(article_id):
 @bp.route("/<int:article_id>", methods=["PATCH"])
 @jwt_required()
 def update_article(article_id):
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())  # ← convert to int                 # <-- now a string
+    role    = get_jwt().get("role")
     current_user = User.query.get(user_id)
 
     if not current_user:

@@ -1,12 +1,14 @@
+# routes/appointments.py
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
-from models import Appointment, User, Role
+from models import Appointment, User, Role, Clinic
 from schemas import AppointmentSchema
 
 bp = Blueprint("appointments", __name__, url_prefix="/appointments")
 appt_schema = AppointmentSchema()
 appts_schema = AppointmentSchema(many=True)
+
 
 # ------------------------------------------------------------------
 # List Appointments
@@ -14,18 +16,14 @@ appts_schema = AppointmentSchema(many=True)
 @bp.route("/", methods=["GET"])
 @jwt_required()
 def list_appointments():
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())
     current_user = User.query.get(user_id)
     if not current_user:
         return jsonify({"msg": "User not found"}), 404
 
     patient_q = request.args.get("patientId", type=int)
-
-    # Base query
     query = Appointment.query
 
-    # Filter by role
     if current_user.role in [Role.ADMIN, Role.MANAGER]:
         if patient_q:
             query = query.filter_by(patient_id=patient_q)
@@ -41,8 +39,6 @@ def list_appointments():
         query = query.filter_by(patient_id=current_user.id)
 
     appts = query.all()
-
-    # Attach patient names
     results = []
     for appt in appts:
         patient = User.query.get(appt.patient_id)
@@ -59,17 +55,24 @@ def list_appointments():
 @bp.route("/", methods=["POST"])
 @jwt_required()
 def create_appointment():
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())  # ← int
     data = request.get_json() or {}
     required = ["clinicId", "date", "time"]
     for r in required:
         if r not in data:
             return jsonify({"msg": f"Missing field {r}"}), 400
 
+    clinic_id = data.get("clinicId")
+    if not clinic_id or not isinstance(clinic_id, int):
+        return jsonify({"msg": "Invalid clinicId"}), 400
+
+    # Validate clinic exists
+    if not Clinic.query.get(clinic_id):
+        return jsonify({"msg": "Clinic not found"}), 404
+
     appt = Appointment(
         patient_id=user_id,
-        clinic_id=data.get("clinicId"),
+        clinic_id=clinic_id,
         clinic_name=data.get("clinicName"),
         doctor=data.get("doctor"),
         service=data.get("service"),
@@ -79,9 +82,12 @@ def create_appointment():
         notes=data.get("notes"),
     )
     db.session.add(appt)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Failed to save appointment"}), 500
 
-    # Include patient name in response
     appt_dict = appt_schema.dump(appt)
     patient = User.query.get(appt.patient_id)
     appt_dict["patientName"] = patient.full_name if patient else "Unknown"
@@ -95,12 +101,10 @@ def create_appointment():
 @bp.route("/<int:appt_id>", methods=["GET"])
 @jwt_required()
 def get_appointment(appt_id):
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())
     current_user = User.query.get(user_id)
     appt = Appointment.query.get_or_404(appt_id)
 
-    # Authorization
     if current_user.role in [Role.ADMIN, Role.MANAGER]:
         pass
     elif current_user.role == Role.CLINIC:
@@ -110,7 +114,6 @@ def get_appointment(appt_id):
         if appt.patient_id != current_user.id:
             return jsonify({"msg": "Not authorized"}), 403
 
-    # Include patient name
     appt_dict = appt_schema.dump(appt)
     patient = User.query.get(appt.patient_id)
     appt_dict["patientName"] = patient.full_name if patient else "Unknown"
@@ -119,20 +122,18 @@ def get_appointment(appt_id):
 
 
 # ------------------------------------------------------------------
-# Update Appointment Status (NEW)
+# Update Appointment Status
 # ------------------------------------------------------------------
 @bp.route("/<int:appt_id>", methods=["PATCH"])
 @jwt_required()
 def update_appointment(appt_id):
-    identity = get_jwt_identity()
-    user_id = identity["id"] if isinstance(identity, dict) else identity
+    user_id = int(get_jwt_identity())
     current_user = User.query.get(user_id)
     if not current_user:
         return jsonify({"msg": "User not found"}), 404
 
     appt = Appointment.query.get_or_404(appt_id)
 
-    # Only clinic (owning) or admin/manager can update
     if current_user.role not in [Role.ADMIN, Role.MANAGER, Role.CLINIC]:
         return jsonify({"msg": "Not authorized"}), 403
     if current_user.role == Role.CLINIC and appt.clinic_id != current_user.clinic_id:
@@ -150,7 +151,6 @@ def update_appointment(appt_id):
     appt.status = status
     db.session.commit()
 
-    # Include patient name in response
     appt_dict = appt_schema.dump(appt)
     patient = User.query.get(appt.patient_id)
     appt_dict["patientName"] = patient.full_name if patient else "Unknown"

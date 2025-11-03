@@ -2,7 +2,7 @@ from datetime import datetime
 from extensions import db
 from sqlalchemy.dialects.postgresql import JSONB
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class Role:
@@ -38,22 +38,23 @@ class Clinic(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255))
-    coordinates = db.Column(JSONB)
-    services = db.Column(JSONB)
-    rating = db.Column(db.Float)
-    reviews = db.Column(db.Integer)
     phone = db.Column(db.String(50))
     email = db.Column(db.String(120))
-    operating_hours = db.Column(JSONB)
-    verified = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(50))
-    doctors = db.Column(JSONB)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    images = db.relationship("Image", backref="clinic", lazy="select")
     password = db.Column(db.String(200))
-    opening_time = db.Column(db.String, nullable=True)
-    closing_time = db.Column(db.String, nullable=True)
-  # hashed password ideally
+    opening_time = db.Column(db.String)
+    closing_time = db.Column(db.String)
+    coordinates = db.Column(JSONB, default=lambda: {"lat": 0.0, "lng": 0.0})
+    services = db.Column(JSONB, default=[])
+    operating_hours = db.Column(JSONB, default=[])
+    doctors = db.Column(JSONB, default=[])
+    rating = db.Column(db.Float, default=0.0)
+    reviews = db.Column(db.Integer, default=0)
+    verified = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(50), default="pending")
+    created_at = db.Column(db.DateTime, default=datetime.now(UTC))
+
+
+# hashed password ideally
 
 
 class Appointment(db.Model):
@@ -109,6 +110,7 @@ class SymptomHistory(db.Model):
     timestamp = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 class Review(db.Model):
     __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
@@ -122,20 +124,22 @@ class Review(db.Model):
 from extensions import db
 from datetime import datetime
 
+
 class Report(db.Model):
-    __tablename__ = 'reports'
+    __tablename__ = "reports"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     category = db.Column(db.String(80))
     summary = db.Column(db.Text)
     content = db.Column(db.Text)
+    author = db.Column(db.String(100))
     date = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(50), default="Pending")
 
     # Foreign keys
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    clinic_id = db.Column(db.Integer, db.ForeignKey('clinics.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    clinic_id = db.Column(db.Integer, db.ForeignKey("clinics.id"), nullable=True)
 
     # Relationships
     user = db.relationship("User", backref="reports", lazy=True)
@@ -143,7 +147,3 @@ class Report(db.Model):
 
     def __repr__(self):
         return f"<Report {self.title}>"
-
-    
-
-    

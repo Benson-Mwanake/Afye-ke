@@ -1,3 +1,4 @@
+// client/src/services/api.js
 import axios from "axios";
 
 const api = axios.create({
@@ -5,15 +6,17 @@ const api = axios.create({
   timeout: 15000,
 });
 
-// Attach token automatically if it exists
+// Use the same key you save during login
 api.interceptors.request.use((cfg) => {
   try {
-    const store = localStorage.getItem("authToken");
-    if (store) {
+    const token = localStorage.getItem("authToken"); // ← MUST MATCH login
+    if (token) {
       cfg.headers = cfg.headers || {};
-      cfg.headers.Authorization = `Bearer ${store}`;
+      cfg.headers.Authorization = `Bearer ${token}`;
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("Failed to attach token:", e);
+  }
   return cfg;
 });
 

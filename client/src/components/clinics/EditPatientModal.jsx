@@ -42,24 +42,54 @@ const EditPatientModal = ({ patient, onClose, onSave }) => {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("Not authenticated. Please log in.");
+      return;
+    }
+
+    // Validate form
+    if (!form.fullName.trim()) {
+      alert("Full Name is required.");
+      return;
+    }
+
+    const payload = {
+      fullName: form.fullName.trim(),
+      phoneNumber: form.phoneNumber ? form.phoneNumber.trim() : undefined,
+      profile: {
+        dob: form.profile.dob || undefined,
+        gender: form.profile.gender || undefined,
+        country: form.profile.country || undefined,
+        bloodType: form.profile.bloodType || undefined,
+        allergies: form.profile.allergies || undefined,
+        emergencyContact: form.profile.emergencyContact || undefined,
+      },
+    };
+
     try {
       const res = await fetch(`http://127.0.0.1:5000/users/${patient.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: form.fullName,
-          phoneNumber: form.phoneNumber,
-          profile: form.profile,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Backend Error:", err); // Log the error for debugging
+        throw new Error(err.msg || "Failed to save patient information.");
+      }
 
-      onSave({ ...patient, ...form });
+      const updatedPatient = await res.json();
+      onSave(updatedPatient);
       onClose();
       alert("Patient updated successfully!");
     } catch (err) {
-      alert("Failed to save: " + err.message);
+      console.error("Fetch Error:", err);
+      alert(`Error: ${err.message}`);
     }
   };
 

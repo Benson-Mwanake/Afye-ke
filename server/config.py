@@ -12,7 +12,7 @@ class Config:
     #  Corrected PostgreSQL connection string
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "postgresql+psycopg2://postgres:admin123@localhost:5432/afyalink",
+        "postgresql://afyalink_user:newpassword@localhost:5432/afyalink_db",
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False

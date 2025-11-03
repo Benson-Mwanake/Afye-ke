@@ -137,28 +137,26 @@ const PatientProfile = () => {
 
     const controller = new AbortController();
 
+    // PatientProfile.jsx
     const fetchAppointments = async () => {
       try {
+        const token = localStorage.getItem("authToken"); // ← FIXED
         const res = await fetch(
           `${API_URL}/appointments?patientId=${user.id}`,
-          { signal: controller.signal }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ← ADD THIS
+            },
+          }
         );
-        if (!res.ok) {
-          console.error("Failed to load appointments:", res.status);
-          return;
-        }
+
+        if (!res.ok) throw new Error("Failed to load appointments");
         const data = await res.json();
-
-        // SHOW ALL: Confirmed + Completed + Pending + Cancelled
-        const allAppointments = data.sort(
-          (a, b) => new Date(b.date) - new Date(a.date)
+        setAppointments(
+          data.sort((a, b) => new Date(b.date) - new Date(a.date))
         );
-
-        setAppointments(allAppointments);
       } catch (err) {
-        if (err.name !== "AbortError") {
-          console.error("Appointments fetch error:", err);
-        }
+        console.error("Appointments error:", err);
       } finally {
         setApptLoading(false);
       }
@@ -172,38 +170,40 @@ const PatientProfile = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async () => {
-    if (!user?.id) return;
+const handleSave = async () => {
+  const token = localStorage.getItem("authToken"); // ← Use authToken
+  if (!token) return alert("Please log in again.");
 
-    const updated = {
-      fullName: formData.fullName,
-      phoneNumber: formData.phone,
-      profile: {
-        dob: formData.dob,
-        gender: formData.gender,
-        country: formData.country,
-        bloodType: formData.bloodType,
-        allergies: formData.allergies,
-        emergencyContact: formData.emergencyContact,
-      },
-    };
-
-    try {
-      const res = await fetch(`${API_URL}/users/${user.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
-      });
-
-      if (!res.ok) throw new Error("Save failed");
-
-      alert("Profile saved successfully!");
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Save error:", err);
-      alert("Failed to save. Is json-server running?");
-    }
+  const updated = {
+    fullName: formData.fullName,
+    phoneNumber: formData.phone,
+    profile: {
+      dob: formData.dob,
+      gender: formData.gender,
+      country: formData.country,
+      bloodType: formData.bloodType,
+      allergies: formData.allergies,
+      emergencyContact: formData.emergencyContact,
+    },
   };
+
+  try {
+    const res = await fetch(`${API_URL}/users/${user.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updated),
+    });
+
+    if (!res.ok) throw new Error("Save failed");
+    alert("Profile saved!");
+    setIsEditing(false);
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
   const handleCancel = () => {
     setFormData({

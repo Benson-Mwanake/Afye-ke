@@ -63,7 +63,11 @@ const OperatingHoursEditor = ({ values, setFieldValue, isEditable }) => {
   return (
     <div className="space-y-4">
       {days.map((day) => {
-        const slot = values.operatingHours[day] || { isClosed: true, open: "", close: "" };
+        const slot = values.operatingHours[day] || {
+          isClosed: true,
+          open: "",
+          close: "",
+        };
         const label = day.charAt(0).toUpperCase() + day.slice(1);
         return (
           <div
@@ -126,7 +130,7 @@ const OperatingHoursEditor = ({ values, setFieldValue, isEditable }) => {
 };
 
 const ClinicProfile = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
@@ -135,12 +139,13 @@ const ClinicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
+  const [error, setError] = useState(null);
 
   const servicesList = [
     { key: "generalPractice", label: "General Practice" },
     { key: "laboratoryServices", label: "Laboratory Services" },
     { key: "dentalCare", label: "Dental Care" },
-    { key: "xRay", label: "X‑Ray" },
+    { key: "xRay", label: "X-Ray" },
     { key: "surgery", label: "Surgery" },
     { key: "physiotherapy", label: "Physiotherapy" },
     { key: "pediatrics", label: "Pediatrics" },
@@ -182,33 +187,106 @@ const ClinicProfile = () => {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        // Map operating hours for backend
+        setError(null);
         const oh = Object.entries(values.operatingHours).map(([day, slot]) =>
           slot.isClosed
-            ? { day: day.charAt(0).toUpperCase() + day.slice(1), open: null, close: null, closed: true }
-            : { day: day.charAt(0).toUpperCase() + day.slice(1), open: slot.open, close: slot.close, closed: false }
+            ? {
+                day: day.charAt(0).toUpperCase() + day.slice(1),
+                open: null,
+                close: null,
+                closed: true,
+              }
+            : {
+                day: day.charAt(0).toUpperCase() + day.slice(1),
+                open: slot.open,
+                close: slot.close,
+                closed: false,
+              }
         );
 
         const services = Object.entries(values.services)
           .filter(([, v]) => v)
           .map(([k]) => servicesList.find((s) => s.key === k)?.label);
 
-        const payload = { ...values, operatingHours: oh, services };
+        const payload = {
+          name: values.name,
+          description: values.description,
+          phone: values.phone,
+          email: values.email,
+          website: values.website,
+          county: values.county,
+          area_town: values.areaTown,
+          full_address: values.fullAddress,
+          operating_hours: oh,
+          services,
+          images,
+        };
+
+        console.log("Submitting payload:", payload);
 
         const res = await fetch(`${API_URL}/clinics/${user.clinicId}`, {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(payload),
         });
 
-        if (!res.ok) throw new Error("Save failed");
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || "Failed to save profile");
+        }
+
         const saved = await res.json();
-        setClinic({ ...clinic, ...saved });
+        console.log("Saved data:", saved);
+
+        // Sync form with saved data
+        const ohMap = {
+          monday: { isClosed: true, open: "", close: "" },
+          tuesday: { isClosed: true, open: "", close: "" },
+          wednesday: { isClosed: true, open: "", close: "" },
+          thursday: { isClosed: true, open: "", close: "" },
+          friday: { isClosed: true, open: "", close: "" },
+          saturday: { isClosed: true, open: "", close: "" },
+          sunday: { isClosed: true, open: "", close: "" },
+        };
+        saved.operating_hours?.forEach((slot) => {
+          const key = slot.day.toLowerCase();
+          if (ohMap[key])
+            ohMap[key] = {
+              open: slot.open,
+              close: slot.close,
+              isClosed: slot.closed,
+            };
+        });
+        const servicesMap = Object.fromEntries(
+          servicesList.map((s) => [
+            s.key,
+            saved.services?.includes(s.label) ?? false,
+          ])
+        );
+
+        formik.setValues({
+          name: saved.name,
+          description: saved.description || "",
+          phone: saved.phone || "",
+          email: saved.email || "",
+          website: saved.website || "",
+          county: saved.county || "",
+          areaTown: saved.area_town || "",
+          fullAddress: saved.full_address || "",
+          operatingHours: ohMap,
+          services: servicesMap,
+        });
+        setClinic(saved);
+        setImages(saved.images || []);
         setIsEditable(false);
         alert("Profile saved successfully!");
       } catch (err) {
-        console.error(err);
-        alert("Failed to save profile");
+        console.error("Save error:", err);
+        setError(`Failed to save profile: ${err.message}`);
+        alert(`Failed to save profile: ${err.message}`);
       } finally {
         setSubmitting(false);
       }
@@ -217,14 +295,21 @@ const ClinicProfile = () => {
 
   useEffect(() => {
     const load = async () => {
-      if (!user?.clinicId) {
+      if (!user?.clinicId || !token) {
+        setError("Not authenticated or no clinic associated");
         setLoading(false);
         return;
       }
       try {
-        const res = await fetch(`${API_URL}/clinics/${user.clinicId}`);
-        if (!res.ok) throw new Error("Clinic not found");
+        const res = await fetch(`${API_URL}/clinics/${user.clinicId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || "Clinic not found");
+        }
         const data = await res.json();
+        console.log("Loaded clinic:", data);
 
         const ohMap = {
           monday: { isClosed: true, open: "", close: "" },
@@ -235,31 +320,50 @@ const ClinicProfile = () => {
           saturday: { isClosed: true, open: "", close: "" },
           sunday: { isClosed: true, open: "", close: "" },
         };
-
-        data.operatingHours?.forEach((slot) => {
+        data.operating_hours?.forEach((slot) => {
           const key = slot.day.toLowerCase();
-          if (ohMap[key]) ohMap[key] = { open: slot.open, close: slot.close, isClosed: slot.closed };
+          if (ohMap[key])
+            ohMap[key] = {
+              open: slot.open,
+              close: slot.close,
+              isClosed: slot.closed,
+            };
         });
 
         const services = Object.fromEntries(
-          servicesList.map((s) => [s.key, data.services?.includes(s.label) ?? false])
+          servicesList.map((s) => [
+            s.key,
+            data.services?.includes(s.label) ?? false,
+          ])
         );
 
-        formik.setValues({ ...data, operatingHours: ohMap, services });
+        formik.setValues({
+          name: data.name,
+          description: data.description || "",
+          phone: data.phone || "",
+          email: data.email || "",
+          website: data.website || "",
+          county: data.county || "",
+          areaTown: data.area_town || "",
+          fullAddress: data.full_address || "",
+          operatingHours: ohMap,
+          services,
+        });
         setClinic(data);
         setImages(data.images || []);
       } catch (e) {
-        console.error(e);
-        alert("Failed to load clinic profile");
+        console.error("Load error:", e);
+        setError(`Failed to load clinic profile: ${e.message}`);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [user]);
+  }, [user, token]);
 
   const handleImageFiles = async (files) => {
-    if (images.length + files.length > 5) return alert("Maximum 5 images allowed");
+    if (images.length + files.length > 5)
+      return alert("Maximum 5 images allowed");
     setUploading(true);
     try {
       const newImages = await Promise.all(
@@ -276,14 +380,24 @@ const ClinicProfile = () => {
       );
       const updated = [...images, ...newImages];
       setImages(updated);
-      await fetch(`${API_URL}/clinics/${user.clinicId}`, {
+      const res = await fetch(`${API_URL}/clinics/${user.clinicId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ images: updated }),
       });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to upload images");
+      }
+      const saved = await res.json();
+      setImages(saved.images || []);
     } catch (e) {
-      console.error(e);
-      alert("Failed to upload images");
+      console.error("Image upload error:", e);
+      setError(`Failed to upload images: ${e.message}`);
+      alert(`Failed to upload images: ${e.message}`);
     } finally {
       setUploading(false);
     }
@@ -293,14 +407,24 @@ const ClinicProfile = () => {
     const updated = images.filter((_, i) => i !== idx);
     setImages(updated);
     try {
-      await fetch(`${API_URL}/clinics/${user.clinicId}`, {
+      const res = await fetch(`${API_URL}/clinics/${user.clinicId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ images: updated }),
       });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to remove image");
+      }
+      const saved = await res.json();
+      setImages(saved.images || []);
     } catch (e) {
-      console.error(e);
-      alert("Failed to remove image");
+      console.error("Image remove error:", e);
+      setError(`Failed to remove image: ${e.message}`);
+      alert(`Failed to remove image: ${e.message}`);
     }
   };
 
@@ -311,11 +435,14 @@ const ClinicProfile = () => {
       </ClinicDashboardLayout>
     );
 
-  if (!clinic)
+  if (error || !clinic)
     return (
       <ClinicDashboardLayout>
         <div className="text-center py-12 text-red-600">
-          Clinic not found – please log in as a clinic.
+          {error || "Clinic not found – please log in as a clinic."}
+          <p className="text-sm mt-2">
+            Ensure the backend is running on <code>{API_URL}</code>
+          </p>
         </div>
       </ClinicDashboardLayout>
     );
@@ -326,12 +453,21 @@ const ClinicProfile = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold">Clinic Profile</h1>
           <button
-            onClick={() => setIsEditable(!isEditable)}
+            onClick={() => {
+              setError(null);
+              setIsEditable(!isEditable);
+            }}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
             {isEditable ? "Cancel" : "Edit Profile"}
           </button>
         </div>
+
+        {error && (
+          <div className="text-red-600 text-sm p-4 bg-red-100 rounded-lg">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {[
@@ -372,7 +508,10 @@ const ClinicProfile = () => {
                     checked={formik.values.services[s.key]}
                     disabled={!isEditable}
                     onChange={(e) =>
-                      formik.setFieldValue(`services.${s.key}`, e.target.checked)
+                      formik.setFieldValue(
+                        `services.${s.key}`,
+                        e.target.checked
+                      )
                     }
                   />
                   <span>{s.label}</span>
@@ -384,9 +523,14 @@ const ClinicProfile = () => {
           {isEditable && (
             <button
               type="submit"
-              className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              disabled={formik.isSubmitting}
+              className={`px-6 py-2 rounded-lg text-white font-medium ${
+                formik.isSubmitting
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600"
+              }`}
             >
-              Save Changes
+              {formik.isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           )}
         </form>
@@ -396,7 +540,8 @@ const ClinicProfile = () => {
           <div
             onDrop={(e) => {
               e.preventDefault();
-              handleImageFiles(Array.from(e.dataTransfer.files));
+              if (isEditable)
+                handleImageFiles(Array.from(e.dataTransfer.files));
             }}
             onDragOver={(e) => e.preventDefault()}
             className="border border-dashed border-gray-300 p-4 rounded-lg flex flex-wrap gap-3"

@@ -7,8 +7,7 @@ import Button from "../components/ui/Button";
 import ListItem from "../components/ui/ListItem";
 import { BriefcaseMedical } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = "http://127.0.0.1:5000";
+import api from "../services/api";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -18,45 +17,36 @@ const Appointments = () => {
   const [clinicsMap, setClinicsMap] = useState({});
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
 
-    const controller = new AbortController();
-
-    const loadAppointments = async () => {
+    const load = async () => {
       try {
-        // Fetch appointments
-        const apptRes = await fetch(
-          `${API_URL}/appointments?patientId=${user.id}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        const allAppts = apptRes.ok ? await apptRes.json() : [];
+        setLoading(true);
 
-        // Fetch clinics map
-        const clinicsRes = await fetch(`${API_URL}/clinics`, {
-          signal: controller.signal,
+        // AUTHENTICATED: uses api → JWT included
+        const apptRes = await api.get("/appointments/", {
+          params: { patientId: user.id },
         });
-        const clinicsData = clinicsRes.ok ? await clinicsRes.json() : [];
-        const map = {};
-        clinicsData.forEach((c) => (map[c.id] = c.name));
-        setClinicsMap(map);
+        setAppointments(apptRes.data);
 
-        setAppointments(allAppts);
-      } catch (error) {
-        console.error("Failed to load appointments:", error);
+        // PUBLIC: fetch clinics
+        const clinicsRes = await fetch("http://127.0.0.1:5000/clinics");
+        const clinics = clinicsRes.ok ? await clinicsRes.json() : [];
+        const map = {};
+        clinics.forEach((c) => (map[c.id] = c.name));
+        setClinicsMap(map);
+      } catch (err) {
+        console.error("Load failed:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    loadAppointments();
-    return () => controller.abort();
+    load();
   }, [user]);
-
-  const handleBookAppointment = () => {
-    navigate("/clinic-browser");
-  };
 
   return (
     <DashboardLayout>
@@ -67,26 +57,23 @@ const Appointments = () => {
         <p className="text-lg text-gray-500 mb-6">
           View your upcoming and past appointments.
         </p>
+
         <Card>
           {loading ? (
-            <p className="text-center text-gray-500">Loading appointments...</p>
-          ) : appointments.length > 0 ? (
+            <p className="text-center py-4 text-gray-500">Loading...</p>
+          ) : appointments.length ? (
             <div className="divide-y divide-gray-100">
-              {appointments.map((appointment) => (
+              {appointments.map((a) => (
                 <ListItem
-                  key={appointment.id}
+                  key={a.id}
                   icon={BriefcaseMedical}
-                  title={
-                    clinicsMap[appointment.clinicId] ||
-                    appointment.clinicName ||
-                    "Unknown Clinic"
-                  }
-                  subtitle={`${appointment.doctor || "Dr. Not Assigned"} • ${
-                    appointment.service || "N/A"
-                  } • ${appointment.date} @ ${appointment.time}`}
+                  title={clinicsMap[a.clinicId] || a.clinicName || "Unknown"}
+                  subtitle={`${a.doctor || "Dr. Not Assigned"} • ${
+                    a.service || "N/A"
+                  } • ${a.date} @ ${a.time}`}
                   action={
                     <Button
-                      onClick={() => navigate(`/appointment/${appointment.id}`)}
+                      onClick={() => navigate(`/appointment/${a.id}`)}
                       className="text-green-600 border border-green-600 hover:bg-green-50"
                     >
                       Details
@@ -94,29 +81,22 @@ const Appointments = () => {
                   }
                 />
               ))}
-              <p className="text-sm text-gray-400 pt-4">
-                Showing {appointments.length} appointment(s).
+              <p className="pt-4 text-sm text-gray-400">
+                {appointments.length} appointment(s)
               </p>
             </div>
           ) : (
-            <div className="text-center py-10 bg-white rounded-xl shadow-md border border-gray-100">
-              <BriefcaseMedical className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-              <p className="text-xl text-gray-600">
-                No appointments scheduled yet.
-              </p>
-              <p className="text-sm text-gray-400 mt-2">
-                Go to your dashboard to view your Appointments.
-              </p>
+            <div className="text-center py-10">
+              <BriefcaseMedical className="w-12 h-12 mx-auto text-gray-400 mb-3" />
+              <p className="text-xl text-gray-600">No appointments yet.</p>
+              <Button
+                onClick={() => navigate("/clinic-browser")}
+                className="mt-4 bg-green-600 text-white hover:bg-green-700"
+              >
+                Book Now
+              </Button>
             </div>
           )}
-          <div className="mt-6">
-            <Button
-              onClick={handleBookAppointment}
-              className="text-white bg-green-600 hover:bg-green-700"
-            >
-              Book New Appointment
-            </Button>
-          </div>
         </Card>
       </div>
     </DashboardLayout>

@@ -3,11 +3,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Star, Phone, BriefcaseMedical, Clock } from "lucide-react";
 
+// src/components/clinics/ClinicCard.jsx
 const ClinicCard = ({ clinic }) => {
   const navigate = useNavigate();
 
-  const is24hr = clinic.is24h;
-  const isOpen = clinic.status === "Open";
+  const isOpen = clinic.is_open_now === true;     // FIXED
+  const is24hr = clinic.is_24_7 === true;         // FIXED
   const services = Array.isArray(clinic.services) ? clinic.services : [];
 
   const handleDetailsClick = () => {
@@ -30,30 +31,34 @@ const ClinicCard = ({ clinic }) => {
         </span>
       </div>
 
-      {/* Location + Distance */}
+      {/* Location */}
       <div className="flex items-center text-gray-600 text-sm mb-3">
         <MapPin className="w-4 h-4 mr-2 text-teal-500" />
         <span className="flex-1 truncate">
-          {clinic.location} • {clinic.distance}
+          {clinic.location} • {clinic.distance || "—"}
         </span>
       </div>
 
       {/* Rating */}
       <div className="flex items-center text-sm mb-3">
         <Star className="w-4 h-4 mr-1 text-yellow-400 fill-yellow-400" />
-        <span className="font-medium text-gray-800">{clinic.rating}</span>
-        <span className="text-gray-500 ml-1">({clinic.reviews} reviews)</span>
+        <span className="font-medium text-gray-800">
+          {clinic.rating || "N/A"}
+        </span>
+        <span className="text-gray-500 ml-1">
+          ({clinic.reviews || 0} reviews)
+        </span>
       </div>
 
-      {/* Operating Hours – SAFE */}
+      {/* Hours */}
       <div className="flex items-center text-gray-600 text-sm mb-4">
         <Clock className="w-4 h-4 mr-2 text-indigo-500" />
         <span>
-          {is24hr ? (
-            <span className="font-medium text-indigo-600">Open 24/7</span>
-          ) : (
-            `Closes at ${clinic.hours}`
-          )}
+          {clinic.is_24_7
+            ? "Open 24/7"
+            : clinic.is_open_now
+            ? "Open now"
+            : "Closed now"}
         </span>
       </div>
 

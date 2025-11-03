@@ -1,3 +1,4 @@
+# server/routes/clinics.py
 from flask import Blueprint, jsonify, request
 from models import Clinic, User, Review
 from schemas import ClinicSchema
@@ -10,19 +11,25 @@ bp = Blueprint("clinics", __name__, url_prefix="/clinics")
 clinic_schema = ClinicSchema()
 clinics_schema = ClinicSchema(many=True)
 
+
 # ---------------------------------
 # 🔹 Helper: check if clinic is open now
 # ---------------------------------
 def is_open_now(operating_hours):
+    if not operating_hours:
+        return False
     now = datetime.now()
     today = now.strftime("%A")
     for day_info in operating_hours:
         if day_info.get("day") == today:
             if day_info.get("closed"):
                 return False
-            open_time = datetime.strptime(day_info["open"], "%H:%M").time()
-            close_time = datetime.strptime(day_info["close"], "%H:%M").time()
-            return open_time <= now.time() <= close_time
+            try:
+                open_time = datetime.strptime(day_info["open"], "%H:%M").time()
+                close_time = datetime.strptime(day_info["close"], "%H:%M").time()
+                return open_time <= now.time() <= close_time
+            except:
+                return False
     return False
 
 
@@ -48,14 +55,14 @@ def list_clinics():
 
     # Add open_now and 24/7 flags dynamically
     for c in result:
-        c["is_open_now"] = is_open_now(c.get("operating_hours", []))
-        if (
-            len(c.get("operating_hours", [])) == 1
-            and c["operating_hours"][0].get("open") == "00:00"
-        ):
-            c["is_24_7"] = True
-        else:
-            c["is_24_7"] = False
+        hours = c.get("operating_hours") or []  # FIXED: DEFAULT TO []
+        c["is_open_now"] = is_open_now(hours)
+
+        c["is_24_7"] = len(hours) == 7 and all(
+            d.get("open") == "00:00" and d.get("close") == "23:59"
+            for d in hours
+            if "day" in d
+        )
 
     # Apply filter logic
     if filter_type == "open_now":
@@ -75,7 +82,8 @@ def list_clinics():
 def get_clinic(clinic_id):
     clinic = Clinic.query.get_or_404(clinic_id)
     data = clinic_schema.dump(clinic)
-    data["is_open_now"] = is_open_now(data.get("operating_hours", []))
+    hours = data.get("operating_hours") or []  # FIXED
+    data["is_open_now"] = is_open_now(hours)
     return jsonify(data)
 
 
@@ -102,16 +110,18 @@ def clinic_login():
     # Generate JWT token
     token = create_access_token(identity={"id": user.id, "role": user.role})
 
-    return jsonify({
-        "message": "Login successful",
-        "token": token,
-        "clinic": {
-            "id": user.id,
-            "name": user.full_name,
-            "email": user.email,
-            "phone": user.phone_number
+    return jsonify(
+        {
+            "message": "Login successful",
+            "token": token,
+            "clinic": {
+                "id": user.id,
+                "name": user.full_name,
+                "email": user.email,
+                "phone": user.phone_number,
+            },
         }
-    })
+    )
 
 
 # ---------------------------------
@@ -120,16 +130,18 @@ def clinic_login():
 @bp.route("/<int:clinic_id>/reviews", methods=["GET"])
 def get_reviews(clinic_id):
     reviews = Review.query.filter_by(clinic_id=clinic_id).all()
-    return jsonify([
-        {
-            "id": r.id,
-            "user_id": r.user_id,
-            "rating": r.rating,
-            "comment": r.comment,
-            "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
-        }
-        for r in reviews
-    ])
+    return jsonify(
+        [
+            {
+                "id": r.id,
+                "user_id": r.user_id,
+                "rating": r.rating,
+                "comment": r.comment,
+                "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
+            }
+            for r in reviews
+        ]
+    )
 
 
 # ---------------------------------
@@ -177,7 +189,12 @@ def update_clinic_status(clinic_id):
 
     db.session.commit()
 
-    return jsonify({
-        "message": f"Clinic {clinic.name} updated to {new_status}",
-        "clinic": clinic_schema.dump(clinic)
-    }), 200
+    return (
+        jsonify(
+            {
+                "message": f"Clinic {clinic.name} updated to {new_status}",
+                "clinic": clinic_schema.dump(clinic),
+            }
+        ),
+        200,
+    )

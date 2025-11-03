@@ -1,6 +1,8 @@
+# server/schemas.py
 from extensions import ma
 from marshmallow import fields
 from models import User, Clinic, Article, Appointment, Image, SymptomHistory
+
 
 # ------------------------
 # User Schema
@@ -15,11 +17,14 @@ class UserSchema(ma.SQLAlchemySchema):
     email = ma.auto_field()
     phoneNumber = fields.String(attribute="phone_number", data_key="phoneNumber")
     role = ma.auto_field()
-    clinicId = fields.Integer(attribute="clinic_id", data_key="clinicId", allow_none=True)
+    clinicId = fields.Integer(
+        attribute="clinic_id", data_key="clinicId", allow_none=True
+    )
     profile = fields.Raw()
     savedClinics = fields.Raw(attribute="saved_clinics", data_key="savedClinics")
     blocked = ma.auto_field()
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
+
 
 # ------------------------
 # Clinic Schema
@@ -39,13 +44,21 @@ class ClinicSchema(ma.SQLAlchemySchema):
     reviews = ma.auto_field()
     phone = ma.auto_field()
     email = ma.auto_field()
-    operatingHours = ma.List(ma.Dict())
     verified = ma.auto_field()
     status = ma.auto_field()
-    doctors = ma.List(ma.String())
+
+    # ONLY THIS LINE — data_key maps to JSON
+    operating_hours = ma.List(ma.Dict(), data_key="operating_hours")
+
+    doctors = ma.List(
+        ma.Nested(
+            lambda: ma.Schema.from_dict({"name": ma.Str(), "specialty": ma.Str()})()
+        )
+    )
+
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
 
-# ------------------------
+
 # Article Schema
 # ------------------------
 class ArticleSchema(ma.SQLAlchemySchema):
@@ -66,6 +79,7 @@ class ArticleSchema(ma.SQLAlchemySchema):
     isTrending = fields.Boolean(attribute="is_trending", data_key="isTrending")
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
 
+
 # ------------------------
 # Appointment Schema
 # ------------------------
@@ -77,7 +91,7 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     patientId = fields.Integer(attribute="patient_id", data_key="patientId")
     patientName = fields.Method("get_patient_name", data_key="patientName")
-    
+
     clinicId = fields.Integer(attribute="clinic_id", data_key="clinicId")
     clinicName = fields.String(attribute="clinic_name", data_key="clinicName")
     doctor = ma.auto_field()
@@ -93,6 +107,7 @@ class AppointmentSchema(ma.SQLAlchemySchema):
         user = User.query.get(obj.patient_id)
         return user.full_name if user else "Unknown"
 
+
 # ------------------------
 # Image Schema
 # ------------------------
@@ -100,6 +115,7 @@ class ImageSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Image
         load_instance = True
+
 
 # ------------------------
 # Symptom History Schema

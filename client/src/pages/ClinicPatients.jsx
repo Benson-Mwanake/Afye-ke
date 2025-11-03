@@ -8,85 +8,74 @@ import EditPatientModal from "../components/clinics/EditPatientModal";
 const API_URL = "http://127.0.0.1:5000";
 
 const ClinicPatients = () => {
-  const { user, token } = useAuth(); // make sure your context provides the JWT token
+  const { user } = useAuth(); // make sure your context provides the JWT token
   const [patients, setPatients] = useState([]);
   const [lastVisitMap, setLastVisitMap] = useState({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [editingPatient, setEditingPatient] = useState(null);
+  const token = localStorage.getItem("authToken");
+  
+useEffect(() => {
+  const fetchPatients = async () => {
+    if (!user?.clinicId || !token) {
+      console.log("Missing clinicId or token:", {
+        clinicId: user?.clinicId,
+        token,
+      });
+      setLoading(false);
+      return;
+    }
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      if (!user?.clinicId || !token) {
+    try {
+      // 1. Fetch appointments
+      const apptRes = await fetch(
+        `${API_URL}/appointments?clinicId=${user.clinicId}`, // ← NOW WORKS
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const appts = await apptRes.json();
+
+      console.log("Appointments:", appts); // DEBUG
+
+      const patientIds = [...new Set(appts.map((a) => a.patient_id))];
+
+      if (patientIds.length === 0) {
+        setPatients([]);
         setLoading(false);
         return;
       }
 
-      try {
-        // 1️⃣ Fetch appointments with JWT header
-        const apptRes = await fetch(
-          `${API_URL}/appointments?clinicId=${user.clinicId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      // 2. Fetch patients
+      const patientRes = await fetch(
+        `${API_URL}/users?${patientIds
+          .map((id) => `id=${id}`)
+          .join("&")}&role=patient`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const patients = await patientRes.json();
 
-        if (!apptRes.ok) {
-          throw new Error(`Failed to fetch appointments: ${apptRes.status}`);
+      console.log("Patients:", patients); // DEBUG
+
+      // 3. Last visit map
+      const visitMap = {};
+      appts.forEach((appt) => {
+        const pid = appt.patient_id;
+        if (appt.date && (!visitMap[pid] || appt.date > visitMap[pid])) {
+          visitMap[pid] = appt.date;
         }
+      });
 
-        const appts = await apptRes.json();
+      setPatients(patients);
+      setLastVisitMap(visitMap);
+    } catch (err) {
+      console.error("Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (!Array.isArray(appts) || appts.length === 0) {
-          setPatients([]);
-          setLastVisitMap({});
-          setLoading(false);
-          return;
-        }
-
-        // 2️⃣ Get unique patient IDs
-        const patientIds = [...new Set(appts.map((a) => a.patientId))];
-
-        // 3️⃣ Fetch patient details with JWT header
-        const patientRes = await fetch(
-          `${API_URL}/users?id=${patientIds.join("&id=")}&role=patient`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!patientRes.ok) {
-          throw new Error(`Failed to fetch patients: ${patientRes.status}`);
-        }
-
-        const patientData = await patientRes.json();
-
-        // 4️⃣ Map last visit dates
-        const visitMap = {};
-        appts.forEach((appt) => {
-          const pid = appt.patientId;
-          const date = appt.date;
-          if (date && (!visitMap[pid] || date > visitMap[pid])) {
-            visitMap[pid] = date;
-          }
-        });
-
-        setLastVisitMap(visitMap);
-        setPatients(patientData);
-      } catch (err) {
-        console.error("Failed to load patients:", err);
-        alert("Error loading patients: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPatients();
-  }, [user, token]);
+  fetchPatients();
+}, [user, token]);
 
   const filtered = patients.filter(
     (p) =>
