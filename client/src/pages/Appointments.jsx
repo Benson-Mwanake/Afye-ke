@@ -33,7 +33,7 @@ const Appointments = () => {
         setAppointments(apptRes.data);
 
         // PUBLIC: fetch clinics
-        const clinicsRes = await fetch("http://127.0.0.1:5000/clinics");
+        const clinicsRes = await fetch("https://gadgetreview-5c3b.onrender.com/clinics");
         const clinics = clinicsRes.ok ? await clinicsRes.json() : [];
         const map = {};
         clinics.forEach((c) => (map[c.id] = c.name));

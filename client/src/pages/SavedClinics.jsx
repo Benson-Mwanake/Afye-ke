@@ -5,7 +5,7 @@ import { MapPin, BookmarkCheck, Phone, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "https://gadgetreview-5c3b.onrender.com";
 
 const ClinicCard = ({ clinic, onUnsave }) => {
   const navigate = useNavigate();

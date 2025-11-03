@@ -144,11 +144,11 @@ const AdminDashboard = () => {
         };
 
         const [clinicsData, articlesData, usersData, reportsData, appointmentsData] = await Promise.all([
-          fetchWithCatch("http://127.0.0.1:5000/clinics"),
-          fetchWithCatch("http://127.0.0.1:5000/articles"),
-          fetchWithCatch("http://127.0.0.1:5000/users"),
-          fetchWithCatch("http://127.0.0.1:5000/reports"),
-          fetchWithCatch("http://127.0.0.1:5000/appointments"),
+          fetchWithCatch("https://gadgetreview-5c3b.onrender.com/clinics"),
+          fetchWithCatch("https://gadgetreview-5c3b.onrender.com/articles"),
+          fetchWithCatch("https://gadgetreview-5c3b.onrender.com/users"),
+          fetchWithCatch("https://gadgetreview-5c3b.onrender.com/reports"),
+          fetchWithCatch("https://gadgetreview-5c3b.onrender.com/appointments"),
         ]);
 
         setClinics(clinicsData);
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
   // --- Handlers ---
   const handleApproveClinic = async id => {
     try {
-      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
+      await fetch(`https://gadgetreview-5c3b.onrender.com/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: "approved", verified: true }),
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
   const handleRejectClinic = async id => {
     if (!window.confirm("Reject this clinic?")) return;
     try {
-      await fetch(`http://127.0.0.1:5000/clinics/${id}`, {
+      await fetch(`https://gadgetreview-5c3b.onrender.com/clinics/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: "rejected", verified: false }),
@@ -196,7 +196,7 @@ const AdminDashboard = () => {
   const handleDeleteUser = async id => {
     if (!window.confirm("Delete this user?")) return;
     try {
-      await fetch(`http://127.0.0.1:5000/users/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      await fetch(`https://gadgetreview-5c3b.onrender.com/users/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       setUsers(prev => prev.filter(u => u.id !== id));
     } catch {
       alert("Failed to delete user");
@@ -206,7 +206,7 @@ const AdminDashboard = () => {
   const handleDeleteArticle = async id => {
     if (!window.confirm("Delete this article?")) return;
     try {
-      await fetch(`http://127.0.0.1:5000/articles/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      await fetch(`https://gadgetreview-5c3b.onrender.com/articles/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       setArticles(prev => prev.filter(a => a.id !== id));
     } catch {
       alert("Failed to delete article");
@@ -215,7 +215,7 @@ const AdminDashboard = () => {
 
   const handleSaveArticle = async updated => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/articles/${updated.id}`, {
+      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/articles/${updated.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(updated),

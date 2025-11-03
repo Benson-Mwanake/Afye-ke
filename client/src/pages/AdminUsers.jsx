@@ -11,7 +11,7 @@ const AdminUsers = () => {
       try {
         if (!token) return alert("User not authenticated");
 
-        const res = await fetch("http://127.0.0.1:5000/users", {
+        const res = await fetch("https://gadgetreview-5c3b.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

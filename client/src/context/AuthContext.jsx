@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     const fetchUsers = async () => {
       try {
         if (!token) return;
-        const res = await fetch("http://127.0.0.1:5000/users", {
+        const res = await fetch("https://gadgetreview-5c3b.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch users");
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     if (!storedToken) return false;
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/profile", {
+      const res = await fetch("https://gadgetreview-5c3b.onrender.com/auth/profile", {
         headers: { Authorization: `Bearer ${storedToken}` },
       });
       if (!res.ok) throw new Error("Failed to refresh user");
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/login", {
+      const res = await fetch("https://gadgetreview-5c3b.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailOrObj, password, role }),
@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }) => {
   // --- 5. SIGNUP ---
   const signup = async (fullName, email, phoneNumber, password, role) => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/register", {
+      const res = await fetch("https://gadgetreview-5c3b.onrender.com/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -179,7 +179,7 @@ export const AuthProvider = ({ children }) => {
     try {
       if (!token) return false;
 
-      const res = await fetch(`http://127.0.0.1:5000/users/${user.id}`, {
+      const res = await fetch(`https://gadgetreview-5c3b.onrender.com/users/${user.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

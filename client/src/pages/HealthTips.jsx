@@ -69,7 +69,7 @@ export default function HealthTips() {
 
     const fetchArticles = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/articles", {
+        const res = await fetch("https://gadgetreview-5c3b.onrender.com/articles", {
           signal: controller.signal,
         });
 
