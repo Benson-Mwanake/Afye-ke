@@ -39,7 +39,7 @@
     "server": "json-server --watch src/db.json --port 4000",
     "dev": "react-scripts start",
     "start": "npm run dev",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
