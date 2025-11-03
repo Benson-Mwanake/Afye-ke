@@ -12,12 +12,13 @@ from routes.users import bp as users_bp
 from routes.misc import bp as misc_bp
 from routes.reports import bp as reports_bp
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Allow CORS
-    CORS(app)
+    # Allow CORS from specific origins
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Initialize extensions
     db.init_app(app)
@@ -46,8 +47,9 @@ def create_app():
     return app
 
 
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
