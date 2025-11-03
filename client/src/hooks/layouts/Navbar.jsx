@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -11,6 +12,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-xl font-bold text-green-600">
+              <Heart className="w-6 h-6 mr-2 text-green-600 fill-green-600" />
               <span className="text-gray-900">Afya</span>Link
             </Link>
           </div>

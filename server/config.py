@@ -17,8 +17,6 @@ class Config:
         "postgresql://afyalink_db_p26q_user:a3SkTSKV751rpdD6wTkvO2C3bgtZc7Xs@dpg-d44gfnbipnbc73ft5b3g-a.oregon-postgres.render.com/afyalink_db_p26q",
     )
 
-    # Render sometimes uses a "postgres://" prefix (old format),
-    # so fix it if needed:
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
