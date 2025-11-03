@@ -9,7 +9,6 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "change-me")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-change-me")
 
-    #  Corrected PostgreSQL connection string
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
         "postgresql://afyalink_user:newpassword@localhost:5432/afyalink_db",
@@ -17,8 +16,6 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ITEMS_PER_PAGE = int(os.getenv("ITEMS_PER_PAGE", 12))
-
-    # Optional external services
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
     CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
     CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")

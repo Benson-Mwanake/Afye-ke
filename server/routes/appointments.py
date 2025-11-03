@@ -10,9 +10,7 @@ appt_schema = AppointmentSchema()
 appts_schema = AppointmentSchema(many=True)
 
 
-# ------------------------------------------------------------------
 # List Appointments
-# ------------------------------------------------------------------
 @bp.route("/", methods=["GET"])
 @jwt_required()
 def list_appointments():
@@ -49,9 +47,7 @@ def list_appointments():
     return jsonify(results)
 
 
-# ------------------------------------------------------------------
 # Create Appointment
-# ------------------------------------------------------------------
 @bp.route("/", methods=["POST"])
 @jwt_required()
 def create_appointment():
@@ -95,9 +91,7 @@ def create_appointment():
     return jsonify(appt_dict), 201
 
 
-# ------------------------------------------------------------------
 # Get Single Appointment
-# ------------------------------------------------------------------
 @bp.route("/<int:appt_id>", methods=["GET"])
 @jwt_required()
 def get_appointment(appt_id):
@@ -121,9 +115,7 @@ def get_appointment(appt_id):
     return jsonify(appt_dict)
 
 
-# ------------------------------------------------------------------
 # Update Appointment Status
-# ------------------------------------------------------------------
 @bp.route("/<int:appt_id>", methods=["PATCH"])
 @jwt_required()
 def update_appointment(appt_id):

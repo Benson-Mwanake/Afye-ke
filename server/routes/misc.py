@@ -12,11 +12,9 @@ def health():
 @bp.route("/openai/analyze", methods=["POST"])
 @jwt_required(optional=True)
 def analyze():
-    # Simple stub: frontend expects a JSON with results
     data = request.get_json() or {}
     description = data.get("description", "")
     selected = data.get("selectedSymptoms", [])
-    # Mock response
     res = {
         "summary": "Mock analysis result",
         "possibleConditions": ["Common Cold", "Allergy"] if selected else ["No clear match"],

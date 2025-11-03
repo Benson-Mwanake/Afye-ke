@@ -4,9 +4,7 @@ from marshmallow import fields
 from models import User, Clinic, Article, Appointment, Image, SymptomHistory
 
 
-# ------------------------
 # User Schema
-# ------------------------
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = User
@@ -26,9 +24,8 @@ class UserSchema(ma.SQLAlchemySchema):
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
 
 
-# ------------------------
+
 # Clinic Schema
-# ------------------------
 class ClinicSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Clinic
@@ -47,7 +44,6 @@ class ClinicSchema(ma.SQLAlchemySchema):
     verified = ma.auto_field()
     status = ma.auto_field()
 
-    # ONLY THIS LINE — data_key maps to JSON
     operating_hours = ma.List(ma.Dict(), data_key="operating_hours")
 
     doctors = ma.List(
@@ -60,7 +56,6 @@ class ClinicSchema(ma.SQLAlchemySchema):
 
 
 # Article Schema
-# ------------------------
 class ArticleSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Article
@@ -80,9 +75,7 @@ class ArticleSchema(ma.SQLAlchemySchema):
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
 
 
-# ------------------------
 # Appointment Schema
-# ------------------------
 class AppointmentSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Appointment
@@ -103,23 +96,18 @@ class AppointmentSchema(ma.SQLAlchemySchema):
     createdAt = fields.DateTime(attribute="created_at", data_key="createdAt")
 
     def get_patient_name(self, obj):
-        # Fetch full name from related User object
         user = User.query.get(obj.patient_id)
         return user.full_name if user else "Unknown"
 
 
-# ------------------------
 # Image Schema
-# ------------------------
 class ImageSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Image
         load_instance = True
 
 
-# ------------------------
 # Symptom History Schema
-# ------------------------
 class SymptomHistorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SymptomHistory

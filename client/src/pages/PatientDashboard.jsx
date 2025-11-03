@@ -72,7 +72,7 @@ const PatientDashboard = () => {
       });
       const allAppts = res.data;
 
-      // Filter: Active + Near future (≤7 days)
+      // Filter: Active + (≤7 days)
       const activeAppts = allAppts.filter((a) =>
         ["Confirmed", "Pending", "Scheduled"].includes(a.status)
       );
@@ -84,7 +84,7 @@ const PatientDashboard = () => {
         }))
         .filter((a) => isNearFuture(a.dateTime))
         .sort((a, b) => a.dateTime - b.dateTime)
-        .slice(0, 3); // Show only 3
+        .slice(0, 4);
 
       const checkups = allAppts.filter(
         (a) =>
@@ -168,7 +168,7 @@ const PatientDashboard = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Refresh every 30s
+    const interval = setInterval(fetchData, 30000);
 
     return () => {
       ctrl.abort();

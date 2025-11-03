@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ClinicDashboardLayout from "../hooks/layouts/ClinicLayout";
-import api from "../services/api"; // <-- your axios instance
+import api from "../services/api";
 
 const ClinicAppointments = () => {
   const { user } = useAuth();
@@ -31,7 +31,6 @@ const ClinicAppointments = () => {
       }
 
       try {
-        // Fetch appointments for this clinic (backend should include patientName)
         const res = await api.get(`/appointments?clinicId=${user.clinicId}`);
         const appts = Array.isArray(res.data) ? res.data : [];
 

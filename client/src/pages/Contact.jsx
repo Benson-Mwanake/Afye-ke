@@ -12,7 +12,7 @@ export default function Contact() {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  }); // Outputs: "Thursday, 23 October 2025, 09:05 PM EAT"
+  });
 
   return (
     <>

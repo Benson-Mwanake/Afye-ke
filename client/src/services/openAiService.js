@@ -1,12 +1,7 @@
 // src/services/openAiService.js
-import api from "./api"; // axios instance with baseURL http://127.0.0.1:5000
+import api from "./api";
 
-/**
- * Calls your backend openai proxy which uses the server-side OpenAI key.
- * @param {string} description - free-text description from user
- * @param {string[]} selectedSymptoms - array of selected symptom strings
- * @param {number|string} userId - optional user id
- */
+
 export const analyzeSymptoms = async (
   description,
   selectedSymptoms = [],

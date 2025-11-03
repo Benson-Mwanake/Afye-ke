@@ -6,10 +6,10 @@ from models import User, Role, Clinic
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-from schemas import UserSchema  # Import UserSchema
+from schemas import UserSchema
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
-user_schema = UserSchema()  # Initialize UserSchema
+user_schema = UserSchema() 
 
 
 # REGISTER USER
@@ -65,7 +65,7 @@ def register():
             {
                 "msg": "User registered successfully",
                 "access_token": access_token,
-                "user": user_schema.dump(user),  # Use UserSchema for consistency
+                "user": user_schema.dump(user),
             }
         ),
         201,
@@ -102,7 +102,7 @@ def login():
             {
                 "msg": "Login successful",
                 "access_token": access_token,
-                "user": user_schema.dump(user),  # Use UserSchema for consistency
+                "user": user_schema.dump(user),
             }
         ),
         200,

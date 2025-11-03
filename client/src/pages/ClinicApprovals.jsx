@@ -18,9 +18,7 @@ import {
   Eye,
 } from "lucide-react";
 
-// --- START: Dependency Definitions (Required for consolidation) ---
 
-// Mock navigation items for the Admin, marking "Clinic Approvals" as current
 const adminNavItems = [
   {
     name: "Dashboard",
@@ -46,7 +44,7 @@ const adminNavItems = [
 // 1. AdminDashboardLayout Component (Reusable)
 const AdminDashboardLayout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentPath = "/admin/approvals"; // Set current path to Clinic Approvals
+  const currentPath = "/admin/approvals";
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
@@ -153,17 +151,14 @@ const AdminDashboardLayout = ({ children }) => {
   );
 };
 
-// 2. Admin Stat Card Component (Adapted for Approval Stats with solid colors and larger size)
+// 2. Admin Stat Card Component
 const ApprovalStatCard = ({ title, value, colorClass, icon: Icon }) => {
   return (
-    // Increased padding (p-8) and removed border/bg-white for solid color
     <div
       className={`p-8 rounded-xl shadow-lg ${colorClass} text-white transition-shadow duration-300 hover:shadow-xl flex justify-between items-center h-full`}
     >
       <div>
-        {/* Increased text size (text-5xl) */}
         <p className="text-5xl font-bold mb-1">{value}</p>
-        {/* Increased text size (text-lg) */}
         <h3 className="text-lg font-medium opacity-90">{title}</h3>
       </div>
       {Icon && <Icon className="w-10 h-10 opacity-70" />}
@@ -192,32 +187,31 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// Mock Data for Clinic Approvals (Updated colors and added icons)
 const approvalData = {
   stats: [
     {
       title: "Pending Approvals",
       value: 5,
-      colorClass: "bg-red-600", // Changed to solid red background
-      icon: AlertTriangle, // Added icon
+      colorClass: "bg-red-600",
+      icon: AlertTriangle,
     },
     {
       title: "Approved This Month",
       value: 28,
-      colorClass: "bg-green-600", // Changed to solid green background
-      icon: Check, // Added icon
+      colorClass: "bg-green-600",
+      icon: Check,
     },
     {
       title: "Rejected",
       value: 3,
-      colorClass: "bg-gray-500", // Changed to solid gray background
+      colorClass: "bg-gray-500",
       icon: X, // Added icon
     },
     {
       title: "Total Clinics",
       value: 144,
-      colorClass: "bg-blue-600", // Changed to solid blue background
-      icon: BriefcaseMedical, // Added icon
+      colorClass: "bg-blue-600",
+      icon: BriefcaseMedical,
     },
   ],
   pendingClinics: [
@@ -275,12 +269,9 @@ const approvalData = {
 };
 
 const ClinicApprovals = () => {
-  // State to hold the current list of clinics (to simulate approval/rejection)
   const [clinics, setClinics] = useState(approvalData.pendingClinics);
 
-  // Simple action handler (in a real app, this would update Firestore)
   const handleAction = (id, action) => {
-    // Find the clinic and update its status
     const updatedClinics = clinics.map((clinic) => {
       if (clinic.id === id) {
         return {
@@ -291,10 +282,8 @@ const ClinicApprovals = () => {
       return clinic;
     });
 
-    // Filter out the clinics that were just approved/rejected to mimic removal from 'Pending' list
     setClinics(updatedClinics.filter((c) => c.status === "Pending"));
 
-    // Log the action (or show a success toast in a real app)
     console.log(`Clinic ID ${id} was ${action}d.`);
   };
 

@@ -120,11 +120,6 @@ class Review(db.Model):
     comment = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-
-from extensions import db
-from datetime import datetime
-
-
 class Report(db.Model):
     __tablename__ = "reports"
 

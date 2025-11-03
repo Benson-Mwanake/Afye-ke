@@ -32,9 +32,6 @@ const ClinicDetail = () => {
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  /* ---------------------------------------------------------
-   1. LOAD CLINIC + REVIEWS
-   --------------------------------------------------------- */
   useEffect(() => {
     const controller = new AbortController();
 
@@ -46,7 +43,6 @@ const ClinicDetail = () => {
         if (!res.ok) throw new Error("Clinic not found");
         const c = await res.json();
 
-        // ---- Enrich with safe hours display ----
         const now = new Date();
         const currentHour = now.getHours();
         const currentDay = now.toLocaleString("en-US", { weekday: "long" });
@@ -84,9 +80,6 @@ const ClinicDetail = () => {
     return () => controller.abort();
   }, [id]);
 
-  /* ---------------------------------------------------------
-   2. HOURS DISPLAY – NEVER RENDER OBJECT
-   --------------------------------------------------------- */
   const renderOperatingHours = () => {
     if (!clinic?.operatingHours || !Array.isArray(clinic.operatingHours))
       return "Hours not listed";
@@ -138,9 +131,6 @@ const ClinicDetail = () => {
     return `${h12}:00 ${period}`;
   };
 
-  /* ---------------------------------------------------------
-   3. SAVE / UNSAVE CLINIC
-   --------------------------------------------------------- */
   const toggleSaveClinic = async () => {
     if (!user || user.role !== "patient") {
       alert("Please log in to save clinics.");
@@ -177,9 +167,6 @@ const ClinicDetail = () => {
     }
   };
 
-  /* ---------------------------------------------------------
-   4. REVIEWS
-   --------------------------------------------------------- */
   const handleReviewSubmit = () => {
     if (!newReview.comment.trim()) return;
 
@@ -213,9 +200,7 @@ const ClinicDetail = () => {
     setEditingId(review.id);
   };
 
-  /* ---------------------------------------------------------
-   5. RENDER
-   --------------------------------------------------------- */
+
   if (loading) return <p className="text-center py-10">Loading clinic...</p>;
   if (error) return <p className="text-center text-red-600 py-10">{error}</p>;
   if (!clinic) return <p className="text-center py-10">Clinic not found.</p>;

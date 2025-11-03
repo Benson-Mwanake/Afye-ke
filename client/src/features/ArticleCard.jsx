@@ -6,19 +6,17 @@ const ArticleCard = ({ article, isTrending = false, isSmall = false }) => {
   const {
     category,
     title,
-    summary, // <-- matches your DB
-    description, // fallback if summary missing
+    summary,
+    description,
     author,
     readTime,
     date,
-    image, // <-- from DB
+    image,
     isClosed,
   } = article;
 
-  // Use summary first, then description (for backward compatibility)
   const displaySummary = summary || description || "";
 
-  // Fallback image (only if DB missing)
   const imageUrl =
     image ||
     "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";

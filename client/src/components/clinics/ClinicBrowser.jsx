@@ -6,9 +6,6 @@ import ClinicCard from "./ClinicCard";
 
 const FILTERS = ["Nearest First", "Highest Rated", "Open Now", "24/7 Services"];
 
-/* -------------------------------------------------------------
- SHOW‑MORE COMPONENT
- ------------------------------------------------------------- */
 const ShowMoreClinics = ({ clinics }) => {
   const [showAll, setShowAll] = useState(false);
   const displayed = showAll ? clinics : clinics.slice(0, 6);
@@ -35,9 +32,6 @@ const ShowMoreClinics = ({ clinics }) => {
   );
 };
 
-/* -------------------------------------------------------------
- MAIN COMPONENT
- ------------------------------------------------------------- */
 export default function ClinicBrowser() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState(FILTERS[0]);
@@ -45,9 +39,6 @@ export default function ClinicBrowser() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  /* ---------------------------------------------------------
-   FETCH + ENRICH
-   --------------------------------------------------------- */
   useEffect(() => {
     const controller = new AbortController();
 
@@ -69,7 +60,7 @@ export default function ClinicBrowser() {
         const currentDay = now.toLocaleString("en-US", { weekday: "long" });
 
         const enriched = raw.map((c) => {
-          // 1. Distance (demo)
+          // 1. Distance
           const distance =
             c.distance ?? `${(Math.random() * 8 + 0.5).toFixed(1)} km`;
 
@@ -132,9 +123,6 @@ export default function ClinicBrowser() {
     };
   }, []);
 
-  /* ---------------------------------------------------------
-   FILTER + SEARCH + SORT
-   --------------------------------------------------------- */
   const filteredClinics = useMemo(() => {
     let list = clinics.filter(
       (c) =>
@@ -166,9 +154,6 @@ export default function ClinicBrowser() {
     return list;
   }, [clinics, searchTerm, activeFilter]);
 
-  /* ---------------------------------------------------------
-   RENDER
-   --------------------------------------------------------- */
   if (loading) {
     return (
       <DashboardLayout>

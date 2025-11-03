@@ -16,7 +16,7 @@ def get_articles():
 @bp.route("/", methods=["POST"])
 @jwt_required()
 def create_article():
-    user_id = int(get_jwt_identity())  # ← convert to int                 # <-- now a string
+    user_id = int(get_jwt_identity())
     role    = get_jwt().get("role")
     current_user = User.query.get(user_id)
     if not current_user:
@@ -57,14 +57,14 @@ def delete_article(article_id):
 @bp.route("/<int:article_id>", methods=["PATCH"])
 @jwt_required()
 def update_article(article_id):
-    user_id = int(get_jwt_identity())  # ← convert to int                 # <-- now a string
+    user_id = int(get_jwt_identity())
     role    = get_jwt().get("role")
     current_user = User.query.get(user_id)
 
     if not current_user:
         return jsonify({"msg": "User not found"}), 404
 
-    # only admin, manager, or clinic can edit
+    # only admin clinic can edit
     if current_user.role not in ["admin", "manager", "clinic"]:
         return jsonify({"msg": "Not authorized"}), 403
 

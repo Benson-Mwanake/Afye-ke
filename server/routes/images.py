@@ -9,8 +9,6 @@ api = Api(bp)
 
 class Upload(Resource):
     def post(self):
-        # Mock upload: accept a url or file, but do not contact Cloudinary
-        # Frontend should send an image file; here we simply store a placeholder
         clinic_id = request.form.get("clinic_id")
         uploaded_by = request.form.get("uploaded_by")
         url = request.form.get("url") or "https://via.placeholder.com/400"

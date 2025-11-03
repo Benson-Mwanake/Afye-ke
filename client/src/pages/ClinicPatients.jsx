@@ -8,7 +8,7 @@ import EditPatientModal from "../components/clinics/EditPatientModal";
 const API_URL = "http://127.0.0.1:5000";
 
 const ClinicPatients = () => {
-  const { user } = useAuth(); // make sure your context provides the JWT token
+  const { user } = useAuth();
   const [patients, setPatients] = useState([]);
   const [lastVisitMap, setLastVisitMap] = useState({});
   const [search, setSearch] = useState("");
@@ -30,7 +30,7 @@ useEffect(() => {
     try {
       // 1. Fetch appointments
       const apptRes = await fetch(
-        `${API_URL}/appointments?clinicId=${user.clinicId}`, // ← NOW WORKS
+        `${API_URL}/appointments?clinicId=${user.clinicId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const appts = await apptRes.json();

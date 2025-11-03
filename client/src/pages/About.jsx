@@ -11,7 +11,7 @@ export default function About() {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  }); // Outputs: "Thursday, 23 October 2025, 09:01 PM EAT"
+  });
 
   const developers = [
     {

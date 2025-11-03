@@ -26,12 +26,10 @@ def list_users():
 
     q = User.query
 
-    # PRIORITY 1: id=1&id=2 → ALLOW FOR CLINIC TOO
     if user_ids:
         q = q.filter(User.id.in_(user_ids))
         if role_filter:
             q = q.filter(User.role == role_filter)
-        # ALLOW CLINIC TO FETCH PATIENTS BY ID
         if current.role == "clinic":
             pass  # Let it through
         elif current.role not in ["admin", "manager"]:
@@ -39,7 +37,6 @@ def list_users():
         users = q.all()
         return jsonify(users_schema.dump(users)), 200
 
-    # PRIORITY 2: Role-based filtering
     if current.role in ["admin", "manager"]:
         if role_filter:
             q = q.filter(User.role.ilike(role_filter))
