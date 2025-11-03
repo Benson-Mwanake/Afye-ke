@@ -14,7 +14,7 @@ class Config:
     # --- Database ---
     DATABASE_URL = os.getenv(
         "DATABASE_URL",
-        "postgresql://afyalink_user:newpassword@localhost:5432/afyalink_db",
+        "postgresql://afyalink_db_p26q_user:a3SkTSKV751rpdD6wTkvO2C3bgtZc7Xs@dpg-d44gfnbipnbc73ft5b3g-a.oregon-postgres.render.com/afyalink_db_p26q",
     )
 
     # Render sometimes uses a "postgres://" prefix (old format),
