@@ -192,7 +192,7 @@ SECRET_KEY=<your_secret_key>
 
 **Frontend:** React, Vite, Tailwind CSS, Axios, React Router, Context API, Lucide Icons
 
-**Backend:** Flask, Flask-RESTful, Flask-Migrate, Flask-CORS, SQLAlchemy, Marshmallow
+**Backend:** Flask, Flask-RESTful, Flask-Migrate, Flask-CORS, SQLAlchemy, Marshmallow, JWT-Authentication
 
 ## Contact
 
