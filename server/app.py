@@ -20,9 +20,8 @@ def create_app():
     # Allow CORS from specific origins
     CORS(
         app,
-        origins=["https://afya-ke.netlify.app"],
+        resources={r"/*": {"origins": "https://afya-ke.netlify.app"}},
         supports_credentials=True,
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     )
 
     # Initialize extensions
@@ -30,7 +29,6 @@ def create_app():
     ma.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-
 
     # Register blueprints
     app.register_blueprint(auth_bp)
