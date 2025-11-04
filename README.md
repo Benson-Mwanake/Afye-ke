@@ -1,187 +1,218 @@
-# AfyaLink KE — Full-Stack Health Management Application
+# AfyaLink KE - Full-Stack Health Management Application
 
-## Learning Goals
+#### A full-stack health management platform built with React (frontend) and Flask (backend), connecting patients, clinics, and administrators.
 
-- Understand and implement a full-stack architecture using Flask (backend) and React (frontend).
+#### By **Benson Mwanake, Jesse Mwendwa Ndunda, Lillian Cherono**
 
--Learn how to structure, connect, and deploy a production-grade full-stack application.
+## Description
 
--Practice managing APIs, authentication, and UI/UX integration for healthcare management.
+AfyaLink KE enables patients to find nearby clinics, book appointments, check symptoms, and manage health records. Clinics can manage appointments, patients, and reports, while administrators can approve clinics, manage users, and publish health articles.
 
+## Table of Contents
 
----
+1. [Features](#features)
+2. [File Structure](#file-structure)
+3. [Installation](#installation)
+4. [Environment Variables](#environment-variables)
+5. [Usage](#usage)
+6. [Deployment](#deployment)
+7. [ScreenShots](#screenshots)
+8. [Technologies Used](#technologies-used)
+9.  [Contributing](#contributing)
+10. [License](#license)
+11. [Contact](#contact)
 
-## Introduction
-AfyaLink KE is a full-stack health management system built using Flask and React, designed to connect patients, clinics, and administrators in one seamless platform.
+## Features
 
-#It allows
--Patients to find nearby clinics, book appointments, and check symptoms.
--Clinics to manage appointments, patients, and reports.
--Admins to approve new clinics, manage users, and publish health articles.
+* Patient dashboard: Browse clinics, book appointments, check symptoms.
+* Clinic dashboard: Manage patients, appointments, and reports.
+* Admin dashboard: Approve clinics, manage users, publish health articles.
+* Symptom checker integrated with OpenAI API.
+* Responsive design for mobile and desktop.
+* Authentication and role-based access control.
 
-```console
-$ tree -L 2
-$ # the -L argument limits the depth at which we look into the directory structure
-.
-.
-├── client
-│   ├── build                # Production-ready compiled React app
-│   ├── public               # Static assets and HTML template
-│   ├── src
-│   │   ├── components       # Reusable UI and feature components
-│   │   ├── context          # Global AuthContext for user authentication
-│   │   ├── features         # Feature-specific UI like Articles and Profiles
-│   │   ├── hooks            # Layouts and protected route utilities
-│   │   ├── pages            # All React pages for patients, clinics & admin
-│   │   ├── routes           # Routing configuration
-│   │   └── services         # API service layer and integrations (e.g., OpenAI)
-│   ├── tailwind.config.js   # Tailwind CSS configuration
-│   └── package.json         # React dependencies
-├── server
-│   ├── app.py               # Flask application entry point
-│   ├── config.py            # Flask, SQLAlchemy, and CORS configuration
-│   ├── extensions.py        # Flask extensions like db, migrate, api
-│   ├── models.py            # SQLAlchemy models (Users, Clinics, Appointments, etc.)
-│   ├── routes/              # Modular route files for each resource
-│   ├── schemas.py           # Marshmallow schemas for serialization
-│   ├── seed.py              # Database seeding script
-│   ├── utils.py             # Helper utilities
-│   ├── migrations/          # Auto-generated Flask-Migrate versions
-│   ├── requirements.txt     # Python package dependencies
-│   ├── Procfile             # Deployment process (Gunicorn)
-│   └── runtime.txt          # Python version for deployment
-└── LICENSE.md, CONTRIBUTING.md, Pipfile
+## File Structure
+
+### Frontend (React)
 
 ```
+client/
+├── build/
+│   ├── asset-manifest.json
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── robots.txt
+│   └── static/
+│       ├── css/
+│       └── js/
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── public/
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── _redirects
+│   └── robots.txt
+├── README.md
+├── src/
+│   ├── App.js
+│   ├── components/
+│   ├── context/
+│   ├── features/
+│   ├── hooks/
+│   ├── index.css
+│   ├── index.js
+│   ├── pages/
+│   ├── routes/
+│   └── services/
+└── tailwind.config.js
+```
 
+### Backend (Flask)
 
+```
+server/
+├── app.py
+├── config.py
+├── db.json
+├── extensions.py
+├── migrations/
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+│   └── versions/
+├── models.py
+├── package.json
+├── Procfile
+├── requirements.txt
+├── routes/
+├── runtime.txt
+├── schemas.py
+├── seed.py
+└── utils.py
+```
 
+## Installation
 
-## Setup
+### Prerequisites
 
-### `server/`
--Navigate into the server directory and install dependencies:
--To download the dependencies for the backend server, run:
+* Node.js & npm
+* Python 3.10+
+* Pipenv
+* Modern web browser
 
-```console
+### Frontend
+
+```bash
+cd client
+npm install
+npm start
+```
+
+Visit: `http://localhost:3000`
+
+### Backend
+
+```bash
+cd server
 pipenv install
 pipenv shell
+export FLASK_APP=app.py
+flask run
 ```
 
-You can run your Flask API on [`localhost:5555`](http://localhost:5555) by
-running:
+Visit: `http://localhost:5555`
 
-```console
-python server/app.py
-```
+### Database Setup
 
-Check that your server serves the default route `http://localhost:5555`. You
-should see a web page with the heading "Project Server".
-
-### `client/`
-
-The `client/` directory contains all of your frontend code. The file
-`package.json` has been configured with common React application dependencies,
-include `react-router-dom`. The file also sets the `proxy` field to forward
-requests to `"http://localhost:5555". Feel free to change this to another port-
-just remember to configure your Flask app to use another port as well!
-
-To download the dependencies for the frontend client, run:
-
-```console
-npm install --prefix client
-```
-
-You can run your React app on [`localhost:3000`](http://localhost:3000) by
-running:
-
-```sh
-npm start --prefix client
-```
-
-Check that your the React client displays a default page
-`http://localhost:3000`. You should see a web page with the heading "Afya-Link KE".
-
-## Generating Your Database
-
-```sh
+```bash
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
-
-```
-## Seed initial data
-```sh
 python seed.py
-
 ```
 
+## Environment Variables
 
-```console
-cd server
-```
-
-Then enter the commands to create the `instance` and `migrations` folders and
-the database `app.db` file:
+Create a `.env` file in the `client/` and `server/` directories:
 
 ```
-flask db init
-flask db upgrade head
+# Frontend
+REACT_APP_OPENAI_API_KEY=<your_openai_api_key>
+REACT_APP_OPENAI_MODEL=gpt-4o-mini
+
+# Backend
+DATABASE_URL=<your_database_url>
+SECRET_KEY=<your_secret_key>
 ```
 
-##Key Technologies
+## Usage
 
-#Backend
-Flask
+* Patients can browse clinics, book appointments, view health articles, and check symptoms.
+* Clinics can manage schedules, patients, and reports.
+* Admins can approve clinics, manage users, and publish articles.
 
-Flask-RESTful
+## Deployment
 
-Flask-Migrate
+* Frontend deployed on Netlify: [Live Site](https://afya-ke.netlify.app)
+* Backend deployed on Render: [API Endpoint](https://afya-ke.onrender.com)
 
-Flask-CORS
+## ScreenShots
 
-SQLAlchemy
+![alt text](./client/public/image.png)
+![alt text](./client/public/image-1.png)
+![alt text](./client/public/image-2.png)
+![alt text](./client/public/image-3.png)
+![alt text](./client/public/image-4.png)
+![alt text](./client/public/image-5.png)
 
-Marshmallow
+### Steps for Deployment
 
-#Frontend
-React (Vite)
+**Backend**:
 
-React Router DOM
+1. Push to GitHub
+2. Create a Render Web Service
+3. Set environment variables
+4. Use `pip install -r requirements.txt` during build
 
-Tailwind CSS
+**Frontend**:
 
-Context API
+1. Push to GitHub
+2. Deploy on Netlify or Vercel
+3. Ensure build command: `npm run build` and output directory: `client/build`
 
-Lucide Icons
+## Technologies Used
 
-Axios
+**Frontend:** React, Vite, Tailwind CSS, Axios, React Router, Context API, Lucide Icons
 
-##Deployment
--This was deployed on Render(backend) and Netlify(frontend)
+**Backend:** Flask, Flask-RESTful, Flask-Migrate, Flask-CORS, SQLAlchemy, Marshmallow
 
-#Backend
-Push your Flask app to GitHub.
+## Contributing
 
-Create a new Render Web Service.
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Submit a pull request
 
-Use pip install -r requirements.txt for build.
+## License
 
-Set environment variables (DATABASE_URL, etc.).
+MIT License © 2025 Benson Mwanake, Lillian Cherono, Jesse Mwendwa Ndunda
 
-#Frontend
-Push the React app to GitHub.
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to the following conditions:
 
-Create a new Vercel project.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-Ensure the build command is npm run build and output directory is client/build.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
 
-##License
-This project is licensed under the MIT License — see the LICENSE.md
- file for details.
+## Contact
 
- ##Author
- AfyaLink KE — Built  by Benson Mwanake, Lillian Cherono and Jesse Mwendwa Ndunda
-Empowering healthcare through technology.
-
-
+* Email: [benson.mwanake@student.moringaschool.com](mailto:benson.mwanake@student.moringaschool.com)
+* Lillian: [lillian.cherono@student.moringaschool.com](mailto:lillian.cherono@student.moringaschool.com)
+* Jesse: [jesse.mwendwa@student.moringaschool.com](mailto:jesse.mwendwa@student.moringaschool.com)
