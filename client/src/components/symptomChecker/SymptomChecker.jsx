@@ -20,9 +20,20 @@ import {
 } from "lucide-react";
 
 const COMMON_SYMPTOMS = [
-  "Fever", "Headache", "Fatigue", "Sore throat", "Runny nose",
-  "Nausea", "Vomiting", "Diarrhea", "Chest pain", "Cough",
-  "Body aches", "Shortness of breath", "Dizziness", "Skin rash",
+  "Fever",
+  "Headache",
+  "Fatigue",
+  "Sore throat",
+  "Runny nose",
+  "Nausea",
+  "Vomiting",
+  "Diarrhea",
+  "Chest pain",
+  "Cough",
+  "Body aches",
+  "Shortness of breath",
+  "Dizziness",
+  "Skin rash",
   "Loss of taste/smell",
 ];
 
@@ -39,7 +50,8 @@ const SWAHILI = {
   sources: "Chanzo",
   bookClinic: "Panga Kliniki Sasa",
   saved: "Imesalitiwa!",
-  disclaimer: "Muhimu: Hii si utambuzi wa kimatibabu. Tafadhali wasiliana na daktari.",
+  disclaimer:
+    "Muhimu: Hii si utambuzi wa kimatibabu. Tafadhali wasiliana na daktari.",
 };
 
 const ENGLISH = {
@@ -55,7 +67,8 @@ const ENGLISH = {
   sources: "Learn More",
   bookClinic: "Book Clinic Now",
   saved: "Saved!",
-  disclaimer: "Important: This is not a medical diagnosis. Always consult a doctor.",
+  disclaimer:
+    "Important: This is not a medical diagnosis. Always consult a doctor.",
 };
 
 const SymptomChecker = () => {
@@ -86,31 +99,16 @@ const SymptomChecker = () => {
 
     try {
       const data = await analyzeSymptoms(description, selectedSymptoms);
-      console.log("AI Result:", data);
-
-      const normalizedResult = {
-        assessment: data.assessment || data.summary || data.text || "No assessment provided",
-        possibleConditions: data.possibleConditions || data.conditions || [],
-        homeCare: data.homeCare || [],
-        lightMedication: data.lightMedication || [],
-        emergencySigns: data.emergencySigns || [],
-        urgentAdvice: data.urgentAdvice || "",
-        kenyaTips: data.kenyaTips || [],
-        sources: data.sources || [],
-      };
-
-      setResult(normalizedResult);
+      setResult(data);
 
       await saveSymptomResult(
         user?.id || 1,
         selectedSymptoms.length ? selectedSymptoms : [description],
-        normalizedResult
+        data
       );
-
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      console.error(err);
       setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -118,10 +116,13 @@ const SymptomChecker = () => {
   };
 
   const hasInput = description.trim() || selectedSymptoms.length > 0;
+  const hasHighUrgency = result?.possibleConditions?.some(
+    (c) => c.urgency === "High"
+  );
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto py-8 px-4 text-gray-900">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Language Toggle */}
         <div className="flex justify-end mb-4">
           <button
@@ -156,16 +157,16 @@ const SymptomChecker = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t.placeholder}
-            className="w-full p-3 border border-gray-300 rounded-lg mb-5 h-32 resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 text-gray-900"
+            className="w-full p-3 border border-gray-300 rounded-lg mb-5 h-32 resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50"
             disabled={loading}
           />
 
-          <p className="text-sm text-gray-700 mb-3">{t.orSelect}</p>
+          <p className="text-sm text-gray-600 mb-3">{t.orSelect}</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
             {COMMON_SYMPTOMS.map((s) => (
               <label
                 key={s}
-                className="flex items-center space-x-2 cursor-pointer select-none text-gray-900"
+                className="flex items-center space-x-2 cursor-pointer select-none"
               >
                 <input
                   type="checkbox"
@@ -174,7 +175,7 @@ const SymptomChecker = () => {
                   className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
                   disabled={loading}
                 />
-                <span className="text-sm">{s}</span>
+                <span className="text-sm text-gray-700">{s}</span>
               </label>
             ))}
           </div>
@@ -207,7 +208,7 @@ const SymptomChecker = () => {
 
         {/* Results */}
         {result && (
-          <div className="mt-8 space-y-6 bg-white text-gray-900 p-6 rounded-xl shadow-lg border">
+          <div className="mt-8 space-y-6 bg-white p-6 rounded-xl shadow-lg border">
             {saved && (
               <div className="flex items-center gap-2 text-green-600 text-sm mb-4">
                 <Save className="w-4 h-4" />
@@ -216,18 +217,20 @@ const SymptomChecker = () => {
             )}
 
             {/* Summary */}
-            <div className="bg-blue-50 text-gray-900 p-4 rounded-lg border border-blue-200">
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="font-medium text-blue-900">{t.summary}</p>
-              <p className="mt-1">{result.assessment}</p>
+              <p className="text-gray-700 mt-1">{result.assessment}</p>
             </div>
 
             {/* Conditions */}
             {result.possibleConditions?.length > 0 && (
               <div className="space-y-3">
                 {result.possibleConditions.map((c, i) => (
-                  <div key={i} className="p-4 bg-gray-50 text-gray-900 rounded-lg border">
+                  <div key={i} className="p-4 bg-gray-50 rounded-lg border">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="font-semibold text-lg">{c.name}</h3>
+                      <h3 className="font-semibold text-lg text-gray-800">
+                        {c.name}
+                      </h3>
                       <span
                         className={`px-3 py-1 text-xs font-bold rounded-full ${
                           c.urgency === "High"
@@ -240,7 +243,7 @@ const SymptomChecker = () => {
                         {c.urgency} Risk
                       </span>
                     </div>
-                    <p className="text-sm">{c.detail}</p>
+                    <p className="text-sm text-gray-600">{c.detail}</p>
                   </div>
                 ))}
               </div>
@@ -248,11 +251,12 @@ const SymptomChecker = () => {
 
             {/* Home Care */}
             {result.homeCare?.length > 0 && (
-              <div className="bg-emerald-50 text-gray-900 p-5 rounded-lg border border-emerald-200">
+              <div className="bg-emerald-50 p-5 rounded-lg border border-emerald-200">
                 <h3 className="font-bold text-emerald-800 flex items-center mb-3">
-                  <Home className="w-5 h-5 mr-2" /> {t.homeCare}
+                  <Home className="w-5 h-5 mr-2" />
+                  {t.homeCare}
                 </h3>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-sm text-gray-700">
                   {result.homeCare.map((tip, i) => (
                     <li key={i} className="flex items-start">
                       <span className="text-emerald-600 mr-2">•</span> {tip}
@@ -264,11 +268,12 @@ const SymptomChecker = () => {
 
             {/* OTC */}
             {result.lightMedication?.length > 0 && (
-              <div className="bg-amber-50 text-gray-900 p-5 rounded-lg border border-amber-200">
+              <div className="bg-amber-50 p-5 rounded-lg border border-amber-200">
                 <h3 className="font-bold text-amber-800 flex items-center mb-3">
-                  <Pill className="w-5 h-5 mr-2" /> {t.otc}
+                  <Pill className="w-5 h-5 mr-2" />
+                  {t.otc}
                 </h3>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-sm text-gray-700">
                   {result.lightMedication.map((med, i) => (
                     <li key={i} className="flex items-start">
                       <span className="text-amber-600 mr-2">•</span> {med}
@@ -283,26 +288,32 @@ const SymptomChecker = () => {
 
             {/* Emergency */}
             {result.emergencySigns?.length > 0 && (
-              <div className="bg-red-50 text-gray-900 p-5 rounded-lg border border-red-300">
+              <div className="bg-red-50 p-5 rounded-lg border border-red-300">
                 <h3 className="font-bold text-red-800 flex items-center mb-3">
-                  <Siren className="w-6 h-6 mr-2 animate-pulse" /> {t.emergency}
+                  <Siren className="w-6 h-6 mr-2 animate-pulse" />
+                  {t.emergency}
                 </h3>
                 <ul className="space-y-2 text-sm text-red-700">
                   {result.emergencySigns.map((sign, i) => (
                     <li key={i} className="flex items-start font-medium">
-                      <AlertCircle className="w-4 h-4 mr-2 mt-0.5" /> {sign}
+                      <AlertCircle className="w-4 h-4 mr-2 mt-0.5" />
+                      {sign}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 font-bold text-red-800">{result.urgentAdvice}</p>
+                <p className="mt-3 font-bold text-red-800">
+                  {result.urgentAdvice}
+                </p>
               </div>
             )}
 
             {/* Kenya Tips */}
             {result.kenyaTips?.length > 0 && (
-              <div className="bg-purple-50 text-gray-900 p-5 rounded-lg border border-purple-200">
-                <h3 className="font-bold text-purple-800 mb-3">{t.kenyaTips}</h3>
-                <ul className="space-y-2 text-sm">
+              <div className="bg-purple-50 p-5 rounded-lg border border-purple-200">
+                <h3 className="font-bold text-purple-800 mb-3">
+                  {t.kenyaTips}
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-700">
                   {result.kenyaTips.map((tip, i) => (
                     <li key={i} className="flex items-start">
                       <span className="text-purple-600 mr-2">•</span> {tip}
@@ -317,7 +328,8 @@ const SymptomChecker = () => {
               onClick={() => navigate("/book-appointment")}
               className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center font-medium shadow-lg transition-all"
             >
-              <Calendar className="w-5 h-5 mr-2" /> {t.bookClinic}
+              <Calendar className="w-5 h-5 mr-2" />
+              {t.bookClinic}
             </button>
 
             {/* Sources */}
